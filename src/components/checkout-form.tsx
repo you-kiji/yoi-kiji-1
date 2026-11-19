@@ -13,23 +13,26 @@ export function CheckoutForm({isAuthenticated}:{isAuthenticated:boolean}){
  const router=useRouter();
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[couponCode,setCouponCode]=useState("");
  const [guestEmail,setGuestEmail]=useState(""),[paymentMethod,setPaymentMethod]=useState<"COD"|"RAZORPAY">("COD");
- const [summaryLines,setSummaryLines]=useState<QuoteLine[]>([]),[summarySubtotal,setSummarySubtotal]=useState(0),[summaryLoading,setSummaryLoading]=useState(true),[summaryError,setSummaryError]=useState("");
+ const [summaryLines,setSummaryLines]=useState<QuoteLine[]>([]),[summarySubtotal,setSummarySubtotal]=useState(0),[summaryShipping,setSummaryShipping]=useState(0),[summaryDiscount,setSummaryDiscount]=useState(0),[summaryTax,setSummaryTax]=useState(0),[summaryTotal,setSummaryTotal]=useState(0),[appliedCoupon,setAppliedCoupon]=useState<string|null>(null),[summaryLoading,setSummaryLoading]=useState(true),[summaryError,setSummaryError]=useState("");
  const [form,setForm]=useState<ShippingForm>(emptyForm);
  function change(key:keyof ShippingForm,value:string){setForm(previous=>({...previous,[key]:value}));}
  useEffect(()=>{
   const controller=new AbortController();let active=true;
   async function load(){
+   const code=couponCode.trim().toUpperCase();
+   if(code&&code.length<3){setSummaryError("");setSummaryLoading(false);return;}
+   setSummaryLoading(true);
    try{
     const items:CartLine[]=JSON.parse(localStorage.getItem("yoikiji_cart")??"[]");
     if(!Array.isArray(items)||!items.length){if(active)setSummaryLines([]);return;}
-    const response=await fetch("/api/cart/quote",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({items}),signal:controller.signal});
+    const response=await fetch("/api/cart/quote",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({items,...(code?{couponCode:code}:{})}),signal:controller.signal});
     const data=await response.json();if(!response.ok)throw new Error(data.error??"Your bag could not be verified.");
-    if(active){setSummaryLines(data.items??[]);setSummarySubtotal(data.subtotalPaise??0);setSummaryError((data.items??[]).some((line:QuoteLine)=>line.quantity>line.availableQty)?"One or more pieces no longer have enough stock. Return to your bag and adjust the quantities.":"");}
+    if(active){setSummaryLines(data.items??[]);setSummarySubtotal(data.subtotalPaise??0);setSummaryShipping(data.shippingPaise??0);setSummaryDiscount(data.discountPaise??0);setSummaryTax(data.taxPaise??0);setSummaryTotal(data.totalPaise??0);setAppliedCoupon(data.appliedCoupon??null);setSummaryError("");}
    }catch(reason){if(!active||(reason instanceof DOMException&&reason.name==="AbortError"))return;setSummaryError(reason instanceof Error?reason.message:"Your bag could not be verified.");}
    finally{if(active)setSummaryLoading(false);}
   }
   void load();return()=>{active=false;controller.abort();};
- },[]);
+ },[couponCode]);
  async function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();setBusy(true);setError("");
   try{
@@ -69,7 +72,7 @@ export function CheckoutForm({isAuthenticated}:{isAuthenticated:boolean}){
     <div className="checkout-summary-heading"><div><p className="eyebrow">BEFORE WE SEND IT HOME</p><h2 id="checkout-summary-heading">Your order</h2></div><span>{summaryLines.reduce((n,line)=>n+line.quantity,0)} items</span></div>
     {summaryLoading?<p className="checkout-summary-message" role="status">Checking availability and current prices…</p>:summaryError?<div className="checkout-summary-message" role="alert"><p>{summaryError}</p><Link href="/cart">Return to your bag</Link></div>:noItems?<div className="checkout-summary-message"><p>Your bag is empty. Add a piece before continuing.</p><Link href="/shop">Explore the collections</Link></div>:<>
      <div className="checkout-summary-lines">{summaryLines.map(line=><article className="checkout-summary-line" key={line.productId+(line.variantId??"")}><div className="checkout-summary-image">{line.image?<img src={line.image} alt=""/>:<span>YK</span>}</div><div className="checkout-summary-copy"><strong>{line.name}</strong>{line.variantLabel&&<span>{line.variantLabel}</span>}<small>Qty {line.quantity}</small></div><strong className="checkout-summary-price">{formatPrice(line.lineTotalPaise)}</strong></article>)}</div>
-     <div className="checkout-summary-total"><span>Items subtotal</span><strong>{formatPrice(summarySubtotal)}</strong></div><p className="checkout-summary-note">Final delivery charges, applicable taxes and promotions are confirmed before the order is placed.</p>
+     <div className="checkout-summary-breakdown"><div><span>Items subtotal</span><strong>{formatPrice(summarySubtotal)}</strong></div><div><span>Delivery</span><strong>{summaryShipping===0?"Complimentary":formatPrice(summaryShipping)}</strong></div>{summaryDiscount>0&&<div className="checkout-summary-discount"><span>Promotion {appliedCoupon?"("+appliedCoupon+")":""}</span><strong>−{formatPrice(summaryDiscount)}</strong></div>}<div><span>Included tax estimate</span><strong>{formatPrice(summaryTax)}</strong></div><div className="checkout-summary-total"><span>Order total</span><strong>{formatPrice(summaryTotal)}</strong></div></div><p className="checkout-summary-note">The order total is recalculated and stock is reserved securely when you place the order.</p>
     </>}
    </section>
    {!isAuthenticated&&<section className="checkout-form-section" aria-labelledby="guest-email-heading"><div className="checkout-section-heading"><span className="checkout-step">01</span><div><h2 id="guest-email-heading">Guest contact</h2><p>We will use this email to share your order confirmation and updates.</p></div></div><label htmlFor="checkout-guest-email"><span>Email address</span><input id="checkout-guest-email" type="email" required maxLength={254} autoComplete="email" placeholder="you@example.com" value={guestEmail} onChange={e=>setGuestEmail(e.target.value)}/></label><p className="field-hint">Already have an account? <Link href="/login?next=/checkout">Sign in</Link>. You can place a COD order without registering.</p></section>}
