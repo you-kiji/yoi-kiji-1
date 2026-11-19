@@ -20,7 +20,7 @@ export function CheckoutForm({isAuthenticated}:{isAuthenticated:boolean}){
   const controller=new AbortController();let active=true;
   async function load(){
    const code=couponCode.trim().toUpperCase();
-   if(code&&code.length<3){setSummaryError("");setSummaryLoading(false);return;}
+   if(code&&code.length<3){setSummaryError("Enter at least 3 characters for the promotion code, or clear the field.");setSummaryLoading(false);return;}
    setSummaryLoading(true);
    try{
     const items:CartLine[]=JSON.parse(localStorage.getItem("yoikiji_cart")??"[]");
