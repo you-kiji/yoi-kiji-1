@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-export function AdminOrderActions({id,status,paymentStatus}:{id:string;status:string;paymentStatus:string;paymentProvider:string}){
+export function AdminOrderActions({id,status,paymentStatus,paymentProvider}:{id:string;status:string;paymentStatus:string;paymentProvider:string}){
  const [next,setNext]=useState(status==="CONFIRMED"?"PROCESSING":status==="PROCESSING"?"SHIPPED":status==="SHIPPED"?"DELIVERED":"");const [message,setMessage]=useState("");const [busy,setBusy]=useState(false);
  async function update(){if(!next)return;setBusy(true);setMessage("");try{const r=await fetch("/api/admin/orders/"+id,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({status:next})});const d=await r.json();if(!r.ok)throw new Error(d.error);setMessage("Updated");window.location.reload();}catch(e){setMessage(e instanceof Error?e.message:"Unable to update.");}finally{setBusy(false);}}
  async function refund(){if(!window.confirm("Issue a full refund through Razorpay for this order?"))return;setBusy(true);setMessage("");try{const r=await fetch("/api/admin/orders/"+id+"/refund",{method:"POST"});const d=await r.json();if(!r.ok)throw new Error(d.error);setMessage("Refund issued");window.location.reload();}catch(e){setMessage(e instanceof Error?e.message:"Refund failed.");}finally{setBusy(false);}}
