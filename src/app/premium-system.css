@@ -4432,3 +4432,22 @@ body {
     font-size: max(12px, 1em);
   }
 }
+
+
+/* Admin forms use the same readable type scale as customer-facing forms. */
+:where(.admin-content, .admin-main, .admin-shell, .dashboard-content) :where(label, small, p, li, time, button, select, input, textarea) {
+  font-size: max(12px, 1em);
+  line-height: 1.55;
+}
+:where(.admin-content, .admin-main, .admin-shell, .dashboard-content) :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  min-height: 44px;
+  padding: 10px 12px;
+}
+:where(.admin-content, .admin-main, .admin-shell, .dashboard-content) textarea {
+  min-height: 112px;
+}
+:where(.admin-content, .admin-main, .admin-shell, .dashboard-content) :where(button, .button, .primary-link) {
+  min-height: 44px;
+  height: auto;
+  padding: 11px 16px;
+}
