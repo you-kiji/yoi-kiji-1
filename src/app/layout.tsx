@@ -5,8 +5,10 @@ import "./admin-operations.css";
 import "./journal.css";
 import "./visual-stability.css";
 import "./premium-system.css";
+import "./experience-overrides.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { JapaneseLoader } from "@/components/japanese-loader";
 import { Analytics } from "@/components/analytics";
 import { CookieConsent } from "@/components/cookie-consent";
 import { ScrollMotion } from "@/components/scroll-motion";
@@ -25,7 +27,16 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body><ScrollMotion/><div className="announcement"><span>TEXTILES FOR THE WAY YOU LIVE</span><i>✳</i><span>COMFORT, CONSIDERED</span></div><SiteHeader/>{children}<SiteFooter/><Analytics/><CookieConsent/></body>
+      <body>
+        <JapaneseLoader />
+        <ScrollMotion />
+        <div className="announcement"><span>TEXTILES FOR THE WAY YOU LIVE</span><i>✳</i><span>COMFORT, CONSIDERED</span></div>
+        <SiteHeader />
+        {children}
+        <SiteFooter />
+        <Analytics />
+        <CookieConsent />
+      </body>
     </html>
   );
 }
