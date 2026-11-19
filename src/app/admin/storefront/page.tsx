@@ -6,7 +6,7 @@ import { AdminStorefrontManager } from "@/components/admin-storefront-manager";
 export const dynamic="force-dynamic";
 export const metadata={title:"Storefront content studio · YOI KIJI"};
 export default async function AdminStorefrontPage(){
- const admin=await requireAdmin();if(!admin)redirect("/login");if(admin.role!=="ADMIN")redirect("/admin");
+ const admin=await requireAdmin();if(!admin)redirect("/admin/login");if(admin.role!=="ADMIN")redirect("/admin");
  const [sections,collections,products]=await Promise.all([
   prisma.homepageSection.findMany({orderBy:[{position:"asc"},{key:"asc"}]}),
   prisma.storeCollection.findMany({include:{products:{include:{product:{select:{id:true,name:true,sku:true}}}},_count:{select:{products:true}}},orderBy:[{sortOrder:"asc"},{name:"asc"}]}),
