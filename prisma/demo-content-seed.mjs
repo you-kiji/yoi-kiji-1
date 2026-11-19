@@ -90,9 +90,9 @@ async function main() {
   }
 
   const couponSeeds = [
-    { code: "YOIWELCOME10", description: "Preview-only 10% welcome promotion", discountType: "PERCENTAGE", discountValue: 10, minimumSubtotalPaise: 150000, maximumDiscountPaise: 50000, usageLimit: 100 },
+    { code: "YOIWELCOME10", description: "Preview-only 10% welcome promotion", discountType: "PERCENTAGE", discountValue: 1000, minimumSubtotalPaise: 150000, maximumDiscountPaise: 50000, usageLimit: 100 },
     { code: "YOIHOME250", description: "Preview-only ₹250 home refresh offer", discountType: "FIXED_AMOUNT", discountValue: 25000, minimumSubtotalPaise: 200000, maximumDiscountPaise: null, usageLimit: 50 },
-    { code: "YOILINEN15", description: "Preview-only 15% linen edit promotion", discountType: "PERCENTAGE", discountValue: 15, minimumSubtotalPaise: 300000, maximumDiscountPaise: 75000, usageLimit: 25 },
+    { code: "YOILINEN15", description: "Preview-only 15% linen edit promotion", discountType: "PERCENTAGE", discountValue: 1500, minimumSubtotalPaise: 300000, maximumDiscountPaise: 75000, usageLimit: 25 },
   ];
   for (const coupon of couponSeeds) await prisma.coupon.upsert({ where: { code: coupon.code }, update: { ...coupon, isActive: true }, create: { ...coupon, isActive: true } });
 
