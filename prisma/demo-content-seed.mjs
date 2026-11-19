@@ -55,12 +55,12 @@ async function main() {
     tags.set(slug, row);
   }
   const author = await prisma.user.findFirst({ where: { role: "ADMIN" }, select: { id: true } });
-  for (const post of posts) {
+  for (const [postIndex, post] of posts.entries()) {
     const publishedAt = post.status === "PUBLISHED" ? new Date(Date.now() - post.days * 86400000) : null;
-    const scheduledAt = post.scheduled ? new Date("2026-12-05T09:00:00.000Z") : null;
+    const scheduledAt = post.scheduled ? new Date("2026-12-05T09:00:00.000Z") : null;\n    const coverImageUrl = ["https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1400&q=85", "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1400&q=85", "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1400&q=85"][postIndex % 3];
     const row = await prisma.blogPost.upsert({
       where: { slug: post.slug },
-      update: { title: post.title, excerpt: post.excerpt, contentMarkdown: post.body, status: post.status, publishedAt, scheduledAt, noIndex: true, authorId: author?.id ?? null, seoTitle: post.title + " | YOI KIJI Journal", seoDescription: post.excerpt },
+      update: { title: post.title, excerpt: post.excerpt, contentMarkdown: post.body, coverImageUrl, coverImageAlt: "Illustrative editorial preview image", status: post.status, publishedAt, scheduledAt, noIndex: true, authorId: author?.id ?? null, seoTitle: post.title + " | YOI KIJI Journal", seoDescription: post.excerpt },
       create: { title: post.title, slug: post.slug, excerpt: post.excerpt, contentMarkdown: post.body, status: post.status, publishedAt, scheduledAt, noIndex: true, authorId: author?.id ?? null, seoTitle: post.title + " | YOI KIJI Journal", seoDescription: post.excerpt, coverImageAlt: "Illustrative YOI KIJI editorial preview image" },
     });
     await prisma.blogPostCategory.deleteMany({ where: { postId: row.id } });
@@ -124,15 +124,15 @@ async function main() {
   const folderRows = new Map();
   for (const [name, slug] of folders) folderRows.set(slug, await prisma.mediaFolder.upsert({ where: { slug }, update: { name }, create: { name, slug } }));
   const media = [
-    ["demo-bedroom-hero", "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1800&q=85", "A calm bedroom interior with layered textiles", "Storefront imagery", "hero,bedroom,interior"],
-    ["demo-linen-detail", "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1400&q=85", "Natural linen texture in soft daylight", "Product details", "linen,texture,material"],
-    ["demo-living-room", "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1600&q=85", "Neutral living room with natural textures", "Storefront imagery", "living-room,interior"],
-    ["demo-editorial-table", "https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?w=1400&q=85", "Thoughtful dining and table styling", "Editorial", "table,editorial,home"],
-    ["demo-bath-linen", "https://images.unsplash.com/photo-1620626011761-996317b8d101?w=1400&q=85", "Folded bath linen in a minimal bathroom", "Product details", "bath,towel,linen"],
-    ["demo-curtain-light", "https://images.unsplash.com/photo-1615874694520-474822394e73?w=1400&q=85", "Daylight filtering through soft curtains", "Editorial", "curtains,light,interior"],
+    ["demo-bedroom-hero", "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1800&q=85", "A calm bedroom interior with layered textiles", "storefront-imagery", "hero,bedroom,interior"],
+    ["demo-linen-detail", "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1400&q=85", "Natural linen texture in soft daylight", "product-details", "linen,texture,material"],
+    ["demo-living-room", "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1600&q=85", "Neutral living room with natural textures", "storefront-imagery", "living-room,interior"],
+    ["demo-editorial-table", "https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?w=1400&q=85", "Thoughtful dining and table styling", "editorial", "table,editorial,home"],
+    ["demo-bath-linen", "https://images.unsplash.com/photo-1620626011761-996317b8d101?w=1400&q=85", "Folded bath linen in a minimal bathroom", "product-details", "bath,towel,linen"],
+    ["demo-curtain-light", "https://images.unsplash.com/photo-1615874694520-474822394e73?w=1400&q=85", "Daylight filtering through soft curtains", "editorial", "curtains,light,interior"],
   ];
   for (const [publicId, secureUrl, altText, folderName, tagText] of media) {
-    const folder = folderRows.get(folders.find(([, name]) => name === folderName)[1]);
+    const folder = folderRows.get(folderName);
     await prisma.mediaAsset.upsert({ where: { publicId }, update: { secureUrl, altText, title: "DEMO — " + altText, folderId: folder.id, tags: tagText.split(",") }, create: { publicId, secureUrl, resourceType: "IMAGE", format: "jpg", originalFilename: publicId + ".jpg", altText, title: "DEMO — " + altText, bytes: 240000, width: 1600, height: 1100, folderId: folder.id, tags: tagText.split(",") } });
   }
 
