@@ -23,7 +23,7 @@ export function JapaneseLoader() {
       <div className="yk-loader__pattern" aria-hidden="true" />
       <div className="yk-loader__content">
         <div className="yk-loader__enso" aria-hidden="true"><span /></div>
-        <p className="yk-loader__brand">YOI KIJI</p>
+        <div className="wordmark yk-loader__wordmark"><span className="wordmark-main">YOI KIJI</span><span className="wordmark-sub">THE ART OF TEXTILE LIVING</span></div>
         <p className="yk-loader__japanese" lang="ja">暮らしに、心地よさを。</p>
         <span className="yk-loader__rule" aria-hidden="true"><i /></span>
         <p className="yk-loader__caption">THE ART OF TEXTILE LIVING</p>
