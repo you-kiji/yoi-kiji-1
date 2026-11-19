@@ -117,7 +117,7 @@ export function AdminProductEditForm({ product }: { product: EditableProduct }) 
   }
 
   return <section className="admin-product-edit">
-    <button type="button" className="primary-link" onClick={() => setOpen(value => !value)}>{open ? "Close product editor" : "Edit full product"} <span>{open ? "−" : "↗"}</span></button>
+    <button type="button" className="primary-link" onClick={() => setOpen(value => !value)}>{open ? "Close product editor" : "Edit full product"} <span>{open ? "−" : "+"}</span></button>
     {open && <form className="admin-product-form" onSubmit={submit}>
       <label>Product name<input required minLength={2} value={form.name} onChange={event => set("name", event.target.value)} /></label>
       <label>URL slug<input required pattern="[a-z0-9-]+" value={form.slug} onChange={event => set("slug", event.target.value)} /></label>
