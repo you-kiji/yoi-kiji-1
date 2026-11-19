@@ -14,18 +14,18 @@ const fallbackCategories = [
 export default async function HomePage() {
   const [categoryRecords,homepageSections,collectionRecords]=await Promise.all([
     getActiveCategories(),
-    prisma.homepageSection.findMany({where:{isActive:true},orderBy:{position:"asc"}}),
-    prisma.storeCollection.findMany({where:{isActive:true},orderBy:[{sortOrder:"asc"},{name:"asc"}]}),
+    prisma.homepageSection.findMany({where:{isActive:true},orderBy:{position:"asc"}}).catch(() => []),
+    prisma.storeCollection.findMany({where:{isActive:true},orderBy:[{sortOrder:"asc"},{name:"asc"}]}).catch(() => []),
   ]);
   const section=(key:string)=>homepageSections.find(item=>item.key===key);
   const hero=section("hero"),intro=section("intro"),feature=section("feature"),manifesto=section("manifesto"),journal=section("journal");
   const dbCategories=categoryRecords.filter(category=>category.parentId===null);
   const imageFallbacks=Object.fromEntries(fallbackCategories.map(category=>[category.slug,category.image]));
   const categories=collectionRecords.length
-    ? collectionRecords.map((item,index)=>({name:item.name,note:item.description??"Thoughtfully chosen textiles for the spaces you return to.",image:item.imageUrl??fallbackCategories[index%fallbackCategories.length].image,slug:item.slug}))
+    ? collectionRecords.map((item,index)=>({name:item.name,note:item.description??"Thoughtfully chosen textiles for the spaces you return to.",image:item.imageUrl??fallbackCategories[index%fallbackCategories.length].image,slug:item.slug,href:`/shop?collection=${encodeURIComponent(item.slug)}`}))
     : dbCategories.length
-      ? dbCategories.map((category,index)=>({name:category.name,note:category.description??"Thoughtfully chosen textiles for the spaces you return to.",image:category.imageUrl??imageFallbacks[category.slug]??fallbackCategories[index%fallbackCategories.length].image,slug:category.slug}))
-      : fallbackCategories;
+      ? dbCategories.map((category,index)=>({name:category.name,note:category.description??"Thoughtfully chosen textiles for the spaces you return to.",image:category.imageUrl??imageFallbacks[category.slug]??fallbackCategories[index%fallbackCategories.length].image,slug:category.slug,href:`/shop?category=${encodeURIComponent(category.slug)}`}))
+       : fallbackCategories.map(category => ({ ...category, href: `/shop?category=${encodeURIComponent(category.slug)}` }));
 
   return <main className="home-redesign">
     <section className="editorial-hero" aria-label="YOI KIJI home textiles">
@@ -49,11 +49,11 @@ export default async function HomePage() {
     </section>
     <section className="editorial-collections">
       <div className="editorial-section-heading"><div><p className="editorial-eyebrow editorial-eyebrow--dark">THE COLLECTIONS</p><h2>Find your <em>own rhythm.</em></h2></div><a className="editorial-text-link" href="/shop">View all collections</a></div>
-      <div className="editorial-collection-grid">{categories.map((item,index)=><a className={`editorial-collection editorial-collection--${index+1}`} href={`/shop?collection=${item.slug}`} key={item.slug}><div className="editorial-collection__photo" style={{backgroundImage:`url("${item.image}")`}}/><div className="editorial-collection__shade"/><div className="editorial-collection__copy"><span>{item.note}</span><h3>{item.name}</h3><b>DISCOVER</b></div></a>)}</div>
+      <div className="editorial-collection-grid">{categories.map((item,index)=><a className={`editorial-collection editorial-collection--${index+1}`} href={item.href} key={item.slug}><div className="editorial-collection__photo" style={{backgroundImage:`url("${item.image}")`}}/><div className="editorial-collection__shade"/><div className="editorial-collection__copy"><span>{item.note}</span><h3>{item.name}</h3><b>DISCOVER</b></div></a>)}</div>
     </section>
     <section className="editorial-feature">
       <div className="editorial-feature__image" role="img" aria-label={feature?.imageAlt??"Softly layered natural bed linen in a sunlit bedroom"} style={feature?.imageUrl?{backgroundImage:`url("${feature.imageUrl}")`}:undefined}/>
-      <div className="editorial-feature__copy"><p className="editorial-eyebrow"><span/>{feature?.eyebrow??"THE BEDDING EDIT"}</p><h2>{feature?.title??<>Rest, in<br/><em>your own way.</em></>}</h2><p>{feature?.body??"Beautifully considered bedding for slower mornings, longer evenings and everything in between."}</p><a className="editorial-cta editorial-cta--light" href={feature?.ctaHref??"/shop/bedsheets"}>{feature?.ctaLabel??"Shop bedsheets"}</a><small>SINGLE&nbsp;&nbsp; / &nbsp;&nbsp;DOUBLE&nbsp;&nbsp; / &nbsp;&nbsp;KING&nbsp;&nbsp; / &nbsp;&nbsp;FITTED</small></div>
+      <div className="editorial-feature__copy"><p className="editorial-eyebrow"><span/>{feature?.eyebrow??"THE BEDDING EDIT"}</p><h2>{feature?.title??<>Rest, in<br/><em>your own way.</em></>}</h2><p>{feature?.body??"Beautifully considered bedding for slower mornings, longer evenings and everything in between."}</p><a className="editorial-cta editorial-cta--light" href={feature?.ctaHref??"/shop?category=bedsheets"}>{feature?.ctaLabel??"Shop bedsheets"}</a><small>SINGLE&nbsp;&nbsp; / &nbsp;&nbsp;DOUBLE&nbsp;&nbsp; / &nbsp;&nbsp;KING&nbsp;&nbsp; / &nbsp;&nbsp;FITTED</small></div>
     </section>
     <section className="editorial-manifesto"><span className="editorial-manifesto__flower">✳</span><p>{manifesto?.title??<>Not more things.<br/>Just more <em>meaning</em> in the things we keep.</>}</p><span className="editorial-manifesto__jp">日々を、心地よく。</span></section>
     <section className="editorial-journal"><div><p className="editorial-eyebrow"><span/>{journal?.eyebrow??"NOTES FOR LIVING WELL"}</p><h2>{journal?.title??<>A little more<br/><em>thoughtfulness.</em></>}</h2></div><p>{journal?.body??"Explore stories, care notes and considered ideas for creating spaces that feel like you."}</p><a className="editorial-text-link" href={journal?.ctaHref??"/journal"}>{journal?.ctaLabel??"Read the journal"}</a></section>
