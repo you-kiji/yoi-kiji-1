@@ -189,20 +189,42 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
 
       {products.length ? (
         <section className="product-grid shop-product-grid" aria-label="Available products">
-          {products.map((product) => (
-            <Link className="product-card" href={"/products/" + product.slug} key={product.id}>
-              <div className="product-card-image">
-                {product.images[0] ? (
-                  <img src={product.images[0].url} alt={product.images[0].alt || product.name} />
-                ) : (
-                  <span>YOI KIJI</span>
-                )}
-              </div>
-              <p className="product-card-category">{product.category?.name ?? "YOI KIJI"}</p>
-              <h2>{product.name}</h2>
-              <p className="product-card-price">{formatINR(product.pricePaise)}</p>
-            </Link>
-          ))}
+          {products.map((product) => {
+            const available = product.hasVariants
+              ? product.variants.some((variant) => variant.inventoryQty > 0)
+              : product.inventoryQty > 0;
+            const startingPrice = product.hasVariants && product.variants.length
+              ? Math.min(...product.variants.map((variant) => variant.pricePaise ?? product.pricePaise))
+              : product.pricePaise;
+            return (
+              <Link
+                className={available ? "product-card" : "product-card is-unavailable"}
+                href={"/products/" + product.slug}
+                key={product.id}
+                aria-label={`${product.name}, ${available ? "available" : "currently unavailable"}, ${formatINR(startingPrice)}`}
+              >
+                <div className="product-card-image">
+                  {product.images[0] ? (
+                    <img
+                      src={product.images[0].url}
+                      alt={product.images[0].alt || product.name}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <span>YOI KIJI</span>
+                  )}
+                  {!available && <span className="product-card-stock-badge">Currently unavailable</span>}
+                </div>
+                <p className="product-card-category">{product.category?.name ?? "YOI KIJI"}</p>
+                <h2>{product.name}</h2>
+                <p className="product-card-price">
+                  {product.hasVariants ? <span className="product-card-price-prefix">From </span> : null}
+                  {formatINR(startingPrice)}
+                </p>
+              </Link>
+            );
+          })}
         </section>
       ) : (
         <section className="catalogue-empty shop-empty-state" aria-labelledby="shop-empty-title">
