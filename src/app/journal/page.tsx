@@ -34,9 +34,9 @@ export default async function JournalPage({ searchParams }: { searchParams: Sear
       },
       orderBy: [{ publishedAt: "desc" }, { id: "desc" }],
       take: 48,
-    }),
-    prisma.blogCategory.findMany({ where: { posts: { some: { post: { status: "PUBLISHED", publishedAt: { lte: now }, noIndex: false } } } }, orderBy: { name: "asc" } }),
-    prisma.blogTag.findMany({ where: { posts: { some: { post: { status: "PUBLISHED", publishedAt: { lte: now }, noIndex: false } } } }, orderBy: { name: "asc" } }),
+    }).catch(() => []),
+    prisma.blogCategory.findMany({ where: { posts: { some: { post: { status: "PUBLISHED", publishedAt: { lte: now }, noIndex: false } } } }, orderBy: { name: "asc" } }).catch(() => []),
+    prisma.blogTag.findMany({ where: { posts: { some: { post: { status: "PUBLISHED", publishedAt: { lte: now }, noIndex: false } } } }, orderBy: { name: "asc" } }).catch(() => []),
   ]);
   const selectedLabel = category ? categories.find(item => item.slug === category)?.name : tag ? tags.find(item => item.slug === tag)?.name : null;
 
@@ -66,9 +66,9 @@ export default async function JournalPage({ searchParams }: { searchParams: Sear
           <h3><Link href={"/journal/" + post.slug}>{post.title}</Link></h3>
           {post.excerpt && <p>{post.excerpt}</p>}
           <div className="journal-card-meta"><span>{post.author?.name ?? "YOI KIJI Editorial"}</span><time dateTime={post.publishedAt?.toISOString()}>{post.publishedAt?.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}</time></div>
-          <Link className="journal-read-link" href={"/journal/" + post.slug}>Read story <span>↗</span></Link>
+          <Link className="journal-read-link" href={"/journal/" + post.slug}>Read story</Link>
         </div>
       </article>)}
-    </section> : <section className="journal-empty"><span>✳</span><h2>No stories here just yet.</h2><p>Try another category or return to all journal stories.</p><Link href="/journal">View all stories ↗</Link></section>}
+    </section> : <section className="journal-empty"><span>✳</span><h2>No stories here just yet.</h2><p>Try another category or return to all journal stories.</p><Link href="/journal">View all stories</Link></section>}
   </main>;
 }
