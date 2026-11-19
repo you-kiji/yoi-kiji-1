@@ -106,3 +106,44 @@
 .guest-order-payment strong{font-size:13px;color:#17351c}
 .guest-order-security{margin:18px 0;font-size:10px}
 @media(max-width:600px){.guest-order-card{margin:28px auto 56px;padding:22px}.guest-order-reference{gap:9px}.guest-order-status{margin-left:0}}
+
+/* Checkout summary and form hierarchy */
+.checkout-form{gap:22px}
+.checkout-summary{padding:clamp(18px,3vw,28px);border:1px solid #d2d8cd;border-radius:14px;background:#f5f5ee}
+.checkout-summary-heading,.checkout-section-heading{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.checkout-summary-heading h2,.checkout-section-heading h2{margin:5px 0 0;color:#17351c;font-size:20px;font-weight:500;letter-spacing:-.025em}
+.checkout-summary-heading>span{color:#65745f;font-size:12px}
+.checkout-summary-heading .eyebrow,.checkout-section-heading .eyebrow{color:#71816a}
+.checkout-summary-lines{display:grid;gap:13px;margin:22px 0 18px}
+.checkout-summary-line{display:grid;grid-template-columns:64px minmax(0,1fr) auto;align-items:center;gap:13px}
+.checkout-summary-image{width:64px;height:70px;overflow:hidden;border-radius:7px;background:#e4e8df;display:grid;place-items:center;color:#6b7b65;font-size:11px}
+.checkout-summary-image img{width:100%;height:100%;object-fit:cover}
+.checkout-summary-copy{display:grid;gap:4px;min-width:0}
+.checkout-summary-copy strong{color:#203d25;font-size:12px;font-weight:600;line-height:1.5}
+.checkout-summary-copy span,.checkout-summary-copy small{color:#6d7b68;font-size:11px;line-height:1.5}
+.checkout-summary-price{color:#203d25;font-size:12px;white-space:nowrap}
+.checkout-summary-breakdown{display:grid;gap:10px;padding-top:16px;border-top:1px solid #d4dbcf}
+.checkout-summary-breakdown>div{display:flex;justify-content:space-between;gap:16px;color:#63715f;font-size:12px;line-height:1.6}
+.checkout-summary-breakdown strong{color:#29442c;font-weight:600;white-space:nowrap}
+.checkout-summary-breakdown .checkout-summary-discount,.checkout-summary-breakdown .checkout-summary-discount strong{color:#55754f}
+.checkout-summary-breakdown .checkout-summary-total{margin-top:4px;padding-top:13px;border-top:1px solid #d4dbcf;color:#17351c;font-size:15px}
+.checkout-summary-breakdown .checkout-summary-total strong{font-size:18px}
+.checkout-summary-note,.checkout-summary-message{margin:13px 0 0;color:#6a7965;font-size:12px;line-height:1.7}
+.checkout-summary-message a,.field-hint a{color:#355b37;text-decoration:underline;text-underline-offset:3px}
+.checkout-form-section{display:grid;gap:18px;padding:22px;border:1px solid #d2d8cd;border-radius:14px;background:#fbfbf7}
+.checkout-section-heading{justify-content:flex-start;align-items:flex-start}
+.checkout-step{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;border-radius:50%;background:#e9eee5;color:#345539;font-size:11px;font-weight:600}
+.checkout-section-heading h2{font-size:17px}
+.checkout-section-heading p{margin:5px 0 0;color:#71806d;font-size:12px;line-height:1.6}
+.checkout-form-section label{display:grid;gap:8px;color:#29442c;font-size:12px;font-weight:500}
+.checkout-form-section label>span{display:flex;gap:8px;align-items:center}
+.checkout-form-section label em{font-style:normal;color:#7c8977;font-size:11px;font-weight:400}
+.checkout-form-section input:not([type=radio]),.checkout-form-section select,.checkout-form-section textarea{width:100%;min-height:46px;padding:12px 13px;border:1px solid #cbd4c7;border-radius:7px;background:#fff;color:#203d25;font:400 13px 'Montserrat',Arial,sans-serif;outline:none}
+.checkout-form-section input:focus,.checkout-form-section select:focus,.checkout-form-section textarea:focus{border-color:#728b6d;box-shadow:0 0 0 3px rgba(91,121,84,.12)}
+.checkout-form-section .field-hint{margin:0;color:#6d7b68;font-size:12px;line-height:1.7}
+.checkout-coupon{max-width:440px}
+.checkout-submit-area{display:grid;gap:10px}
+.checkout-submit{min-height:50px;justify-content:center;border-radius:5px;font-size:12px;letter-spacing:.04em}
+.checkout-submit-area .checkout-disclaimer{margin:0;text-align:center;color:#71806d;font-size:11px;line-height:1.7}
+.checkout-error{padding:12px 14px;border:1px solid #e2bdb5;border-radius:8px;background:#fff6f3;font-size:12px}
+@media(max-width:600px){.checkout-form-section{padding:17px}.checkout-summary{padding:17px}.checkout-summary-line{grid-template-columns:54px minmax(0,1fr) auto;gap:10px}.checkout-summary-image{width:54px;height:60px}.checkout-summary-copy strong{font-size:11px}.checkout-summary-price{font-size:11px}.checkout-section-heading h2{font-size:16px}}
