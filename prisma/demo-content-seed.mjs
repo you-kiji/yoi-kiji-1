@@ -60,8 +60,8 @@ async function main() {
     const scheduledAt = post.scheduled ? new Date("2026-12-05T09:00:00.000Z") : null;\n    const coverImageUrl = ["https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1400&q=85", "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1400&q=85", "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1400&q=85"][postIndex % 3];
     const row = await prisma.blogPost.upsert({
       where: { slug: post.slug },
-      update: { title: post.title, excerpt: post.excerpt, contentMarkdown: post.body, coverImageUrl, coverImageAlt: "Illustrative editorial preview image", status: post.status, publishedAt, scheduledAt, noIndex: true, authorId: author?.id ?? null, seoTitle: post.title + " | YOI KIJI Journal", seoDescription: post.excerpt },
-      create: { title: post.title, slug: post.slug, excerpt: post.excerpt, contentMarkdown: post.body, status: post.status, publishedAt, scheduledAt, noIndex: true, authorId: author?.id ?? null, seoTitle: post.title + " | YOI KIJI Journal", seoDescription: post.excerpt, coverImageAlt: "Illustrative YOI KIJI editorial preview image" },
+      update: { title: post.title, excerpt: post.excerpt, contentMarkdown: post.body, coverImageUrl, coverImageAlt: "Illustrative editorial preview image", status: post.status, publishedAt, scheduledAt, noIndex: false, authorId: author?.id ?? null, seoTitle: post.title + " | YOI KIJI Journal", seoDescription: post.excerpt },
+      create: { title: post.title, slug: post.slug, excerpt: post.excerpt, contentMarkdown: post.body, status: post.status, publishedAt, scheduledAt, noIndex: false, authorId: author?.id ?? null, seoTitle: post.title + " | YOI KIJI Journal", seoDescription: post.excerpt, coverImageAlt: "Illustrative YOI KIJI editorial preview image" },
     });
     await prisma.blogPostCategory.deleteMany({ where: { postId: row.id } });
     await prisma.blogPostTag.deleteMany({ where: { postId: row.id } });
