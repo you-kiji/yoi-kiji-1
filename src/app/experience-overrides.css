@@ -41,8 +41,6 @@
   box-shadow: 0 8px 28px rgba(4, 19, 7, .12);
 }
 .site-header .wordmark { position: relative; z-index: 2; flex-shrink: 0; }
-.site-header .wordmark-main { color: #f1f0e8; font-size: 23px; line-height: 1.15; letter-spacing: .16em; }
-.site-header .wordmark-sub { color: #d0d8c9; font-size: 8px; line-height: 1.4; letter-spacing: .16em; }
 .site-header .desktop-navigation {
   display: flex;
   align-items: center;
@@ -118,8 +116,6 @@
 }
 @media (max-width: 600px) {
   .site-header { min-height: 72px; height: 72px; grid-template-columns: minmax(0,1fr) auto auto; padding-inline: 16px; gap: 10px; }
-  .site-header .wordmark-main { font-size: 19px; }
-  .site-header .wordmark-sub { font-size: 6px; }
   .site-header .header-actions { gap: 0; }
   .site-header .header-actions > a:not(.bag-link) { display: none; }
   .site-header .header-actions .bag-link { gap: 5px; font-size: 11px; }
@@ -173,6 +169,8 @@
   background-size: 100px 50px;
 }
 .yk-loader__content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; padding: 32px; text-align: center; }
+.yk-loader__wordmark { align-items: center; }
+.yk-loader__brand { margin: 0; }
 .yk-loader__enso {
   position: relative; width: 94px; height: 94px; margin-bottom: 30px;
   border: 2px solid rgba(18,53,26,.18); border-top-color: #9b8058; border-right-color: #9b8058;
@@ -186,7 +184,6 @@
   position: absolute; top: -5px; right: 12px; width: 9px; height: 9px;
   border-radius: 50%; background: #b48d60; box-shadow: 0 0 0 5px rgba(180,141,96,.13);
 }
-.yk-loader__brand { margin: 0; color: #12351a; font-size: 25px; font-weight: 700; letter-spacing: .2em; }
 .yk-loader__japanese { margin: 14px 0 19px; color: #526b50; font-size: 15px; letter-spacing: .16em; }
 .yk-loader__rule { position: relative; width: 150px; height: 1px; overflow: hidden; background: #c8cdbf; }
 .yk-loader__rule i { position: absolute; inset: 0 auto 0 0; width: 42%; background: #9b8058; animation: yk-loader-progress 1.2s ease-in-out infinite; }
@@ -197,7 +194,6 @@
   :root { --yk-button-height: 48px; }
   .auth-panel { width: 100%; }
   .yk-loader__enso { width: 78px; height: 78px; }
-  .yk-loader__brand { font-size: 22px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .yk-loader__enso, .yk-loader__rule i { animation: none; }
