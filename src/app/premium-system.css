@@ -1930,3 +1930,21 @@ body {
   .wishlist-card { padding-bottom: 13px; }
   .wishlist-card .wishlist-control button { min-height: 42px; }
 }
+
+
+/* Align the remaining shared theme tokens with the approved YOI KIJI palette. */
+:root {
+  --yk-ink: #18331d;
+  --yk-forest: #0e300e;
+  --yk-moss: #526c4d;
+  --yk-paper: #e9e9e9;
+  --yk-soft: #e1e3dc;
+  --yk-gold: #b99a6b;
+  --yk-ui-font: "Montserrat", Arial, sans-serif;
+  --yk-ui-paper: #e9e9e9;
+  --yk-ui-ink: #18331d;
+  --yk-ui-muted: #647260;
+  --yk-ui-border: #d5ddd1;
+  --yk-display: "Montserrat", Arial, sans-serif;
+  --yk-body: "Montserrat", Arial, sans-serif;
+}
