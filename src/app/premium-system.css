@@ -2608,3 +2608,182 @@ body {
   .admin-row-controls > * { width: 100%; }
   .admin-recent-orders .order-card { grid-template-columns: minmax(0, 1fr); }
 }
+
+
+/* Guided product creation form */
+.admin-create-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+}
+.admin-create-heading .eyebrow {
+  margin: 0 0 6px;
+  color: var(--yk-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .15em;
+}
+.admin-create-heading h2 {
+  margin: 0;
+  color: var(--yk-forest);
+  font-size: clamp(20px, 3vw, 27px);
+  font-weight: 650;
+  letter-spacing: -.035em;
+}
+.admin-create-heading > div > p:last-child {
+  max-width: 650px;
+  margin: 7px 0 0;
+  color: var(--yk-muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+.admin-create-heading > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.admin-product-create-form {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  margin-top: 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.admin-product-create-form .admin-form-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 15px;
+  min-width: 0;
+  margin: 0;
+  padding: clamp(17px, 2.5vw, 25px);
+  border: 1px solid var(--yk-line);
+  border-radius: 8px;
+  background: #fbfaf5;
+}
+.admin-product-create-form .admin-form-section > legend {
+  float: none;
+  width: auto;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 8px;
+  color: var(--yk-forest);
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: .01em;
+}
+.admin-form-section-copy {
+  margin: -5px 0 0;
+  color: var(--yk-muted);
+  font-size: 11px;
+  line-height: 1.65;
+}
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  min-width: 0;
+}
+.admin-product-create-form .admin-form-grid > label {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+  color: var(--yk-ink);
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+.admin-product-create-form .admin-form-grid > label > em {
+  color: var(--yk-muted);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 500;
+}
+.admin-product-create-form .admin-form-grid > label :where(input, select, textarea) {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 11px 13px;
+  border: 1px solid var(--yk-line-strong);
+  border-radius: 7px;
+  background: #fffefa;
+  color: var(--yk-ink);
+  font-size: 12px;
+}
+.admin-product-create-form .admin-form-grid > label textarea {
+  min-height: 112px;
+  line-height: 1.7;
+  resize: vertical;
+}
+.admin-product-create-form .admin-field-span-all {
+  grid-column: 1 / -1;
+}
+.admin-product-create-form .admin-dynamic-fields {
+  background: #f5f4ed;
+}
+.admin-product-create-form .admin-dynamic-fields .admin-form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.admin-product-create-form .admin-dynamic-fields label {
+  display: grid;
+  gap: 8px;
+}
+.admin-product-create-form .admin-dynamic-fields label:has(input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+}
+.admin-product-create-form .admin-dynamic-fields input[type="checkbox"] {
+  width: 18px;
+  min-width: 18px;
+  min-height: 18px;
+  padding: 0;
+}
+.admin-product-create-form .admin-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 8px 0 0;
+}
+.admin-product-create-form .admin-form-footer > p {
+  margin: 0;
+  color: var(--yk-muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.admin-product-create-form .admin-form-footer > button {
+  min-height: 52px;
+  padding: 13px 22px;
+  border: 1px solid var(--yk-forest);
+  border-radius: 8px;
+  background: var(--yk-forest);
+  color: var(--yk-white);
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+}
+.admin-product-create-form .admin-form-footer > button:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+@media (max-width: 850px) {
+  .admin-form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .admin-create-heading { align-items: stretch; flex-direction: column; }
+  .admin-create-heading > button { width: 100%; }
+  .admin-product-create-form .admin-form-section { padding: 17px 13px; }
+  .admin-form-grid,
+  .admin-product-create-form .admin-dynamic-fields .admin-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+  .admin-product-create-form .admin-field-span-all { grid-column: auto; }
+  .admin-product-create-form .admin-form-footer { align-items: stretch; flex-direction: column; }
+  .admin-product-create-form .admin-form-footer > button { width: 100%; }
+}
