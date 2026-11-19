@@ -3,6 +3,8 @@ import { getCurrentUser } from "@/lib/auth";
 import { LogoutButton } from "@/components/logout-button";
 import { WhatsAppPreference } from "@/components/whatsapp-preference";
 
+export const metadata = { title: "Your account", description: "Manage your YOI KIJI profile, orders and saved details." };
+
 export const dynamic = "force-dynamic";
 
 export default async function AccountPage() {
