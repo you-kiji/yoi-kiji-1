@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type Line = { productId: string; variantId?: string; quantity: number };
 type Quoted = {
@@ -27,8 +27,7 @@ export function CartView() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  async function refresh(next?: Line[]) {
-    const items = next ?? cart;
+  const refresh = useCallback(async (items: Line[]) => {
     setLoading(true);
     try {
       const response = await fetch("/api/cart/quote", {
@@ -46,7 +45,7 @@ export function CartView() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
     try {
@@ -58,7 +57,7 @@ export function CartView() {
       setError("Your saved bag could not be read. Please refresh and try again.");
       setLoading(false);
     }
-  }, []);
+  }, [refresh]);
 
   function update(next: Line[]) {
     setCart(next);
