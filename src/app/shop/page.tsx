@@ -39,6 +39,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
                   images: { where: { variantId: null }, orderBy: { isPrimary: "desc" }, take: 1 },
                   category: true,
                   categoryLinks: { include: { category: true } },
+                  variants: { where: { isActive: true }, orderBy: { label: "asc" } },
                 },
               },
             },
