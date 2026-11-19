@@ -9,7 +9,7 @@ const schema = z.object({
 });
 
 const allowedTransitions: Record<string, string[]> = {
-  CONFIRMED: ["PROCESSING"],
+  CONFIRMED: ["PROCESSING", "CANCELLED"],
   PROCESSING: ["SHIPPED"],
   SHIPPED: ["DELIVERED"],
   PENDING: ["CANCELLED"],
