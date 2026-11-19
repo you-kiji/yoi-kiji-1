@@ -74,7 +74,18 @@ export async function PATCH(
         throw conflict("This order was updated by another administrator. Refresh and try again.");
       }
 
+      if (parsed.data.status === "DELIVERED" && current.payment?.provider === "COD" && current.payment.status !== "CAPTURED") {
+        await tx.payment.update({ where: { orderId: current.id }, data: { status: "CAPTURED" } });
+      }
+
       if (parsed.data.status === "CANCELLED") {
+        const redemption = await tx.couponRedemption.findFirst({ where: { orderId: current.id }, select: { couponId: true } });
+        if (redemption) {
+          const released = await tx.couponRedemption.deleteMany({ where: { orderId: current.id } });
+          if (released.count > 0) {
+            await tx.coupon.update({ where: { id: redemption.couponId }, data: { usageCount: { decrement: released.count } } });
+          }
+        }
         for (const item of current.items) {
           if (item.variantId) {
             await tx.productVariant.update({
