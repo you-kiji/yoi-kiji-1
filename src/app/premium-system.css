@@ -4395,3 +4395,40 @@ body {
   font-size: max(11px, 1em);
   line-height: 1.6;
 }
+
+
+/* Final readability pass: keep supporting copy and operational controls legible. */
+:where(small, .field-hint, .form-hint, .help-text, .form-security-note) {
+  font-size: max(12px, 1em);
+  line-height: 1.6;
+}
+:where(.commerce-page, .journal-page, .journal-article-page, .editorial-page, .admin-content, .admin-main, .admin-shell, .dashboard-content) .eyebrow {
+  font-size: max(11px, 1em);
+  line-height: 1.55;
+}
+:where(.commerce-page, .journal-page, .journal-article-page) :where(.commerce-breadcrumb, .product-card-category, .order-card-label, .product-detail-note, .stock-note, .checkout-disclaimer, .checkout-section-heading p) {
+  font-size: max(12px, 1em);
+  line-height: 1.6;
+}
+:where(.admin-panel, .customer-insights, .admin-inventory-snapshot, .admin-inventory-ledger, .fulfillment-editor, .admin-order-actions) :where(label, small, p, time, select, input, button) {
+  font-size: max(12px, 1em);
+  line-height: 1.55;
+}
+:where(.admin-panel, .customer-insights, .admin-inventory-snapshot, .admin-inventory-ledger) :where(button, input, select) {
+  min-height: 44px;
+}
+.admin-panel .admin-row-controls input[type="file"] {
+  min-height: 44px;
+}
+.fulfillment-editor > button {
+  min-height: 44px;
+}
+.admin-order-actions button,
+.admin-order-actions select {
+  min-height: 44px;
+}
+@media (max-width: 600px) {
+  :where(.admin-panel, .customer-insights, .admin-inventory-snapshot, .admin-inventory-ledger) :where(label, small, p, time) {
+    font-size: max(12px, 1em);
+  }
+}
