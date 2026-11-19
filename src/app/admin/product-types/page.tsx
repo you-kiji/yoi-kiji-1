@@ -8,7 +8,7 @@ export const metadata = { title: "Product types & attributes" };
 
 export default async function AdminProductTypesPage() {
   const admin = await requireAdmin();
-  if (!admin) redirect("/login");
+  if (!admin) redirect("/admin/login");
   if (admin.role !== "ADMIN") redirect("/admin");
   return <main className="commerce-page">
     <div className="commerce-breadcrumb"><Link href="/admin">Admin</Link><span>/</span> Product types</div>
