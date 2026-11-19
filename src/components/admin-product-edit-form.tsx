@@ -116,33 +116,84 @@ export function AdminProductEditForm({ product }: { product: EditableProduct }) 
     }
   }
 
-  return <section className="admin-product-edit">
-    <button type="button" className="primary-link" onClick={() => setOpen(value => !value)}>{open ? "Close product editor" : "Edit full product"} <span>{open ? "−" : "+"}</span></button>
-    {open && <form className="admin-product-form" onSubmit={submit}>
-      <label>Product name<input required minLength={2} value={form.name} onChange={event => set("name", event.target.value)} /></label>
-      <label>URL slug<input required pattern="[a-z0-9-]+" value={form.slug} onChange={event => set("slug", event.target.value)} /></label>
-      <label>Parent SKU<input required value={form.sku} onChange={event => set("sku", event.target.value)} /></label>
-      <label>Product type<select value={form.productTypeId} onChange={event => { const id = event.target.value; set("productTypeId", id); const type = productTypes.find(item => item.id === id); setAttributeValues(Object.fromEntries((type?.attributes ?? []).filter(link => link.attribute.type === "BOOLEAN").map(link => [link.attribute.id, false]))); }}><option value="">No product type</option>{productTypes.map(type => <option key={type.id} value={type.id}>{type.name}</option>)}</select></label>
-      <label>Categories<select multiple value={form.categoryIds} onChange={event => { const ids = Array.from(event.target.selectedOptions).map(option => option.value); setForm(old => ({ ...old, categoryIds: ids, primaryCategoryId: ids.includes(old.primaryCategoryId) ? old.primaryCategoryId : ids[0] ?? "" })); }}><option value="" disabled>Select one or more categories</option>{categoryOptions.map(category => <option key={category.id} value={category.id}>{category.label}</option>)}</select></label>
-      <label>Primary category<select required value={form.primaryCategoryId} onChange={event => set("primaryCategoryId", event.target.value)}><option value="">Choose primary category</option>{categoryOptions.filter(category => form.categoryIds.includes(category.id)).map(category => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
-      <label>HSN code<input value={form.hsnCode} onChange={event => set("hsnCode", event.target.value)} /></label>
-      <label>Material<input value={form.material} onChange={event => set("material", event.target.value)} /></label>
-      <label>Colour<input value={form.color} onChange={event => set("color", event.target.value)} /></label>
-      <label>Weight (grams)<input type="number" min="1" value={form.weightGrams} onChange={event => set("weightGrams", event.target.value)} /></label>
-      <label>Length (mm)<input type="number" min="1" value={form.lengthMm} onChange={event => set("lengthMm", event.target.value)} /></label>
-      <label>Width (mm)<input type="number" min="1" value={form.widthMm} onChange={event => set("widthMm", event.target.value)} /></label>
-      <label>Height (mm)<input type="number" min="1" value={form.heightMm} onChange={event => set("heightMm", event.target.value)} /></label>
-      <label>GST rate (%)<input required type="number" min="0" max="100" step=".01" value={form.gstRate} onChange={event => set("gstRate", event.target.value)} /></label>
-      <label>Price (INR)<input required type="number" min=".01" step=".01" value={form.price} onChange={event => set("price", event.target.value)} /></label>
-      <label>Compare-at price (INR)<input type="number" min=".01" step=".01" value={form.compareAtPrice} onChange={event => set("compareAtPrice", event.target.value)} /></label>
-      <label>Product stock<input required type="number" min="0" step="1" value={form.stock} onChange={event => set("stock", event.target.value)} /></label>
-      <label className="admin-dynamic-attribute"><span><input type="checkbox" checked={form.isActive} onChange={event => set("isActive", event.target.checked)} /> Published on storefront</span></label>
-      {selectedType && selectedType.attributes.length > 0 && <div className="admin-form-wide admin-dynamic-fields"><p className="eyebrow">{selectedType.name.toUpperCase()} SPECIFICATIONS</p><div className="admin-product-form">{selectedType.attributes.filter(link => !link.attribute.isVariantAxis).map(renderAttribute)}</div><small>Variant-axis attributes are managed in the SKU section below.</small></div>}
-      <div className="admin-form-wide admin-seo-fields"><p className="eyebrow">SEARCH ENGINE OPTIMISATION</p><label>SEO title (max 160 characters)<input maxLength={160} value={form.seoTitle} onChange={event => set("seoTitle", event.target.value)} /></label><label>SEO description (max 320 characters)<textarea maxLength={320} rows={3} value={form.seoDescription} onChange={event => set("seoDescription", event.target.value)} /></label><label>SEO keywords (comma separated)<input value={form.seoKeywords} onChange={event => set("seoKeywords", event.target.value)} /></label><label>Canonical URL<input type="url" value={form.canonicalUrl} onChange={event => set("canonicalUrl", event.target.value)} /></label><label className="admin-dynamic-attribute"><span><input type="checkbox" checked={form.noIndex} onChange={event => set("noIndex", event.target.checked)} /> Exclude this product from search indexing</span></label></div>
-      <label className="admin-form-wide">Care instructions<textarea value={form.careInstructions} onChange={event => set("careInstructions", event.target.value)} /></label>
-      <label className="admin-form-wide">Description<textarea required minLength={10} value={form.description} onChange={event => set("description", event.target.value)} /></label>
-      {message && <p className="admin-form-wide" role="status">{message}</p>}
-      <button className="primary-link" disabled={busy}>{busy ? "Saving…" : "Save product changes"} <span>↗</span></button>
-    </form>}
-  </section>;
+  return (
+    <section className="admin-product-edit">
+      <button type="button" className="primary-link" aria-expanded={open} onClick={() => setOpen(value => !value)}>
+        {open ? "Close product editor" : "Edit full product"} <span aria-hidden="true">{open ? "−" : "+"}</span>
+      </button>
+
+      {open && (
+        <form className="admin-product-form admin-product-edit-form" onSubmit={submit}>
+          <fieldset className="admin-form-section admin-form-wide">
+            <legend>01 · Product identity and classification</legend>
+            <p className="admin-form-section-copy">Manage the catalogue identity, URL, SKU and category placement.</p>
+            <div className="admin-form-grid">
+              <label>Product name<input required minLength={2} value={form.name} onChange={event => set("name", event.target.value)} /></label>
+              <label>URL slug<input required pattern="[a-z0-9-]+" value={form.slug} onChange={event => set("slug", event.target.value)} /></label>
+              <label>Parent SKU<input required value={form.sku} onChange={event => set("sku", event.target.value)} /></label>
+              <label>Product type<select value={form.productTypeId} onChange={event => { const id = event.target.value; set("productTypeId", id); const type = productTypes.find(item => item.id === id); setAttributeValues(Object.fromEntries((type?.attributes ?? []).filter(link => link.attribute.type === "BOOLEAN").map(link => [link.attribute.id, false]))); }}><option value="">No product type</option>{productTypes.map(type => <option key={type.id} value={type.id}>{type.name}</option>)}</select></label>
+              <label>Categories<select multiple value={form.categoryIds} onChange={event => { const ids = Array.from(event.target.selectedOptions).map(option => option.value); setForm(old => ({ ...old, categoryIds: ids, primaryCategoryId: ids.includes(old.primaryCategoryId) ? old.primaryCategoryId : ids[0] ?? "" })); }}><option value="" disabled>Select one or more categories</option>{categoryOptions.map(category => <option key={category.id} value={category.id}>{category.label}</option>)}</select></label>
+              <label>Primary category<select required value={form.primaryCategoryId} onChange={event => set("primaryCategoryId", event.target.value)}><option value="">Choose primary category</option>{categoryOptions.filter(category => form.categoryIds.includes(category.id)).map(category => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
+              <label>HSN code<input value={form.hsnCode} onChange={event => set("hsnCode", event.target.value)} /></label>
+            </div>
+          </fieldset>
+
+          <fieldset className="admin-form-section admin-form-wide">
+            <legend>02 · Materials and dimensions</legend>
+            <p className="admin-form-section-copy">Keep product composition and fulfilment measurements accurate.</p>
+            <div className="admin-form-grid">
+              <label>Material<input value={form.material} onChange={event => set("material", event.target.value)} /></label>
+              <label>Colour<input value={form.color} onChange={event => set("color", event.target.value)} /></label>
+              <label>Weight (grams)<input type="number" min="1" value={form.weightGrams} onChange={event => set("weightGrams", event.target.value)} /></label>
+              <label>Length (mm)<input type="number" min="1" value={form.lengthMm} onChange={event => set("lengthMm", event.target.value)} /></label>
+              <label>Width (mm)<input type="number" min="1" value={form.widthMm} onChange={event => set("widthMm", event.target.value)} /></label>
+              <label>Height (mm)<input type="number" min="1" value={form.heightMm} onChange={event => set("heightMm", event.target.value)} /></label>
+              <label className="admin-field-span-all">Care instructions<textarea value={form.careInstructions} onChange={event => set("careInstructions", event.target.value)} /></label>
+              <label className="admin-field-span-all">Description<textarea required minLength={10} value={form.description} onChange={event => set("description", event.target.value)} /></label>
+            </div>
+          </fieldset>
+
+          <fieldset className="admin-form-section admin-form-wide">
+            <legend>03 · Pricing, inventory and visibility</legend>
+            <p className="admin-form-section-copy">Review the selling price, tax rate, stock and storefront publication status.</p>
+            <div className="admin-form-grid">
+              <label>GST rate (%)<input required type="number" min="0" max="100" step=".01" value={form.gstRate} onChange={event => set("gstRate", event.target.value)} /></label>
+              <label>Price (INR)<input required type="number" min=".01" step=".01" value={form.price} onChange={event => set("price", event.target.value)} /></label>
+              <label>Compare-at price (INR)<input type="number" min=".01" step=".01" value={form.compareAtPrice} onChange={event => set("compareAtPrice", event.target.value)} /></label>
+              <label>Product stock<input required type="number" min="0" step="1" value={form.stock} onChange={event => set("stock", event.target.value)} /></label>
+              <label className="admin-dynamic-attribute"><span><input type="checkbox" checked={form.isActive} onChange={event => set("isActive", event.target.checked)} /> Published on storefront</span></label>
+            </div>
+          </fieldset>
+
+          {selectedType && selectedType.attributes.length > 0 && (
+            <fieldset className="admin-form-section admin-form-wide admin-dynamic-fields">
+              <legend>04 · {selectedType.name} specifications</legend>
+              <p className="admin-form-section-copy">Product-type attributes. Variant-axis attributes are managed in the SKU section below.</p>
+              <div className="admin-form-grid">
+                {selectedType.attributes.filter(link => !link.attribute.isVariantAxis).map(renderAttribute)}
+              </div>
+            </fieldset>
+          )}
+
+          <fieldset className="admin-form-section admin-form-wide admin-seo-fields">
+            <legend>05 · Search engine optimisation</legend>
+            <p className="admin-form-section-copy">Control the search result title, description and canonical indexing details.</p>
+            <div className="admin-form-grid">
+              <label>SEO title (max 160 characters)<input maxLength={160} value={form.seoTitle} onChange={event => set("seoTitle", event.target.value)} /></label>
+              <label>SEO keywords (comma separated)<input value={form.seoKeywords} onChange={event => set("seoKeywords", event.target.value)} /></label>
+              <label className="admin-field-span-all">SEO description (max 320 characters)<textarea maxLength={320} rows={3} value={form.seoDescription} onChange={event => set("seoDescription", event.target.value)} /></label>
+              <label className="admin-field-span-all">Canonical URL<input type="url" value={form.canonicalUrl} onChange={event => set("canonicalUrl", event.target.value)} /></label>
+              <label className="admin-dynamic-attribute"><span><input type="checkbox" checked={form.noIndex} onChange={event => set("noIndex", event.target.checked)} /> Exclude this product from search indexing</span></label>
+            </div>
+          </fieldset>
+
+          {message && <p className="admin-form-wide" role="status">{message}</p>}
+          <div className="admin-form-footer admin-form-wide">
+            <p>Changes are saved to the existing product record.</p>
+            <button className="primary-link" disabled={busy}>{busy ? "Saving…" : "Save product changes"}</button>
+          </div>
+        </form>
+      )}
+    </section>
+  );
 }
