@@ -16,7 +16,7 @@ const navigation = [
 
 export default async function AdminPage() {
   const admin = await requireAdmin();
-  if (!admin) redirect("/login");
+  if (!admin) redirect("/admin/login");
 
   const [products, activeProducts, customers, orders, pendingOrders, lowStock, failedPayments, revenue, recentOrders, stockAlerts] = await Promise.all([
     prisma.product.count(),
