@@ -96,7 +96,7 @@ export function CartView() {
     setCart([]);
     setLines([]);
     setError("");
-    localStorage.removeItem("yoikiji_cart");
+    try { localStorage.removeItem("yoikiji_cart"); } catch { /* The visible cart is still cleared for this session. */ }
     window.dispatchEvent(new Event("yoikiji-cart-updated"));
   }
 
