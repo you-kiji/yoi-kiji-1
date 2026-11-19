@@ -24,9 +24,9 @@ export async function GET(request: NextRequest) {
     take: 1000,
   });
   const rows = [
-    ["Order number", "Customer", "Email", "Status", "Payment status", "Subtotal paise", "Discount paise", "Shipping paise", "Total paise", "Items", "Created at", "Tracking number"],
+    ["Order number", "Customer", "Email", "Phone", "Customer type", "Status", "Payment method", "Payment status", "Subtotal paise", "Discount paise", "Shipping paise", "Total paise", "Items", "Created at", "Tracking number"],
     ...orders.map(order => [
-      order.orderNumber, order.user.name, order.user.email, order.status, order.payment?.status ?? "",
+      order.orderNumber, order.user?.name ?? order.guestName ?? "", order.user?.email ?? order.guestEmail ?? "", order.guestPhone ?? "", order.userId ? "REGISTERED" : "GUEST", order.status, order.payment?.provider ?? "", order.payment?.status ?? "",
       order.subtotalPaise, order.discountPaise, order.shippingPaise, order.totalPaise,
       order.items.map(item => item.productName + " x" + item.quantity).join("; "),
       order.createdAt.toISOString(), order.trackingNumber ?? "",
