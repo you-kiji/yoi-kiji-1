@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type CategoryOption = { id: string; name: string; slug: string; parentId: string | null; isActive: boolean };
 type DynamicAttribute = { id: string; isRequired: boolean; isFilterable: boolean; attribute: { id: string; name: string; key: string; type: string; unit: string | null; options: unknown; isVariantAxis: boolean } };
@@ -8,6 +9,7 @@ type ProductTypeOption = { id: string; name: string; slug: string; attributes: D
 const emptyForm = { name:"", slug:"", description:"", sku:"", hsnCode:"", material:"", color:"", careInstructions:"", weightGrams:"", lengthMm:"", widthMm:"", heightMm:"", gstRate:"0", price:"", stock:"", categoryId:"", productTypeId:"", imageUrl:"", imageAlt:"" };
 
 export function AdminProductForm() {
+  const router = useRouter();
   const [categories,setCategories]=useState<CategoryOption[]>([]);
   const [productTypes,setProductTypes]=useState<ProductTypeOption[]>([]);
   const [open,setOpen]=useState(false);
@@ -39,7 +41,7 @@ export function AdminProductForm() {
       const payload={name:form.name,slug:form.slug,description:form.description,sku:form.sku,hsnCode:form.hsnCode||undefined,material:form.material||undefined,color:form.color||undefined,careInstructions:form.careInstructions||undefined,weightGrams:form.weightGrams?Number(form.weightGrams):undefined,lengthMm:form.lengthMm?Number(form.lengthMm):undefined,widthMm:form.widthMm?Number(form.widthMm):undefined,heightMm:form.heightMm?Number(form.heightMm):undefined,gstRateBps:Math.round(Number(form.gstRate)*100),pricePaise:Math.round(Number(form.price)*100),inventoryQty:Number(form.stock),categoryId:form.categoryId,productTypeId:form.productTypeId||undefined,attributes,isActive:false,hasVariants:false,...(form.imageUrl?{imageUrl:form.imageUrl,imageAlt:form.imageAlt||form.name}:{})};
       const response=await fetch("/api/admin/products",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
       const data=await response.json();if(!response.ok)throw new Error(data.error??"Could not create product.");
-      setMessage("Draft product created with its type-specific specifications. Refresh to see it.");setForm(emptyForm);setAttributeValues({});
+      setMessage("Draft product created successfully.");setForm(emptyForm);setAttributeValues({});setOpen(false);router.refresh();
     }catch(error){setMessage(error instanceof Error?error.message:"Unable to create product.");}
     finally{setBusy(false);}
   }
