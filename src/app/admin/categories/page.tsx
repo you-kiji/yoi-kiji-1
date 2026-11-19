@@ -8,7 +8,7 @@ export const metadata = { title: "Category management" };
 
 export default async function AdminCategoriesPage() {
   const admin = await requireAdmin();
-  if (!admin) redirect("/login");
+  if (!admin) redirect("/admin/login");
   if (admin.role !== "ADMIN") redirect("/admin");
   return <main className="commerce-page">
     <div className="commerce-breadcrumb"><Link href="/admin">Admin</Link><span>/</span> Categories</div>

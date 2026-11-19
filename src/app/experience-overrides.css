@@ -198,3 +198,191 @@
 @media (prefers-reduced-motion: reduce) {
   .yk-loader__enso, .yk-loader__rule i { animation: none; }
 }
+
+
+/* Premium catalogue dropdowns and select controls */
+:where(.commerce-page, .auth-form, .admin-panel, .admin-product-form, .admin-content-form, .shop-filter-form, .checkout-fields) select:not([multiple]) {
+  appearance: none;
+  -webkit-appearance: none;
+  min-height: 48px;
+  width: 100%;
+  padding: 0 46px 0 16px;
+  border: 1px solid rgba(14,48,14,.22);
+  border-radius: 10px;
+  color: #17351c;
+  background-color: #fbfbf7;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='m4 6 4 4 4-4' stroke='%233f5b3d' stroke-width='1.35' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 16px;
+  font: 400 13px/1.3 var(--sans, inherit);
+  letter-spacing: .01em;
+  cursor: pointer;
+  transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+:where(.commerce-page, .auth-form, .admin-panel, .admin-product-form, .admin-content-form, .shop-filter-form, .checkout-fields) select:not([multiple]):hover {
+  border-color: rgba(14,48,14,.48);
+  background-color: #fff;
+}
+:where(.commerce-page, .auth-form, .admin-panel, .admin-product-form, .admin-content-form, .shop-filter-form, .checkout-fields) select:not([multiple]):focus-visible {
+  outline: none;
+  border-color: #9b815a;
+  box-shadow: 0 0 0 3px rgba(185,154,107,.2), 0 5px 18px rgba(17,39,20,.06);
+}
+:where(.commerce-page, .auth-form, .admin-panel, .admin-product-form, .admin-content-form, .shop-filter-form, .checkout-fields) select:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+:where(.commerce-page, .admin-panel, .admin-product-form, .admin-content-form) select option {
+  color: #17351c;
+  background: #fbfbf7;
+  padding: 12px;
+}
+:where(.commerce-page, .admin-panel, .admin-product-form, .admin-content-form) select[multiple] {
+  min-height: 120px;
+  padding: 12px;
+  border: 1px solid rgba(14,48,14,.22);
+  border-radius: 10px;
+  background: #fbfbf7;
+  color: #17351c;
+}
+:where(.commerce-page, .admin-panel, .admin-product-form, .admin-content-form) details > summary {
+  list-style: none;
+  cursor: pointer;
+}
+:where(.commerce-page, .admin-panel, .admin-product-form, .admin-content-form) details > summary::-webkit-details-marker {
+  display: none;
+}
+.header-collections { position: relative; }
+.site-header .header-collections > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 3px;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+}
+.site-header .header-collections > summary::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform .22s ease;
+}
+.site-header .header-collections[open] > summary::after {
+  transform: translateY(2px) rotate(225deg);
+}
+.site-header .header-collections-menu {
+  position: absolute;
+  z-index: 80;
+  top: calc(100% + 12px);
+  left: -22px;
+  display: grid;
+  grid-template-columns: minmax(190px, 1fr);
+  min-width: 245px;
+  padding: 12px;
+  border: 1px solid rgba(14,48,14,.1);
+  border-radius: 14px;
+  background: rgba(251,251,247,.98);
+  box-shadow: 0 22px 55px rgba(9,31,12,.16);
+  opacity: 0;
+  transform: translateY(8px);
+  animation: yk-dropdown-enter .2s ease forwards;
+  backdrop-filter: blur(18px);
+}
+.site-header .header-collections-menu a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 13px;
+  border-radius: 8px;
+  color: #17351c;
+  font-size: 12px;
+  letter-spacing: .01em;
+  transition: background .18s ease, padding .18s ease, color .18s ease;
+}
+.site-header .header-collections-menu a:hover,
+.site-header .header-collections-menu a:focus-visible {
+  padding-left: 17px;
+  outline: none;
+  background: #edf0e8;
+  color: #8a7048;
+}
+@keyframes yk-dropdown-enter {
+  to { opacity: 1; transform: translateY(0); }
+}
+.mobile-navigation { position: relative; }
+.mobile-navigation > summary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid rgba(14,48,14,.18);
+  border-radius: 10px;
+  color: inherit;
+  background: transparent;
+  font-size: 11px;
+  letter-spacing: .08em;
+}
+.mobile-navigation[open] > summary { background: #edf0e8; }
+.mobile-navigation nav {
+  z-index: 100;
+  border: 1px solid rgba(14,48,14,.12);
+  border-radius: 14px;
+  background: #fbfbf7;
+  box-shadow: 0 22px 55px rgba(9,31,12,.16);
+}
+.mobile-navigation nav a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 8px;
+  color: #17351c;
+  font-size: 12px;
+  transition: background .18s ease, color .18s ease;
+}
+.mobile-navigation nav a:hover { background: #edf0e8; color: #8a7048; }
+.admin-page .admin-section-heading a,
+.admin-page .admin-links a,
+.admin-page .admin-recent-orders a {
+  transition: color .2s ease, border-color .2s ease;
+}
+.admin-page .admin-links a:hover { color: #8a7048; }
+.admin-page .admin-links section {
+  border: 1px solid rgba(14,48,14,.12);
+  border-radius: 14px;
+  background: rgba(255,255,255,.35);
+  padding: 22px;
+}
+.admin-page .admin-links section h3 {
+  font-size: 14px;
+  letter-spacing: .04em;
+}
+.admin-page .admin-links section p {
+  min-height: 42px;
+  font-size: 11px;
+  line-height: 1.7;
+}
+.admin-login-page { max-width: 760px; margin: 0 auto; padding-bottom: 100px; }
+.admin-login-page .commerce-heading { margin-top: 70px; }
+.admin-login-note {
+  max-width: 440px;
+  margin: 24px auto 0;
+  color: #71806d;
+  font-size: 11px;
+  line-height: 1.8;
+  text-align: center;
+}
+@media (max-width: 700px) {
+  .site-header .header-collections-menu { position: static; min-width: 0; box-shadow: none; border: 0; padding: 5px 0; }
+  .admin-page .admin-links section { padding: 17px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-header .header-collections-menu { animation: none; opacity: 1; transform: none; }
+}

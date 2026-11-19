@@ -5,7 +5,7 @@ import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 export const dynamic="force-dynamic";
 export default async function AdminSeoPage(){
- const admin=await requireAdmin();if(!admin)redirect("/login");if(admin.role!=="ADMIN")redirect("/admin");
+ const admin=await requireAdmin();if(!admin)redirect("/admin/login");if(admin.role!=="ADMIN")redirect("/admin");
  const [products,categories]=await Promise.all([
   prisma.product.findMany({where:{isActive:true},select:{id:true,name:true,slug:true,seoTitle:true,seoDescription:true,seoKeywords:true,canonicalUrl:true,noIndex:true,images:{select:{alt:true,url:true},orderBy:{position:"asc"}}},orderBy:{name:"asc"},take:1000}),
   prisma.category.findMany({where:{isActive:true},select:{id:true,name:true,slug:true,seoTitle:true,seoDescription:true},orderBy:{name:"asc"},take:500})

@@ -226,7 +226,11 @@ model Order {
   orderNumber         String              @unique
   checkoutKey         String?             @unique
   reservationExpiresAt DateTime?
-  userId              String
+  userId              String?
+  guestName           String?
+  guestEmail          String?
+  guestPhone          String?
+  guestAccessTokenHash String?             @unique
   status              OrderStatus         @default(PENDING)
   subtotalPaise       Int
   taxPaise            Int
@@ -240,7 +244,7 @@ model Order {
   fulfillmentOrderId  String?             @unique
   trackingNumber      String?
   trackingUrl         String?
-  user                User                @relation(fields: [userId], references: [id])
+  user                User?               @relation(fields: [userId], references: [id])
   items               OrderItem[]
   payment             Payment?
   couponCode          String?
@@ -449,11 +453,11 @@ model CouponRedemption {
   id           String   @id @default(cuid())
   couponId     String
   orderId      String
-  userId       String
+  userId       String?
   discountPaise Int
   coupon       Coupon   @relation(fields: [couponId], references: [id], onDelete: Restrict)
   order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  user         User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  user         User?    @relation(fields: [userId], references: [id], onDelete: Restrict)
   createdAt    DateTime @default(now())
   @@unique([couponId, orderId])
   @@index([userId, createdAt])

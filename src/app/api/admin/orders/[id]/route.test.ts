@@ -12,6 +12,8 @@ const mocks = vi.hoisted(() => ({
     product: { update: vi.fn() },
     productVariant: { update: vi.fn() },
     inventoryMovement: { create: vi.fn() },
+    couponRedemption: { findFirst: vi.fn(), deleteMany: vi.fn() },
+    coupon: { update: vi.fn() },
   },
 }));
 
@@ -56,6 +58,9 @@ describe("admin order status transitions", () => {
     mocks.tx.product.update.mockResolvedValue({});
     mocks.tx.productVariant.update.mockResolvedValue({});
     mocks.tx.inventoryMovement.create.mockResolvedValue({});
+    mocks.tx.couponRedemption.findFirst.mockResolvedValue(null);
+    mocks.tx.couponRedemption.deleteMany.mockResolvedValue({ count: 0 });
+    mocks.tx.coupon.update.mockResolvedValue({});
   });
 
   it("claims cancellation before restoring each stock item exactly once", async () => {
@@ -69,6 +74,15 @@ describe("admin order status transitions", () => {
     expect(mocks.tx.productVariant.update).toHaveBeenCalledTimes(1);
     expect(mocks.tx.inventoryMovement.create).toHaveBeenCalledTimes(2);
     expect(mocks.sendOrderStatusUpdate).toHaveBeenCalledWith("order-1", "CANCELLED");
+  });
+
+  it("releases a redeemed coupon when a COD order is cancelled", async () => {
+    mocks.tx.couponRedemption.findFirst.mockResolvedValue({ couponId: "coupon-1" });
+    mocks.tx.couponRedemption.deleteMany.mockResolvedValue({ count: 1 });
+    const response = await PATCH(request(), { params: Promise.resolve({ id: "order-1" }) });
+    expect(response.status).toBe(200);
+    expect(mocks.tx.couponRedemption.deleteMany).toHaveBeenCalledWith({ where: { orderId: "order-1" } });
+    expect(mocks.tx.coupon.update).toHaveBeenCalledWith({ where: { id: "coupon-1" }, data: { usageCount: { decrement: 1 } } });
   });
 
   it("does not restore stock when another admin already claimed the transition", async () => {

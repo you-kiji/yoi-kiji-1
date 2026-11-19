@@ -7,7 +7,7 @@ import { formatINR } from "@/lib/money";
 export const dynamic="force-dynamic";
 const paidStatuses=["CONFIRMED","PROCESSING","SHIPPED","DELIVERED"] as const;
 export default async function AdminReportsPage(){
- const admin=await requireAdmin();if(!admin)redirect("/login");if(admin.role!=="ADMIN")redirect("/admin");
+ const admin=await requireAdmin();if(!admin)redirect("/admin/login");if(admin.role!=="ADMIN")redirect("/admin");
  const start=new Date();start.setMonth(start.getMonth()-11);start.setDate(1);start.setHours(0,0,0,0);
  const [orders,items,inventoryProducts,customers]=await Promise.all([
   prisma.order.findMany({where:{createdAt:{gte:start},status:{in:[...paidStatuses]}},select:{id:true,orderNumber:true,createdAt:true,totalPaise:true,subtotalPaise:true,discountPaise:true,shippingPaise:true},orderBy:{createdAt:"asc"},take:10000}),

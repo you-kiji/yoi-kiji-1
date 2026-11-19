@@ -16,7 +16,8 @@
     "db:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio",
     "test": "vitest run",
-    "db:seed": "node prisma/seed.mjs"
+    "db:seed": "node prisma/seed.mjs",
+    "db:seed:demo": "node prisma/demo-content-seed.mjs"
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",

@@ -6,7 +6,7 @@ import { AdminCustomerInsights } from "@/components/admin-customer-insights";
 export const dynamic="force-dynamic";
 export const metadata={title:"Customer intelligence · YOI KIJI"};
 export default async function AdminCustomersPage(){
- const admin=await requireAdmin();if(!admin)redirect("/login");if(admin.role!=="ADMIN")redirect("/admin");
+ const admin=await requireAdmin();if(!admin)redirect("/admin/login");if(admin.role!=="ADMIN")redirect("/admin");
  const [users,spend]=await Promise.all([
   prisma.user.findMany({where:{role:"CUSTOMER"},select:{id:true,name:true,email:true,whatsappOptIn:true,createdAt:true},orderBy:{createdAt:"desc"},take:1000}),
   prisma.order.groupBy({by:["userId"],where:{status:{in:["CONFIRMED","PROCESSING","SHIPPED","DELIVERED"]}},_sum:{totalPaise:true},_count:{_all:true},_max:{createdAt:true}})

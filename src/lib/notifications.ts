@@ -7,6 +7,9 @@ export async function sendOrderConfirmation(orderId:string){
  if(!apiKey||!from)return {sent:false,reason:"Email provider is not configured."};
  const order=await prisma.order.findUnique({where:{id:orderId},include:{user:true,items:true}});
  if(!order)return {sent:false,reason:"Order not found."};
+ const recipient=order.user?.email??order.guestEmail;
+ if(!recipient)return {sent:false,reason:"Order has no customer email."};
+ const customerName=order.user?.name??order.guestName??"there";
  const event="ORDER_CONFIRMED";
  const log=await prisma.notificationLog.upsert({where:{orderId_channel_event:{orderId,channel:"EMAIL",event}},create:{orderId,channel:"EMAIL",event,status:"PENDING"},update:{}});
  if(log.status==="SENT"||log.status==="SENDING")return {sent:log.status==="SENT",reason:"Already processed."};
@@ -15,7 +18,7 @@ export async function sendOrderConfirmation(orderId:string){
  const lines=order.items.map(item=>item.productName+(item.variantLabel?" — "+item.variantLabel:"")+" × "+item.quantity).join("\n");
  const htmlLines=order.items.map(item=>"<li>"+escapeHtml(item.productName+(item.variantLabel?" — "+item.variantLabel:""))+" × "+item.quantity+"</li>").join("");
  try{
-  const response=await fetch("https://api.resend.com/emails",{method:"POST",headers:{Authorization:"Bearer "+apiKey,"Content-Type":"application/json"},body:JSON.stringify({from,to:[order.user.email],subject:"Your YOI KIJI order "+order.orderNumber+" is confirmed",text:"Thank you for choosing YOI KIJI. Your order "+order.orderNumber+" is confirmed.\n\n"+lines+"\n\nOrder total: INR "+(order.totalPaise/100).toFixed(2),html:"<div style='font-family:Arial,sans-serif;color:#0e300e;max-width:600px;margin:auto'><h1 style='letter-spacing:.18em'>YOI KIJI</h1><p>Thank you for choosing us. Your order is confirmed.</p><h2>"+escapeHtml(order.orderNumber)+"</h2><ul>"+htmlLines+"</ul><p><strong>Order total: INR "+(order.totalPaise/100).toFixed(2)+"</strong></p><p>With care,<br/>YOI KIJI</p></div>"}),cache:"no-store"});
+  const response=await fetch("https://api.resend.com/emails",{method:"POST",headers:{Authorization:"Bearer "+apiKey,"Content-Type":"application/json"},body:JSON.stringify({from,to:[recipient],subject:"Your YOI KIJI order "+order.orderNumber+" is confirmed",text:"Thank you for choosing YOI KIJI. Your order "+order.orderNumber+" is confirmed.\n\n"+lines+"\n\nOrder total: INR "+(order.totalPaise/100).toFixed(2),html:"<div style='font-family:Arial,sans-serif;color:#0e300e;max-width:600px;margin:auto'><h1 style='letter-spacing:.18em'>YOI KIJI</h1><p>Hello "+escapeHtml(customerName)+". Thank you for choosing us. Your order is confirmed.</p><h2>"+escapeHtml(order.orderNumber)+"</h2><ul>"+htmlLines+"</ul><p><strong>Order total: INR "+(order.totalPaise/100).toFixed(2)+"</strong></p><p>With care,<br/>YOI KIJI</p></div>"}),cache:"no-store"});
   const data=await response.json().catch(()=>({}));
   if(!response.ok)throw new Error(typeof data.message==="string"?data.message:"Email provider rejected the message.");
   await prisma.notificationLog.update({where:{id:log.id},data:{status:"SENT",providerId:data.id??null,error:null}});
@@ -33,7 +36,7 @@ export async function sendWhatsAppOrderConfirmation(orderId:string){
  const templateName=process.env.WHATSAPP_ORDER_TEMPLATE_NAME;
  if(!accessToken||!phoneNumberId||!version||!templateName)return {sent:false,reason:"WhatsApp provider is not configured."};
  const order=await prisma.order.findUnique({where:{id:orderId},include:{user:true}});
- if(!order||!order.user.whatsappOptIn)return {sent:false,reason:"Customer has not opted in to WhatsApp updates."};
+ if(!order||!order.user?.whatsappOptIn)return {sent:false,reason:"Customer has not opted in to WhatsApp updates."};
  const address=order.shippingAddress as Record<string,string>;
  let phone=(address.phone??"").replace(/\\D/g,"");
  if(address.countryCode==="IN"&&phone.length===10)phone="91"+phone;
@@ -61,6 +64,9 @@ export async function sendOrderStatusUpdate(orderId:string,status:"PROCESSING"|"
  if(!apiKey||!from)return {sent:false,reason:"Email provider is not configured."};
  const order=await prisma.order.findUnique({where:{id:orderId},include:{user:true,items:true}});
  if(!order)return {sent:false,reason:"Order not found."};
+ const recipient=order.user?.email??order.guestEmail;
+ if(!recipient)return {sent:false,reason:"Order has no customer email."};
+ const customerName=order.user?.name??order.guestName??"there";
  const event="ORDER_STATUS_"+status;
  const log=await prisma.notificationLog.upsert({
   where:{orderId_channel_event:{orderId,channel:"EMAIL",event}},
@@ -94,8 +100,8 @@ export async function sendOrderStatusUpdate(orderId:string,status:"PROCESSING"|"
    method:"POST",
    headers:{Authorization:"Bearer "+apiKey,"Content-Type":"application/json"},
    body:JSON.stringify({
-    from,to:[order.user.email],subject:copy[status].subject+" · "+order.orderNumber,
-    text:"Hello "+(order.user.name??"there")+",\\n\\n"+copy[status].message+"\\n\\n"+details.join("\\n")+"\\n\\nWith care,\\nYOI KIJI",
+    from,to:[recipient],subject:copy[status].subject+" · "+order.orderNumber,
+    text:"Hello "+customerName+",\\n\\n"+copy[status].message+"\\n\\n"+details.join("\\n")+"\\n\\nWith care,\\nYOI KIJI",
     html:"<div style='font-family:Arial,sans-serif;color:#0e300e;max-width:600px;margin:auto'><h1 style='letter-spacing:.18em'>YOI KIJI</h1><h2>"+copy[status].heading+"</h2><p>"+copy[status].message+"</p><p>Order: <strong>"+escapeHtml(order.orderNumber)+"</strong></p><p>Status: "+status.toLowerCase()+"</p>"+htmlAwb+htmlTracking+"<p>Order total: INR "+(order.totalPaise/100).toFixed(2)+"</p><p>With care,<br/>YOI KIJI</p></div>",
    }),
    cache:"no-store",

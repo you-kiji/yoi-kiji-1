@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { AdminInventoryAdjustment } from "@/components/admin-inventory-adjustment";
 export const dynamic="force-dynamic";
 export default async function InventoryPage(){
- const admin=await requireAdmin();if(!admin)redirect("/login");
+ const admin=await requireAdmin();if(!admin)redirect("/admin/login");
  const [products,movements,lowStock,zeroStock]=await Promise.all([
   prisma.product.findMany({where:{isActive:true},select:{id:true,name:true,sku:true,inventoryQty:true,variants:{where:{isActive:true},select:{id:true,label:true,sku:true,inventoryQty:true},orderBy:{createdAt:"asc"}}},orderBy:{name:"asc"},take:500}),
   prisma.inventoryMovement.findMany({include:{product:{select:{name:true,sku:true}},variant:{select:{label:true,sku:true}}},orderBy:{createdAt:"desc"},take:200}),

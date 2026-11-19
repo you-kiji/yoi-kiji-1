@@ -16,7 +16,7 @@ const navigation = [
 
 export default async function AdminPage() {
   const admin = await requireAdmin();
-  if (!admin) redirect("/login");
+  if (!admin) redirect("/admin/login");
 
   const [products, activeProducts, customers, orders, pendingOrders, lowStock, failedPayments, revenue, recentOrders, stockAlerts] = await Promise.all([
     prisma.product.count(),
@@ -72,7 +72,7 @@ export default async function AdminPage() {
     <section className="admin-recent-orders">
       <div className="admin-section-heading"><h2>Recent orders</h2><Link href="/admin/orders">View all orders ↗</Link></div>
       <div className="orders-list">{recentOrders.map(order => <article className="order-card" key={order.id}>
-        <div><p className="order-number">{order.orderNumber}</p><p>{order.user.name ?? order.user.email}</p><small>{new Intl.DateTimeFormat("en-IN", { dateStyle: "medium" }).format(order.createdAt)}</small></div>
+        <div><p className="order-number">{order.orderNumber}</p><p>{order.user?.name ?? order.user?.email ?? order.guestName ?? order.guestEmail ?? "Guest customer"}</p><small>{new Intl.DateTimeFormat("en-IN", { dateStyle: "medium" }).format(order.createdAt)}</small></div>
         <div><strong>{formatINR(order.totalPaise)}</strong><p>{order.items.length} item(s)</p></div>
         <span className="order-status">{order.status.toLowerCase()}</span>
       </article>)}</div>
