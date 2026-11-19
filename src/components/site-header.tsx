@@ -4,14 +4,21 @@ import { getActiveCategories } from "@/lib/catalog";
 
 export async function SiteHeader() {
   const categories = await getActiveCategories();
-  const roots = categories.filter(category => category.parentId === null && category.showInMenu);
+  const navigationCategories = categories.length ? categories : [
+    { id: "fallback-bedsheets", name: "Bedsheets", slug: "bedsheets", children: [], parentId: null, showInMenu: true },
+    { id: "fallback-curtains", name: "Curtains", slug: "curtains", children: [], parentId: null, showInMenu: true },
+    { id: "fallback-upholstery", name: "Upholstery", slug: "upholstery", children: [], parentId: null, showInMenu: true },
+    { id: "fallback-bath-linen", name: "Bath linen", slug: "bath-linen", children: [], parentId: null, showInMenu: true },
+    { id: "fallback-kitchen-linen", name: "Kitchen linen", slug: "kitchen-linen", children: [], parentId: null, showInMenu: true },
+  ];
+  const roots = navigationCategories.filter(category => category.parentId === null && category.showInMenu);
   const navigation = <>
     <Link href="/shop">Shop all</Link>
     {roots.map(category => {
       const children = categories.filter(child => child.parentId === category.id && child.showInMenu);
       return <div className="nav-category" key={category.id}>
-        <Link href={`/shop/${category.slug}`}>{category.name}</Link>
-        {children.length > 0 && <div className="nav-submenu">{children.map(child => <Link key={child.id} href={`/shop/${child.slug}`}>{child.name}</Link>)}</div>}
+        <Link href={`/shop?category=${encodeURIComponent(category.slug)}`}>{category.name}</Link>
+        {children.length > 0 && <div className="nav-submenu">{children.map(child => <Link key={child.id} href={`/shop?category=${encodeURIComponent(child.slug)}`}>{child.name}</Link>)}</div>}
       </div>;
     })}
     <Link href="/our-story">Our story</Link>

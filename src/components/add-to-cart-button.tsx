@@ -11,5 +11,5 @@ export function AddToCartButton({productId,variantId,disabled=false}:{productId:
   localStorage.setItem("yoikiji_cart",JSON.stringify(cart));setAdded(true);
   window.dispatchEvent(new Event("yoikiji-cart-updated"));
  }
- return <button className="primary-link add-to-bag" type="button" disabled={disabled} onClick={add}>{added?"Added to bag":"Add to bag"} <span>↗</span></button>;
+ return <button className="primary-link add-to-bag" type="button" disabled={disabled} onClick={add}>{added?"Added to bag":"Add to bag"}</button>;
 }

@@ -19,9 +19,9 @@ export function AdminMediaLibrary() {
   setMessage("Uploaded "+file.name);await load();
  }catch(e){setError(e instanceof Error?e.message:"Upload failed.");}finally{setBusy(false);}}
  const size=(n:number)=>n<1048576?Math.round(n/1024)+" KB":(n/1048576).toFixed(1)+" MB";
- return <section className="admin-control-navigation" style={{marginTop:32}}>
+ return <section className="admin-control-navigation admin-media-workspace">
   <div className="admin-section-heading"><h2>Asset library</h2><span>{assets.length} assets shown · latest 100</span></div>
-  <div style={{display:"flex",gap:12,flexWrap:"wrap",alignItems:"end",marginBottom:20}}>
+  <div className="admin-media-filters">
    <label>Folder<select value={folderId} onChange={e=>setFolderId(e.target.value)}><option value="">All folders</option><option value="root">Unfiled</option>{folders.map(f=><option key={f.id} value={f.id}>{f.name} ({f._count.assets})</option>)}</select></label>
    <label>Type<select value={type} onChange={e=>setType(e.target.value)}><option value="">All types</option><option value="IMAGE">Images</option><option value="VIDEO">Video</option><option value="RAW">Audio / documents</option></select></label>
    <label>Search<input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Filename, title or alt text"/></label>
@@ -29,15 +29,15 @@ export function AdminMediaLibrary() {
    <label>{busy?"Uploading…":"Upload asset"}<input type="file" accept="image/*,video/mp4,video/webm,video/quicktime,audio/*,application/pdf" disabled={busy} onChange={e=>{const f=e.target.files?.[0];if(f)upload(f);e.currentTarget.value="";}}/></label>
   </div>
   {error&&<p role="alert">{error}</p>}{message&&<p role="status">{message}</p>}
-  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(190px,1fr))",gap:16}}>
-   {assets.map(a=><article key={a.id} style={{border:"1px solid #d8d8d0",padding:10,minWidth:0}}>
-    <div style={{aspectRatio:"4/3",background:"#efefe9",display:"grid",placeItems:"center",overflow:"hidden"}}>
-     {a.resourceType==="IMAGE"?<img src={a.secureUrl} alt={a.altText||a.title||"Media asset"} style={{width:"100%",height:"100%",objectFit:"cover"}}/>:a.resourceType==="VIDEO"&&["mp3","wav","m4a","aac","ogg"].includes(a.format.toLowerCase())?<audio src={a.secureUrl} controls style={{width:"90%"}}/>:a.resourceType==="VIDEO"?<video src={a.secureUrl} controls preload="metadata" style={{width:"100%",height:"100%",objectFit:"contain"}}/>:<a href={a.secureUrl} target="_blank" rel="noreferrer">Open {a.format.toUpperCase()}</a>}
+  <div className="admin-media-grid">
+   {assets.map(a=><article className="admin-media-card" key={a.id}>
+    <div className="admin-media-preview">
+     {a.resourceType==="IMAGE"?<img src={a.secureUrl} alt={a.altText||a.title||"Media asset"}/>:a.resourceType==="VIDEO"&&["mp3","wav","m4a","aac","ogg"].includes(a.format.toLowerCase())?<audio src={a.secureUrl} controls/>:a.resourceType==="VIDEO"?<video src={a.secureUrl} controls preload="metadata"/>:<a href={a.secureUrl} target="_blank" rel="noreferrer">Open {a.format.toUpperCase()}</a>}
     </div>
-    <strong style={{display:"block",marginTop:10,overflowWrap:"anywhere"}}>{a.title||a.originalFilename||"Media asset"}</strong>
+    <strong className="admin-media-title">{a.title||a.originalFilename||"Media asset"}</strong>
     <small>{a.format.toUpperCase()} · {size(a.bytes)}{a.width&&a.height?" · "+a.width+"×"+a.height:""}</small>
-    <small style={{display:"block"}}>{a.folder?.name||"Unfiled"} · {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium"}).format(new Date(a.createdAt))}</small>
-    <button type="button" onClick={()=>editAsset(a)}>Edit metadata</button> <button type="button" onClick={()=>navigator.clipboard.writeText(a.secureUrl).then(()=>setMessage("Asset URL copied."))}>Copy asset URL</button>
+    <small className="admin-media-meta">{a.folder?.name||"Unfiled"} · {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium"}).format(new Date(a.createdAt))}</small>
+    <div className="admin-media-actions"><button type="button" onClick={()=>editAsset(a)}>Edit metadata</button><button type="button" onClick={()=>navigator.clipboard.writeText(a.secureUrl).then(()=>setMessage("Asset URL copied."))}>Copy asset URL</button></div>
    </article>)}
   </div>
   {assets.length===0&&<p>No media assets found. Upload your first asset to begin the library.</p>}
