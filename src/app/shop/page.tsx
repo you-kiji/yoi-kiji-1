@@ -84,7 +84,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   else if (params.sort === "name") products = [...products].sort((a, b) => a.name.localeCompare(b.name));
   else products = [...products].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
-  const roots = categories.filter((category) => category.parentId === null);
+  const categoryOptions = categories;
   const clearHref = selected ? `/shop?collection=${encodeURIComponent(selected.slug)}` : "/shop";
 
   return (
@@ -131,8 +131,8 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
             <span>Category</span>
             <select id="shop-category" name="category" defaultValue={params.category ?? ""}>
               <option value="">All categories</option>
-              {roots.map((category) => (
-                <option key={category.id} value={category.slug}>{category.name}</option>
+              {categoryOptions.map((category) => (
+                <option key={category.id} value={category.slug}>{category.parentId ? "— " : ""}{category.name}</option>
               ))}
             </select>
           </label>
