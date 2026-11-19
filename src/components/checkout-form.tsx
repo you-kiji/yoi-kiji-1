@@ -1,7 +1,7 @@
 "use client";
 
 import Script from "next/script";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 declare global {
@@ -11,6 +11,11 @@ declare global {
 }
 
 type CartLine = { productId: string; variantId?: string; quantity: number };
+type CartQuoteLine = { productId: string; variantId: string | null; name: string; variantLabel: string | null; quantity: number; unitPricePaise: number; lineTotalPaise: number; image: string | null };
+
+function formatPrice(paise: number) {
+  return "₹" + (paise / 100).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
 type ShippingForm = {
   fullName: string;
   phone: string;
@@ -27,6 +32,10 @@ export function CheckoutForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [couponCode, setCouponCode] = useState("");
+  const [summaryLines, setSummaryLines] = useState<CartQuoteLine[]>([]);
+  const [summarySubtotal, setSummarySubtotal] = useState(0);
+  const [summaryLoading, setSummaryLoading] = useState(true);
+  const [summaryError, setSummaryError] = useState("");
   const [form, setForm] = useState<ShippingForm>({
     fullName: "",
     phone: "",
@@ -41,6 +50,45 @@ export function CheckoutForm() {
   function change(key: keyof ShippingForm, value: string) {
     setForm((previous) => ({ ...previous, [key]: value }));
   }
+
+  useEffect(() => {
+    const controller = new AbortController();
+    let active = true;
+
+    async function loadOrderSummary() {
+      try {
+        const items: CartLine[] = JSON.parse(localStorage.getItem("yoikiji_cart") ?? "[]");
+        if (!Array.isArray(items) || items.length === 0) {
+          if (active) setSummaryLines([]);
+          return;
+        }
+        const response = await fetch("/api/cart/quote", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items }),
+          signal: controller.signal,
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error ?? "Your bag could not be verified.");
+        if (active) {
+          setSummaryLines(data.items ?? []);
+          setSummarySubtotal(data.subtotalPaise ?? 0);
+          setSummaryError("");
+        }
+      } catch (reason) {
+        if (!active || (reason instanceof DOMException && reason.name === "AbortError")) return;
+        setSummaryError(reason instanceof Error ? reason.message : "Your bag could not be verified.");
+      } finally {
+        if (active) setSummaryLoading(false);
+      }
+    }
+
+    void loadOrderSummary();
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, []);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -126,6 +174,51 @@ export function CheckoutForm() {
     <>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
       <form className="checkout-form premium-form" onSubmit={submit}>
+        <section className="checkout-summary" aria-labelledby="checkout-summary-heading">
+          <div className="checkout-summary-heading">
+            <div>
+              <p className="eyebrow">BEFORE WE SEND IT HOME</p>
+              <h2 id="checkout-summary-heading">Your order</h2>
+            </div>
+            <span>{summaryLines.reduce((total, line) => total + line.quantity, 0)} items</span>
+          </div>
+          {summaryLoading ? (
+            <p className="checkout-summary-message" role="status">Checking availability and current prices…</p>
+          ) : summaryError ? (
+            <div className="checkout-summary-message" role="alert">
+              <p>{summaryError}</p>
+              <Link href="/cart">Return to your bag</Link>
+            </div>
+          ) : summaryLines.length === 0 ? (
+            <div className="checkout-summary-message">
+              <p>Your bag is empty. Add a piece before continuing to checkout.</p>
+              <Link href="/shop">Explore the collections</Link>
+            </div>
+          ) : (
+            <>
+              <div className="checkout-summary-lines">
+                {summaryLines.map((line) => (
+                  <article className="checkout-summary-line" key={line.productId + (line.variantId ?? "")}>
+                    <div className="checkout-summary-image">
+                      {line.image ? <img src={line.image} alt="" /> : <span>YK</span>}
+                    </div>
+                    <div className="checkout-summary-copy">
+                      <strong>{line.name}</strong>
+                      {line.variantLabel && <span>{line.variantLabel}</span>}
+                      <small>Qty {line.quantity}</small>
+                    </div>
+                    <strong className="checkout-summary-price">{formatPrice(line.lineTotalPaise)}</strong>
+                  </article>
+                ))}
+              </div>
+              <div className="checkout-summary-total">
+                <span>Items subtotal</span>
+                <strong>{formatPrice(summarySubtotal)}</strong>
+              </div>
+              <p className="checkout-summary-note">Delivery charges, applicable taxes and any promotion are confirmed by the checkout service before payment.</p>
+            </>
+          )}
+        </section>
         <section className="checkout-form-section" aria-labelledby="delivery-contact-heading">
           <div className="checkout-section-heading">
             <span className="checkout-step">01</span>
