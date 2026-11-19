@@ -5,13 +5,13 @@ import { getActiveCategories } from "@/lib/catalog";
 export async function SiteHeader() {
   const categories = await getActiveCategories();
   const navigationCategories = categories.length ? categories : [
-    { id: "fallback-bedsheets", name: "Bedsheets", slug: "bedsheets", children: [] },
-    { id: "fallback-curtains", name: "Curtains", slug: "curtains", children: [] },
-    { id: "fallback-upholstery", name: "Upholstery", slug: "upholstery", children: [] },
-    { id: "fallback-bath-linen", name: "Bath linen", slug: "bath-linen", children: [] },
-    { id: "fallback-kitchen-linen", name: "Kitchen linen", slug: "kitchen-linen", children: [] },
+    { id: "fallback-bedsheets", name: "Bedsheets", slug: "bedsheets", children: [], parentId: null, showInMenu: true },
+    { id: "fallback-curtains", name: "Curtains", slug: "curtains", children: [], parentId: null, showInMenu: true },
+    { id: "fallback-upholstery", name: "Upholstery", slug: "upholstery", children: [], parentId: null, showInMenu: true },
+    { id: "fallback-bath-linen", name: "Bath linen", slug: "bath-linen", children: [], parentId: null, showInMenu: true },
+    { id: "fallback-kitchen-linen", name: "Kitchen linen", slug: "kitchen-linen", children: [], parentId: null, showInMenu: true },
   ];
-  const roots = categories.filter(category => category.parentId === null && category.showInMenu);
+  const roots = navigationCategories.filter(category => category.parentId === null && category.showInMenu);
   const navigation = <>
     <Link href="/shop">Shop all</Link>
     {roots.map(category => {
