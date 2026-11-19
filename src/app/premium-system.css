@@ -4380,3 +4380,18 @@ body {
   .admin-customer-list .order-card { grid-template-columns: minmax(0, 1fr); }
   .admin-customer-list .order-card > div:last-child { grid-column: auto; }
 }
+
+
+/* Legibility floor for microcopy, metadata and form helper text. */
+:where(.commerce-page, .journal-page, .journal-article-page, .editorial-page) small {
+  font-size: max(11px, 1em);
+  line-height: 1.55;
+}
+:where(.commerce-page, .journal-page, .journal-article-page, .editorial-page) .eyebrow {
+  font-size: max(10px, 1em);
+  line-height: 1.5;
+}
+:where(.commerce-page, .journal-page, .journal-article-page) :where(.field-hint, .form-hint, .admin-helper, .help-text) {
+  font-size: max(11px, 1em);
+  line-height: 1.6;
+}
