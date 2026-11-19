@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Media library · YOI KIJI" };
 export default async function MediaPage() {
   const admin = await requireAdmin();
-  if (!admin) redirect("/login");
+  if (!admin) redirect("/admin/login");
   if (admin.role !== "ADMIN") redirect("/admin");
   return <main className="commerce-page">
     <div className="commerce-breadcrumb"><Link href="/admin">Admin</Link><span>/</span> Media library</div>
