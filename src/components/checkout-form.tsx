@@ -142,7 +142,7 @@ export function CheckoutForm() {
                 name="fullName"
                 required
                 minLength={2}
-                maxLength={120}
+                maxLength={100}
                 autoComplete="name"
                 placeholder="Name of the recipient"
                 value={form.fullName}
@@ -183,6 +183,7 @@ export function CheckoutForm() {
                 id="checkout-address-line1"
                 name="address-line1"
                 required
+                minLength={4}
                 maxLength={180}
                 autoComplete="address-line1"
                 placeholder="House number, building and street"
@@ -208,7 +209,8 @@ export function CheckoutForm() {
                 id="checkout-city"
                 name="city"
                 required
-                maxLength={100}
+                minLength={2}
+                maxLength={80}
                 autoComplete="address-level2"
                 placeholder="City"
                 value={form.city}
@@ -221,7 +223,8 @@ export function CheckoutForm() {
                 id="checkout-state"
                 name="state"
                 required
-                maxLength={100}
+                minLength={2}
+                maxLength={80}
                 autoComplete="address-level1"
                 placeholder="State"
                 value={form.state}
@@ -235,8 +238,10 @@ export function CheckoutForm() {
                 name="postalCode"
                 type="text"
                 required
-                minLength={5}
-                maxLength={10}
+                minLength={6}
+                maxLength={6}
+                pattern="[0-9]{6}"
+                title="Enter a valid 6-digit Indian PIN code."
                 autoComplete="postal-code"
                 inputMode="numeric"
                 placeholder="Postal code"
