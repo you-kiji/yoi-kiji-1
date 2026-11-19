@@ -4692,3 +4692,33 @@ body {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
 }
+
+
+/* Cart recovery state — clear messaging when a saved bag cannot be quoted. */
+.cart-error-state {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  margin: 16px 0 26px;
+  padding: clamp(16px, 3vw, 24px);
+  border: 1px solid rgba(163, 62, 53, .28);
+  border-radius: 6px;
+  background: #fff8f6;
+  color: #7f302b;
+}
+.cart-error-state p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.cart-error-state button {
+  min-height: 44px;
+  padding: 10px 15px;
+  border: 1px solid #9a453d;
+  border-radius: 6px;
+  background: transparent;
+  color: #7f302b;
+  font: 600 12px "Montserrat", Arial, sans-serif;
+  cursor: pointer;
+}
+.cart-error-state button:hover { background: #f8e9e5; }
