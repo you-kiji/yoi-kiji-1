@@ -22,7 +22,7 @@ async function getPost(slug: string) {
         orderBy: { sortOrder: "asc" },
       },
     },
-  });
+  }).catch(() => null);
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
