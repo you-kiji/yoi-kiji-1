@@ -12,7 +12,7 @@ declare global {
 }
 
 type CartLine = { productId: string; variantId?: string; quantity: number };
-type CartQuoteLine = { productId: string; variantId: string | null; name: string; variantLabel: string | null; quantity: number; unitPricePaise: number; lineTotalPaise: number; image: string | null };
+type CartQuoteLine = { productId: string; variantId: string | null; name: string; variantLabel: string | null; quantity: number; unitPricePaise: number; lineTotalPaise: number; image: string | null; availableQty: number };
 
 function formatPrice(paise: number) {
   return "₹" + (paise / 100).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -72,9 +72,14 @@ export function CheckoutForm() {
         const data = await response.json();
         if (!response.ok) throw new Error(data.error ?? "Your bag could not be verified.");
         if (active) {
-          setSummaryLines(data.items ?? []);
+          const quotedLines: CartQuoteLine[] = data.items ?? [];
+          setSummaryLines(quotedLines);
           setSummarySubtotal(data.subtotalPaise ?? 0);
-          setSummaryError("");
+          setSummaryError(
+            quotedLines.some((line) => line.quantity > line.availableQty)
+              ? "One or more pieces no longer have enough stock. Return to your bag and adjust the quantities."
+              : "",
+          );
         }
       } catch (reason) {
         if (!active || (reason instanceof DOMException && reason.name === "AbortError")) return;
