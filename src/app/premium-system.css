@@ -1485,6 +1485,8 @@ body {
   display: inline-grid;
   width: 38px;
   height: 38px;
+  min-height: 38px;
+  padding: 0;
   place-items: center;
   border: 1px solid var(--yk-line-strong);
   border-radius: 7px;
@@ -1621,7 +1623,7 @@ body {
   .cart-line-total { font-size: 14px; }
   .cart-unit-price { margin: 8px 0 14px; }
   .quantity-control { flex-wrap: wrap; gap: 7px; }
-  .quantity-control button { width: 34px; height: 34px; }
+  .quantity-control button { width: 34px; height: 34px; min-height: 34px; padding: 0; }
   .quantity-control .remove-line { margin-left: 0; }
   .cart-summary { width: 100%; padding: 18px; }
 }
