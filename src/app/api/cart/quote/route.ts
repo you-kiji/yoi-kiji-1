@@ -26,7 +26,7 @@ export async function POST(request:NextRequest){
  const production=process.env.VERCEL_ENV==="production";
  const shippingRaw=process.env.SHIPPING_FLAT_RATE_PAISE??(production?undefined:"0");
  if(!shippingRaw||!/^\d+$/.test(shippingRaw))return NextResponse.json({error:"Delivery pricing is being configured. Please try again later."},{status:503});
- const shippingPaise=Number(shippingRaw);
+ const shippingPaise=Number(shippingRaw);\n if(!Number.isSafeInteger(shippingPaise)||shippingPaise<0)return NextResponse.json({error:"Delivery pricing is not configured correctly."},{status:503});
  const shippingTaxRaw=process.env.SHIPPING_TAX_RATE_BPS??(production?undefined:"0");
  if(!shippingTaxRaw||!/^\d+$/.test(shippingTaxRaw)||Number(shippingTaxRaw)>10000)return NextResponse.json({error:"Shipping tax treatment is awaiting seller confirmation."},{status:503});
  const shippingTaxRateBps=Number(shippingTaxRaw);
