@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type CategoryOption = { id: string; name: string; slug: string; parentId: string | null; isActive: boolean };
 type DynamicAttribute = { id: string; isRequired: boolean; isFilterable: boolean; attribute: { id: string; name: string; key: string; type: string; unit: string | null; options: unknown; isVariantAxis: boolean } };
@@ -18,6 +19,7 @@ type EditableProduct = {
 };
 
 export function AdminProductEditForm({ product }: { product: EditableProduct }) {
+  const router = useRouter();
   const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [productTypes, setProductTypes] = useState<ProductTypeOption[]>([]);
   const [open, setOpen] = useState(false);
@@ -108,7 +110,9 @@ export function AdminProductEditForm({ product }: { product: EditableProduct }) 
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Could not update product.");
-      setMessage("Product details saved. Refresh the page to see the updated catalogue record.");
+      setMessage("Product details saved successfully.");
+      setOpen(false);
+      router.refresh();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Unable to update product.");
     } finally {
