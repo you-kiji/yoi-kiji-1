@@ -101,7 +101,7 @@ export function AdminCategoryManager() {
         <label>SEO description<input maxLength={320} value={form.seoDescription} onChange={e => set("seoDescription", e.target.value)} /></label>
         <label className="admin-form-wide"><span><input type="checkbox" checked={form.showInMenu} onChange={e => set("showInMenu", e.target.checked)} /> Show in navigation menu</span></label>
         {message && <p className="admin-form-wide" role="status">{message}</p>}
-        <div className="admin-form-wide" style={{display:"flex",gap:12,flexWrap:"wrap"}}><button className="primary-link" disabled={busy}>{busy ? "Saving…" : editingId ? "Save category" : "Create category"} <span>↗</span></button>{editingId && <button className="text-link" type="button" onClick={() => {setEditingId(null);setForm(emptyForm);}}>Cancel edit</button>}</div>
+        <div className="admin-form-wide" style={{display:"flex",gap:12,flexWrap:"wrap"}}><button className="primary-link" disabled={busy}>{busy ? "Saving…" : editingId ? "Save category" : "Create category"}</button>{editingId && <button className="text-link" type="button" onClick={() => {setEditingId(null);setForm(emptyForm);}}>Cancel edit</button>}</div>
       </form>
       <div className="category-tree">{loading ? <p>Loading categories…</p> : items.length ? renderTree(null) : <p>No categories yet. Create your first top-level category.</p>}</div>
     </>}
