@@ -61,7 +61,7 @@ async function main() {
     const row = await prisma.blogPost.upsert({
       where: { slug: post.slug },
       update: { title: post.title, excerpt: post.excerpt, contentMarkdown: post.body, coverImageUrl, coverImageAlt: "Illustrative editorial preview image", status: post.status, publishedAt, scheduledAt, noIndex: false, authorId: author?.id ?? null, seoTitle: post.title + " | YOI KIJI Journal", seoDescription: post.excerpt },
-      create: { title: post.title, slug: post.slug, excerpt: post.excerpt, contentMarkdown: post.body, status: post.status, publishedAt, scheduledAt, noIndex: false, authorId: author?.id ?? null, seoTitle: post.title + " | YOI KIJI Journal", seoDescription: post.excerpt, coverImageAlt: "Illustrative YOI KIJI editorial preview image" },
+      create: { title: post.title, slug: post.slug, excerpt: post.excerpt, contentMarkdown: post.body, coverImageUrl, status: post.status, publishedAt, scheduledAt, noIndex: false, authorId: author?.id ?? null, seoTitle: post.title + " | YOI KIJI Journal", seoDescription: post.excerpt, coverImageAlt: "Illustrative YOI KIJI editorial preview image" },
     });
     await prisma.blogPostCategory.deleteMany({ where: { postId: row.id } });
     await prisma.blogPostTag.deleteMany({ where: { postId: row.id } });
@@ -174,7 +174,7 @@ async function main() {
       shippingAddress: { fullName: guest ? "Demo Guest Buyer" : demoUsers[index].name, phone: "9000000000", line1: "Preview Sample Address, Demo Lane", city: "Jaipur", state: "Rajasthan", postalCode: "302019", countryCode: "IN" },
       billingAddress: { fullName: guest ? "Demo Guest Buyer" : demoUsers[index].name, phone: "9000000000", line1: "Preview Sample Address, Demo Lane", city: "Jaipur", state: "Rajasthan", postalCode: "302019", countryCode: "IN" },
       items: { create: [{ productId: product.id, variantId: variant?.id ?? null, productName: product.name, variantLabel: variant?.label ?? null, sku: variant?.sku ?? product.sku, hsnCode: product.hsnCode, quantity, unitPricePaise: price, gstRateBps: product.gstRateBps }] },
-      payment: { create: { provider: "COD", status: index === 3 ? "CREATED" : "CAPTURED", amountPaise: price * quantity, currency: "INR" } },
+      payment: { create: { provider: "COD", status: index === 3 ? "CAPTURED" : "CREATED", amountPaise: price * quantity, currency: "INR" } },
     };
     await prisma.order.upsert({ where: { orderNumber }, update: {}, create: orderData });
   }
