@@ -9,7 +9,7 @@ export const metadata = { title: "Blog studio · YOI KIJI" };
 
 export default async function AdminBlogPage() {
   const admin = await requireAdmin();
-  if (!admin) redirect("/login");
+  if (!admin) redirect("/admin/login");
   if (admin.role !== "ADMIN") redirect("/admin");
   const [posts, categories, tags, products] = await Promise.all([
     prisma.blogPost.findMany({ include: { author: { select: { name: true, email: true } }, _count: { select: { categories: true, tags: true, relatedProducts: true } } }, orderBy: { updatedAt: "desc" }, take: 100 }),
