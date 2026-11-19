@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type Line = { productId: string; variantId?: string; quantity: number };
 type Quoted = {
@@ -26,44 +26,78 @@ export function CartView() {
   const [lines, setLines] = useState<Quoted[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const quoteController = useRef<AbortController | null>(null);
+  const quoteRequestId = useRef(0);
 
   const refresh = useCallback(async (items: Line[]) => {
+    const requestId = ++quoteRequestId.current;
+    quoteController.current?.abort();
+    const controller = new AbortController();
+    quoteController.current = controller;
     setLoading(true);
     try {
       const response = await fetch("/api/cart/quote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items }),
+        signal: controller.signal,
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Unable to load your bag.");
-      setLines(data.items);
+      if (requestId !== quoteRequestId.current) return;
+      setLines(Array.isArray(data.items) ? data.items : []);
       setError("");
     } catch (reason) {
+      if (reason instanceof DOMException && reason.name === "AbortError") return;
+      if (requestId !== quoteRequestId.current) return;
       setLines([]);
       setError(reason instanceof Error ? reason.message : "Unable to load your bag.");
     } finally {
-      setLoading(false);
+      if (requestId === quoteRequestId.current) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem("yoikiji_cart");
-      const initial: Line[] = saved ? JSON.parse(saved) : [];
+      const parsed: unknown = saved ? JSON.parse(saved) : [];
+      if (!Array.isArray(parsed) || parsed.some((item) =>
+        !item || typeof item.productId !== "string" ||
+        typeof item.quantity !== "number" || !Number.isSafeInteger(item.quantity) || item.quantity < 1 ||
+        (item.variantId !== undefined && typeof item.variantId !== "string")
+      )) {
+        throw new Error("invalid saved bag");
+      }
+      const initial = parsed as Line[];
       setCart(initial);
       void refresh(initial);
     } catch {
-      setError("Your saved bag could not be read. Please refresh and try again.");
+      setError("Your saved bag could not be read. Clear it and add your pieces again.");
       setLoading(false);
     }
+    return () => {
+      quoteRequestId.current += 1;
+      quoteController.current?.abort();
+    };
   }, [refresh]);
 
   function update(next: Line[]) {
     setCart(next);
-    localStorage.setItem("yoikiji_cart", JSON.stringify(next));
+    try {
+      localStorage.setItem("yoikiji_cart", JSON.stringify(next));
+      window.dispatchEvent(new Event("yoikiji-cart-updated"));
+      void refresh(next);
+    } catch {
+      setError("Your browser could not save this bag. Check your browser storage settings and try again.");
+    }
+  }
+
+  function clearSavedBag() {
+    setCart([]);
+    setLines([]);
+    setError("");
+    localStorage.removeItem("yoikiji_cart");
     window.dispatchEvent(new Event("yoikiji-cart-updated"));
-    void refresh(next);
   }
 
   const subtotal = lines.reduce((sum, line) => sum + line.lineTotalPaise, 0);
@@ -72,7 +106,12 @@ export function CartView() {
     <section className="cart-layout" aria-label="Your shopping bag">
       {loading && <p className="cart-loading" role="status">Preparing your bag…</p>}
 
-      {error && <p className="form-error" role="alert">{error}</p>}
+      {error && (
+        <div className="cart-error-state" role="alert">
+          <p>{error}</p>
+          <button type="button" onClick={clearSavedBag}>Clear saved bag</button>
+        </div>
+      )}
 
       {!loading && !error && lines.length === 0 && (
         <div className="catalogue-empty cart-empty-state">
