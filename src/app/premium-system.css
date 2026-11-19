@@ -4053,3 +4053,196 @@ body {
   .admin-product-edit-form .admin-form-footer { align-items: stretch; flex-direction: column; }
   .admin-product-edit-form .admin-form-footer > button { width: 100%; }
 }
+
+
+/* CSV tools, order status controls and shipment details. */
+.admin-panel {
+  display: grid;
+  gap: 18px;
+  margin: 26px 0;
+  padding: clamp(18px, 3vw, 28px);
+  border: 1px solid var(--yk-line);
+  border-radius: 8px;
+  background: #f4f3ed;
+}
+.admin-panel > div:first-child h2 {
+  margin: 6px 0 8px;
+  color: var(--yk-forest);
+  font-size: 21px;
+  font-weight: 650;
+}
+.admin-panel > div:first-child > p:last-child {
+  max-width: 700px;
+  margin: 0;
+  color: var(--yk-muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.admin-panel .admin-row-controls {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0;
+  padding: 17px;
+  border: 1px solid var(--yk-line);
+  border-radius: 7px;
+  background: #fbfaf5;
+}
+.admin-panel .admin-row-controls label {
+  display: grid;
+  gap: 7px;
+  color: var(--yk-ink);
+  font-size: 10px;
+  font-weight: 650;
+}
+.admin-panel .admin-row-controls input[type="file"] {
+  min-width: 190px;
+  min-height: auto;
+  padding: 8px;
+  border: 1px dashed var(--yk-line-strong);
+  border-radius: 6px;
+  background: #fffefa;
+  font-size: 10px;
+}
+.admin-panel .admin-row-controls .button,
+.admin-panel .admin-row-controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 14px;
+  border: 1px solid var(--yk-forest);
+  border-radius: 6px;
+  background: var(--yk-forest);
+  color: var(--yk-white);
+  font-size: 10px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.admin-panel .admin-row-controls button:disabled { opacity: .5; cursor: wait; }
+.admin-panel [role="alert"],
+.admin-panel [role="status"] {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--yk-line);
+  border-radius: 7px;
+  background: #edf1e9;
+  color: var(--yk-forest);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.admin-panel [role="status"] ul {
+  margin: 9px 0 0;
+  padding-left: 18px;
+}
+.fulfillment-editor {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+}
+.fulfillment-editor > button {
+  min-height: 36px;
+  padding: 8px 11px;
+  border: 1px solid var(--yk-line-strong);
+  border-radius: 6px;
+  background: #fbfaf5;
+  color: var(--yk-forest);
+  font-size: 10px;
+  font-weight: 650;
+  text-align: left;
+}
+.fulfillment-editor-fields {
+  display: grid;
+  gap: 10px;
+  width: min(100%, 360px);
+  padding: 13px;
+  border: 1px solid var(--yk-line);
+  border-radius: 7px;
+  background: #f4f3ed;
+}
+.fulfillment-editor-fields label {
+  display: grid;
+  gap: 6px;
+  color: var(--yk-ink);
+  font-size: 10px;
+  font-weight: 650;
+}
+.fulfillment-editor-fields label > span {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+.fulfillment-editor-fields label em {
+  color: var(--yk-muted);
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 500;
+}
+.fulfillment-editor-fields :where(input, select) {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid var(--yk-line-strong);
+  border-radius: 6px;
+  background: #fffefa;
+  color: var(--yk-ink);
+  font-size: 10px;
+}
+.fulfillment-editor-fields > button {
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid var(--yk-forest);
+  border-radius: 6px;
+  background: var(--yk-forest);
+  color: var(--yk-white);
+  font-size: 10px;
+  font-weight: 700;
+}
+.fulfillment-editor-fields small {
+  color: var(--yk-muted);
+  font-size: 10px;
+  line-height: 1.6;
+}
+.admin-order-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 10px;
+}
+.admin-order-actions select {
+  min-height: 38px;
+  min-width: 125px;
+  padding: 7px 9px;
+  border: 1px solid var(--yk-line-strong);
+  border-radius: 6px;
+  background: #fbfaf5;
+  color: var(--yk-ink);
+  font-size: 10px;
+}
+.admin-order-actions button {
+  min-height: 38px;
+  padding: 8px 11px;
+  border: 1px solid var(--yk-forest);
+  border-radius: 6px;
+  background: var(--yk-forest);
+  color: var(--yk-white);
+  font-size: 10px;
+  font-weight: 700;
+}
+.admin-order-actions button:disabled { opacity: .5; cursor: wait; }
+.admin-order-actions small {
+  flex-basis: 100%;
+  color: var(--yk-muted);
+  font-size: 10px;
+  line-height: 1.55;
+}
+@media (max-width: 600px) {
+  .admin-panel { padding: 15px 12px; }
+  .admin-panel .admin-row-controls { align-items: stretch; flex-direction: column; padding: 13px; }
+  .admin-panel .admin-row-controls > * { width: 100%; }
+  .fulfillment-editor-fields { width: 100%; }
+}
