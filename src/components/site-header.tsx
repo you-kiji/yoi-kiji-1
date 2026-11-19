@@ -10,8 +10,8 @@ export async function SiteHeader() {
     {roots.map(category => {
       const children = categories.filter(child => child.parentId === category.id && child.showInMenu);
       return <div className="nav-category" key={category.id}>
-        <Link href={`/shop/${category.slug}`}>{category.name}</Link>
-        {children.length > 0 && <div className="nav-submenu">{children.map(child => <Link key={child.id} href={`/shop/${child.slug}`}>{child.name}</Link>)}</div>}
+        <Link href={`/shop?category=${encodeURIComponent(category.slug)}`}>{category.name}</Link>
+        {children.length > 0 && <div className="nav-submenu">{children.map(child => <Link key={child.id} href={`/shop?category=${encodeURIComponent(child.slug)}`}>{child.name}</Link>)}</div>}
       </div>;
     })}
     <Link href="/our-story">Our story</Link>
