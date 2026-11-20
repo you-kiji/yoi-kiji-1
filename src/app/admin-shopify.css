@@ -1,0 +1,37 @@
+/* Shopify-inspired, unified admin workspace */
+body:has(.admin-shopify-shell),body:has(.admin-login-surface){background:#f6f6f7;color:#202223}
+body:has(.admin-shopify-shell) .announcement,body:has(.admin-shopify-shell) .site-header,body:has(.admin-shopify-shell) .site-footer,
+body:has(.admin-login-surface) .announcement,body:has(.admin-login-surface) .site-header,body:has(.admin-login-surface) .site-footer{display:none!important}
+body:has(.admin-shopify-shell) .admin-shopify-shell{min-height:100vh;display:grid;grid-template-columns:248px minmax(0,1fr);background:#f6f6f7;color:#202223;font-family:var(--sans)}
+.admin-shopify-sidebar{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:18px 12px 14px;background:#ebebec;border-right:1px solid #dedee0;z-index:40;overflow-y:auto}
+.admin-shopify-brand{display:flex;align-items:center;gap:10px;padding:3px 9px 19px;color:#202223}
+.admin-shopify-brand-mark{width:34px;height:34px;display:grid;place-items:center;border-radius:9px;background:#123b20;color:#fff;font-size:12px;font-weight:700;letter-spacing:.06em}
+.admin-shopify-brand>span:last-child,.admin-shopify-store-chip>span:nth-child(2){display:grid;gap:2px}
+.admin-shopify-brand strong{font-size:13px;letter-spacing:.13em}.admin-shopify-brand small,.admin-shopify-store-chip small{font-size:9px;color:#6d7175;letter-spacing:.1em}
+.admin-shopify-store-chip{display:flex;align-items:center;gap:9px;padding:10px;background:#f7f7f8;border:1px solid #dedee0;border-radius:9px;margin:0 2px 18px}
+.admin-shopify-store-avatar,.admin-shopify-avatar{width:28px;height:28px;display:grid;place-items:center;border-radius:7px;background:#d8e5d9;color:#173b20;font-size:11px;font-weight:700}
+.admin-shopify-store-chip strong{font-size:11px}.admin-shopify-store-caret{margin-left:auto;color:#707579}
+.admin-shopify-nav{display:grid;gap:17px}.admin-shopify-nav-group>p{margin:0 10px 6px;color:#73777b;font-size:9px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}
+.admin-shopify-nav-group>a{min-height:34px;display:flex;align-items:center;gap:10px;padding:7px 10px;margin:1px 0;border-radius:7px;color:#303438;font-size:11px;font-weight:500;transition:background .15s,color .15s}
+.admin-shopify-nav-group>a:hover{background:#e0e1e2}.admin-shopify-nav-group>a.is-active{background:#dce8dd;color:#123b20;font-weight:700}
+.admin-shopify-nav-indicator{width:6px;height:6px;border:1.5px solid #8b9094;border-radius:2px;flex:none}.admin-shopify-nav-group>a.is-active .admin-shopify-nav-indicator{border-color:#1c6330;background:#1c6330}
+.admin-shopify-sidebar-bottom{display:grid;gap:4px;margin-top:auto;padding-top:20px;border-top:1px solid #d9dadd}
+.admin-shopify-sidebar-bottom a{padding:9px 10px;border-radius:6px;color:#51565a;font-size:10px}.admin-shopify-sidebar-bottom a:hover{background:#e0e1e2;color:#202223}
+.admin-shopify-main{min-width:0}.admin-shopify-topbar{height:56px;position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:0 30px;background:#fff;border-bottom:1px solid #e5e5e7}
+.admin-shopify-topbar-context,.admin-shopify-topbar-actions{display:flex;align-items:center;gap:12px;font-size:10px}.admin-shopify-topbar-context>span:first-child{color:#73777b}.admin-shopify-topbar-divider{color:#c4c6c8}.admin-shopify-topbar-context strong{font-size:11px}.admin-shopify-topbar-actions{gap:18px}.admin-shopify-topbar-actions>a{color:#303438;font-weight:600}.admin-shopify-status{display:flex;align-items:center;gap:6px;color:#62686c}.admin-shopify-status i{width:6px;height:6px;border-radius:50%;background:#24944a}.admin-shopify-avatar{border-radius:50%;background:#dce8dd}
+.admin-shopify-content{width:100%;max-width:1600px;margin:0 auto;padding:26px 34px 60px}
+.admin-shopify-content>.commerce-page{width:100%;max-width:1500px;margin:0 auto;padding:0;background:transparent;color:#202223}
+.admin-shopify-content .commerce-breadcrumb{margin:0 0 18px;color:#73777b;font-size:10px}.admin-shopify-content .commerce-breadcrumb a{color:#4d5357}.admin-shopify-content .commerce-heading{margin:0 0 24px;padding:0;background:transparent;color:#202223}
+.admin-shopify-content .commerce-heading .eyebrow,.admin-shopify-content .eyebrow{color:#6e7478}
+.admin-shopify-content .commerce-heading h1{margin:8px 0 8px;color:#202223;font:600 clamp(25px,2.4vw,34px)/1.15 var(--sans);letter-spacing:-.045em}
+.admin-shopify-content .commerce-heading h1 em{font-style:normal;color:#4f6652;font-weight:500}
+.admin-shopify-content .commerce-heading>p:last-child{max-width:720px;color:#656b70;font-size:12px;line-height:1.65}
+.admin-shopify-content h2,.admin-shopify-content h3{color:#202223}
+.admin-shopify-content button,.admin-shopify-content input,.admin-shopify-content select,.admin-shopify-content textarea{border-radius:7px}
+.admin-shopify-content :is(.admin-metric-card,.admin-module-card,.admin-attention-grid article,.admin-recent-list article,.admin-product-list>article,.admin-inventory-snapshot,.admin-inventory-ledger,.admin-order-workbench,.admin-customer-insights,.admin-review-manager,.admin-blog-manager){border-radius:10px}
+.admin-shopify-menu-button{display:none;border:0;background:transparent;padding:7px;gap:3px;flex-direction:column}.admin-shopify-menu-button span{display:block;width:17px;height:2px;background:#303438}
+.admin-shopify-backdrop{display:none}
+.admin-login-surface{min-height:100vh;background:#f6f6f7;color:#202223}
+@media(max-width:1050px){body:has(.admin-shopify-shell) .admin-shopify-shell{grid-template-columns:220px minmax(0,1fr)}.admin-shopify-content{padding:22px 22px 48px}.admin-shopify-topbar{padding:0 22px}}
+@media(max-width:760px){body:has(.admin-shopify-shell) .admin-shopify-shell{display:block}.admin-shopify-sidebar{position:fixed;left:0;top:0;width:260px;transform:translateX(-105%);transition:transform .2s ease;box-shadow:0 12px 40px #0002}.admin-shopify-sidebar.is-open{transform:translateX(0)}.admin-shopify-backdrop{display:block;position:fixed;inset:0;z-index:35;border:0;border-radius:0;background:#101a1280}.admin-shopify-menu-button{display:flex}.admin-shopify-topbar{height:52px;padding:0 14px}.admin-shopify-topbar-actions{gap:10px}.admin-shopify-status{display:none}.admin-shopify-content{padding:18px 14px 40px}.admin-shopify-content>.commerce-page{padding:0}.admin-shopify-content .commerce-heading h1{font-size:28px}}
+@media(max-width:420px){.admin-shopify-topbar-context>span:first-child,.admin-shopify-topbar-divider{display:none}.admin-shopify-topbar-actions>a{font-size:9px}.admin-shopify-content{padding-inline:11px}}
