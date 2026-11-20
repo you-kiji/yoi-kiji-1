@@ -291,3 +291,26 @@ VALUES
 ('tr_ja_ui_seo_journal_title','ja','ui','storefront','seo.journalTitle','ジャーナル | YOI KIJI',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
 ('tr_ja_ui_seo_journal_desc','ja','ui','storefront','seo.journalDescription','テキスタイルの物語やお手入れのヒント、心地よい暮らしのためのアイデア。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
 ON CONFLICT ("localeCode","entityType","entityId","fieldKey") DO NOTHING;
+
+INSERT INTO "HomepageSection" ("id","key","eyebrow","title","body","position","isActive","createdAt","updatedAt")
+VALUES ('home_search','search','YOI KIJI / DISCOVERY','Search the collection.','Find products by name, category, material, colour or SKU.',1,true,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+ON CONFLICT ("key") DO NOTHING;
+
+UPDATE "HomepageSection" SET "position" = CASE "key"
+  WHEN 'hero' THEN 0
+  WHEN 'search' THEN 1
+  WHEN 'intro' THEN 2
+  WHEN 'collections' THEN 3
+  WHEN 'feature' THEN 4
+  WHEN 'manifesto' THEN 5
+  WHEN 'journal' THEN 6
+  ELSE "position"
+END
+WHERE "key" IN ('hero','search','intro','collections','feature','manifesto','journal');
+
+INSERT INTO "ContentTranslation" ("id","localeCode","entityType","entityId","fieldKey","value","createdAt","updatedAt")
+SELECT 'tr_ja_home_search_' || "id" || '_' || field.field_key,'ja','homepageSection',"id",field.field_key,field.translated_value,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP
+FROM "HomepageSection"
+JOIN (VALUES ('search','eyebrow','YOI KIJI / 検索'),('search','title','コレクションを検索'),('search','body','商品名、カテゴリー、素材、色、SKUからお探しいただけます。')) AS field(section_key,field_key,translated_value)
+ON field.section_key = "HomepageSection"."key"
+ON CONFLICT ("localeCode","entityType","entityId","fieldKey") DO NOTHING;
