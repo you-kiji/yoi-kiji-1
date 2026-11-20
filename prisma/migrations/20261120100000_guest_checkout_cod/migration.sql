@@ -9,7 +9,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS "Order_guestAccessTokenHash_key" ON "Order"("g
 
 ALTER TABLE "CouponRedemption" ALTER COLUMN "userId" DROP NOT NULL;
 
-DO $
+DO $migrate$
 BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_constraint WHERE conname = 'Order_guest_or_registered_customer_check'
@@ -21,4 +21,4 @@ BEGIN
         ("guestName" IS NOT NULL AND "guestEmail" IS NOT NULL AND "guestPhone" IS NOT NULL)
       );
   END IF;
-END $;
+END $migrate$;
