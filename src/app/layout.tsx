@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+import type { Metadata, CSSProperties } from "next";
+import { prisma } from "@/lib/prisma";
 import "./globals.css";
 import "./ui-overhaul.css";
 import "./admin-operations.css";
@@ -30,9 +31,22 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const locale = await getLocaleData();
+  const [locale, brand] = await Promise.all([
+    getLocaleData(),
+    prisma.storefrontBrandSettings.findUnique({ where: { id: "global" } }).catch(() => null),
+  ]);
+  const brandStyle = {
+    "--green": brand?.background ?? "#0e300e",
+    "--green-2": brand?.surface ?? "#19451b",
+    "--cream": brand?.text ?? "#e9e9e9",
+    "--cream-dim": brand?.muted ?? "#c8d0c5",
+    "--accent": brand?.accent ?? "#c9a878",
+    "--yk-content-max-width": `${brand?.contentMaxWidth ?? 1440}px`,
+    "--yk-section-space": `${brand?.sectionSpacing ?? 96}px`,
+    "--yk-button-radius": `${brand?.buttonRadius ?? 8}px`,
+  } as CSSProperties;
   return (
-    <html lang={locale.code} dir={locale.direction}>
+    <html lang={locale.code} dir={locale.direction} style={brandStyle}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
