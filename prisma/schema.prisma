@@ -69,7 +69,7 @@ enum CouponDiscountType {
   FIXED_AMOUNT
 }
 
-enum ProductAttributeType {
+enum LegalPageStatus {\n  DRAFT\n  PUBLISHED\n  ARCHIVED\n}\n\nenum ProductAttributeType {
   TEXT
   NUMBER
   BOOLEAN
@@ -78,7 +78,7 @@ enum ProductAttributeType {
   DATE
 }
 
-model User {
+model Locale {\n  id          String   @id @default(cuid())\n  code        String   @unique\n  name        String\n  nativeName  String\n  isEnabled   Boolean  @default(true)\n  isDefault   Boolean  @default(false)\n  direction   String   @default("ltr")\n  sortOrder   Int      @default(0)\n  translations ContentTranslation[]\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  @@index([isEnabled, sortOrder])\n}\n\nmodel ContentTranslation {\n  id          String   @id @default(cuid())\n  localeCode  String\n  entityType  String\n  entityId    String\n  fieldKey    String\n  value       String   @db.Text\n  locale      Locale   @relation(fields: [localeCode], references: [code], onDelete: Cascade)\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  @@unique([localeCode, entityType, entityId, fieldKey])\n  @@index([entityType, entityId])\n  @@index([localeCode, entityType])\n}\n\nmodel LegalPage {\n  id             String            @id @default(cuid())\n  slug           String            @unique\n  title          String\n  content        String            @db.Text\n  status         LegalPageStatus   @default(DRAFT)\n  seoTitle       String?\n  seoDescription String?           @db.Text\n  publishedAt    DateTime?\n  revisions      LegalPageRevision[]\n  createdAt      DateTime          @default(now())\n  updatedAt      DateTime          @updatedAt\n  @@index([status, updatedAt])\n}\n\nmodel LegalPageRevision {\n  id          String   @id @default(cuid())\n  pageId      String\n  title       String\n  content     String   @db.Text\n  status      LegalPageStatus\n  editorId    String?\n  page        LegalPage @relation(fields: [pageId], references: [id], onDelete: Cascade)\n  createdAt   DateTime @default(now())\n  @@index([pageId, createdAt])\n}\n\nmodel User {
   id           String   @id @default(cuid())
   email        String   @unique
   name         String?
