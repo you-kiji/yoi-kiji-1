@@ -865,7 +865,9 @@ dialog::backdrop { background: rgba(5,20,8,.46); backdrop-filter: blur(5px); }
 /* Shopify-style storefront section builder */
 .site-header { transition: transform .32s cubic-bezier(.22,1,.36,1); }
 .site-header.site-header--hidden { transform: translateY(-105%); }
-.storefront-slideshow { position: relative; display: grid; gap: 0; overflow: hidden; background: #102b18; }
+.storefront-slideshow { position: relative; display: flex; gap: 0; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; background: #102b18; -webkit-overflow-scrolling: touch; }
+.storefront-slideshow::-webkit-scrollbar { display: none; }
+.storefront-slideshow__slide { flex: 0 0 100%; scroll-snap-align: start; scroll-snap-stop: always; }
 .storefront-slideshow__slide { position: relative; display: flex; align-items: center; min-height: clamp(420px, 58vw, 760px); overflow: hidden; isolation: isolate; }
 .storefront-slideshow__image,.storefront-slideshow__shade { position:absolute; inset:0; }
 .storefront-slideshow__image { z-index:-2; background-size:cover; background-position:center; transform:scale(1.015); }
