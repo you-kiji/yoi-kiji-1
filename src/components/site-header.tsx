@@ -1,5 +1,6 @@
 import { getActiveCategories } from "@/lib/catalog";
 import { SiteHeaderClient } from "@/components/site-header-client";
+import { getLocaleData } from "@/lib/i18n";
 
 const fallbackCategories = [
   { id: "fallback-bedsheets", name: "Bedsheets", slug: "bedsheets", parentId: null, showInMenu: true },
@@ -20,5 +21,6 @@ export async function SiteHeader() {
     .filter(category => category.showInMenu)
     .map(({ id, name, slug }) => ({ id, name, slug }));
 
-  return <SiteHeaderClient categories={roots} />;
+  const locale = await getLocaleData();
+  return <SiteHeaderClient categories={roots} labels={locale.labels} />;
 }
