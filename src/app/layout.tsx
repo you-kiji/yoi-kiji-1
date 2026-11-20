@@ -17,16 +17,17 @@ import { ScrollMotion } from "@/components/scroll-motion";
 import { getLocaleData } from "@/lib/i18n";
 import { AnnouncementBar } from "@/components/announcement-bar";
 
-export const metadata: Metadata = {
-  title: { default: "YOI KIJI — Textiles for the Way You Live", template: "%s | YOI KIJI" },
-  description: "Thoughtfully chosen bedsheets, curtains, upholstery, bath linen and kitchen linen. Comfort, considered.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
-  openGraph: {
-    title: "YOI KIJI — Textiles for the Way You Live",
-    description: "Thoughtfully chosen home textiles. Comfort, considered.",
-    type: "website",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocaleData();
+  const title = locale.labels["seo.homeTitle"] ?? "YOI KIJI — Textiles for the Way You Live";
+  const description = locale.labels["seo.homeDescription"] ?? "Thoughtfully chosen bedsheets, curtains, upholstery, bath linen and kitchen linen. Comfort, considered.";
+  return {
+    title: { default: title, template: "%s | YOI KIJI" },
+    description,
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+    openGraph: { title, description, type: "website" },
+  };
+}
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const locale = await getLocaleData();
