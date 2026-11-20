@@ -68,7 +68,7 @@ export default async function HomePage() {
 
   // Preserve the original LIVE editorial composition. CMS values replace copy/media in-place;
   // The homepage content and visibility are database-owned; absent or hidden sections stay hidden.
-  const baselineItems = defaultSectionOrder.flatMap((key, index) => {
+  const baselineItems = defaultSectionOrder.flatMap((key) => {
     const section = sectionByKey.get(key) ?? null;
     if (!section || !section.isActive) return [];
     return [{ key, section, position: section.position }];
