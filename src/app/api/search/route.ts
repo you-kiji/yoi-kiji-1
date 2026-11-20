@@ -86,6 +86,7 @@ export async function GET(request: NextRequest) {
         { description: { contains: term, mode: "insensitive" as const } },
         { material: { contains: term, mode: "insensitive" as const } },
         { color: { contains: term, mode: "insensitive" as const } },
+        { category: { is: { name: { contains: term, mode: "insensitive" as const } } } },
       ],
     })),
   };
