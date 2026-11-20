@@ -21,7 +21,8 @@ function formatPrice(paise: number) {
   return "₹" + (paise / 100).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-export function CartView({ labels = {} }: { labels?: Record<string,string> }) {\n  const t = (key: string, fallback: string) => labels[key] ?? fallback;
+export function CartView({ labels = {} }: { labels?: Record<string,string> }) {
+  const t = (key: string, fallback: string) => labels[key] ?? fallback;
   const [cart, setCart] = useState<Line[]>([]);
   const [lines, setLines] = useState<Quoted[]>([]);
   const [error, setError] = useState("");
@@ -145,10 +146,10 @@ export function CartView({ labels = {} }: { labels?: Record<string,string> }) {\
 
               <p className="cart-unit-price">{formatPrice(line.unitPricePaise)} {t("cart.each","each")}</p>
 
-              <div className="quantity-control" aria-label={"Quantity for " + line.name}>
+              <div className="quantity-control" aria-label={t("cart.quantityFor","Quantity for") + " " + line.name}>
                 <button
                   type="button"
-                  aria-label={"Decrease quantity of " + line.name}
+                  aria-label={t("cart.decrease","Decrease quantity of") + " " + line.name}
                   disabled={line.quantity <= 1 || loading}
                   onClick={() => update(cart.map((item) =>
                     item.productId === line.productId && item.variantId === line.variantId
@@ -158,10 +159,10 @@ export function CartView({ labels = {} }: { labels?: Record<string,string> }) {\
                 >
                   −
                 </button>
-                <span aria-live="polite" aria-label={"Quantity " + line.quantity}>{line.quantity}</span>
+                <span aria-live="polite" aria-label={t("cart.quantity","Quantity") + " " + line.quantity}>{line.quantity}</span>
                 <button
                   type="button"
-                  aria-label={"Increase quantity of " + line.name}
+                  aria-label={t("cart.increase","Increase quantity of") + " " + line.name}
                   disabled={atMaximum || loading}
                   onClick={() => update(cart.map((item) =>
                     item.productId === line.productId && item.variantId === line.variantId
