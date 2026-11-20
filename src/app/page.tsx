@@ -88,7 +88,7 @@ export default async function HomePage() {
           return (
             <section className="storefront-slideshow" aria-label={section.title || "Featured stories"} key={section.id}>
               {slides.map((slide,index)=><article className="storefront-slideshow__slide" key={index}>
-                {slide.imageUrl && <div className="storefront-slideshow__image" role="img" aria-label={slide.imageAlt || slide.title || "YOI KIJI collection"} style={{backgroundImage:"url(\\""+slide.imageUrl+"\\")"}}/>}
+                {slide.imageUrl && <div className="storefront-slideshow__image" role="img" aria-label={slide.imageAlt || slide.title || "YOI KIJI collection"} style={{ backgroundImage: `url("${slide.imageUrl}")` }} /> }
                 <div className="storefront-slideshow__shade"/>
                 <div className="storefront-slideshow__content">
                   {slide.eyebrow && <p className="editorial-eyebrow"><span/>{slide.eyebrow}</p>}
