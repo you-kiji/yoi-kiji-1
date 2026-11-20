@@ -283,3 +283,11 @@ VALUES
 ('tr_ja_ui_product_add','ja','ui','storefront','product.addToBag','バッグに追加',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
 ('tr_ja_ui_home_discover','ja','ui','storefront','home.discover','詳しく見る',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
 ON CONFLICT ("localeCode","entityType","entityId","fieldKey") DO NOTHING;
+
+INSERT INTO "ContentTranslation" ("id","localeCode","entityType","entityId","fieldKey","value","createdAt","updatedAt")
+VALUES
+('tr_ja_ui_seo_home_title','ja','ui','storefront','seo.homeTitle','YOI KIJI — 暮らしに寄り添うテキスタイル',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_seo_home_desc','ja','ui','storefront','seo.homeDescription','ベッドシーツ、カーテン、張り地、バスリネン、キッチンリネン。丁寧に選ばれたテキスタイルで、心地よい暮らしを。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_seo_journal_title','ja','ui','storefront','seo.journalTitle','ジャーナル | YOI KIJI',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_seo_journal_desc','ja','ui','storefront','seo.journalDescription','テキスタイルの物語やお手入れのヒント、心地よい暮らしのためのアイデア。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+ON CONFLICT ("localeCode","entityType","entityId","fieldKey") DO NOTHING;
