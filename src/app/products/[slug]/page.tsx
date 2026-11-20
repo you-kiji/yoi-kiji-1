@@ -10,7 +10,7 @@ import { BackInStockForm } from "@/components/back-in-stock-form";
 import { formatINR } from "@/lib/money";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { cookies } from "next/headers";
+import { getLocaleData } from "@/lib/i18n";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -35,8 +35,8 @@ export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
   const product = await getActiveProductBySlug(slug);
   if (!product) notFound();
-  const requestedLocale = (await cookies()).get("yk-locale")?.value ?? "en";
-  const locale = await prisma.locale.findFirst({ where: { code: requestedLocale, isEnabled: true }, select: { code: true } }).catch(() => null);
+  const locale = await getLocaleData();
+  const t = (key: string, fallback: string) => locale.labels[key] ?? fallback;
   const translationTargets = [
     { entityType: "product", entityId: product.id },
     ...(product.categoryId ? [{ entityType: "category", entityId: product.categoryId }] : []),
@@ -89,10 +89,10 @@ export default async function ProductPage({ params }: Props) {
       {(product.hasVariants?product.variants.every(v=>v.inventoryQty<=0):product.inventoryQty<=0)&&<BackInStockForm productId={product.id}/>}
       <p className="product-description">{displayDescription}</p>
       {(displayMaterial || displayColor || displayCare || product.lengthMm || product.widthMm || product.heightMm || dynamicSpecs.length > 0) && <dl className="product-specs">
-        {displayMaterial && <div><dt>Material</dt><dd>{displayMaterial}</dd></div>}
-        {displayColor && <div><dt>Colour</dt><dd>{displayColor}</dd></div>}
-        {(product.lengthMm || product.widthMm || product.heightMm) && <div><dt>Dimensions</dt><dd>{[product.lengthMm, product.widthMm, product.heightMm].filter(Boolean).join(" × ")} mm</dd></div>}
-        {displayCare && <div><dt>Care</dt><dd>{displayCare}</dd></div>}
+        {displayMaterial && <div><dt>{t("product.material","Material")}</dt><dd>{displayMaterial}</dd></div>}
+        {displayColor && <div><dt>{t("product.colour","Colour")}</dt><dd>{displayColor}</dd></div>}
+        {(product.lengthMm || product.widthMm || product.heightMm) && <div><dt>{t("product.dimensions","Dimensions")}</dt><dd>{[product.lengthMm, product.widthMm, product.heightMm].filter(Boolean).join(" × ")} mm</dd></div>}
+        {displayCare && <div><dt>{t("product.care","Care")}</dt><dd>{displayCare}</dd></div>}
         {dynamicSpecs.map(spec => <div key={spec.name}><dt>{spec.name}</dt><dd>{spec.value}</dd></div>)}
       </dl>}
     </ProductDetailInteractive>
@@ -104,6 +104,6 @@ export default async function ProductPage({ params }: Props) {
       canReview={!!eligiblePurchase}
       isSignedIn={!!user}
     />
-    {relatedProducts.length>0&&<section className="related-products"><div className="related-products__heading"><p className="eyebrow">CONSIDER THESE TOO</p><h2>Made to <em>belong together.</em></h2></div><div className="product-grid">{relatedProducts.map(item=><Link className="product-card" href={"/products/"+item.slug} key={item.id}><div className="product-card-image">{item.images[0]?<img src={item.images[0].url} alt={item.images[0].alt}/>:<span>YOI KIJI</span>}</div><p className="product-card-category">{item.category?.name??"YOI KIJI"}</p><h3>{item.name}</h3><p className="product-card-price">{formatINR(item.pricePaise)}</p></Link>)}</div></section>}
+    {relatedProducts.length>0&&<section className="related-products"><div className="related-products__heading"><p className="eyebrow">{t("product.relatedEyebrow","CONSIDER THESE TOO")}</p><h2>{t("product.relatedTitle","Made to")} <em>{t("product.relatedTitleAccent","belong together.")}</em></h2></div><div className="product-grid">{relatedProducts.map(item=><Link className="product-card" href={"/products/"+item.slug} key={item.id}><div className="product-card-image">{item.images[0]?<img src={item.images[0].url} alt={item.images[0].alt}/>:<span>YOI KIJI</span>}</div><p className="product-card-category">{item.category?.name??"YOI KIJI"}</p><h3>{item.name}</h3><p className="product-card-price">{formatINR(item.pricePaise)}</p></Link>)}</div></section>}
   </main>;
 }
