@@ -12,7 +12,11 @@ type Props = { params: Promise<{ category: string }>; searchParams: Promise<Sear
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category } = await params;
   const item = await getActiveCategoryBySlug(category);
-  return item ? { title: item.seoTitle ?? item.name, description: item.seoDescription ?? item.description ?? undefined } : {};
+  if (!item) return {};
+  const locale = await getLocaleData();
+  const translations = locale.code === "en" ? [] : await prisma.contentTranslation.findMany({ where: { localeCode: locale.code, entityType: "category", entityId: item.id, fieldKey: { in: ["name", "description", "seoTitle", "seoDescription"] } } });
+  const text = new Map(translations.map(entry => [entry.fieldKey, entry.value]));
+  return { title: text.get("seoTitle") ?? text.get("name") ?? item.seoTitle ?? item.name, description: text.get("seoDescription") ?? text.get("description") ?? item.seoDescription ?? item.description ?? undefined };
 }
 
 function asValues(value: string | string[] | undefined): string[] {
