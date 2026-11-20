@@ -4,7 +4,7 @@ import { SearchResults } from "@/components/search-results";
 import { getLocaleData } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Search" };
+export async function generateMetadata() { const locale = await getLocaleData(); return { title: locale.labels["seo.searchTitle"] ?? "Search", description: locale.labels["seo.searchDescription"] ?? "Search YOI KIJI products, collections and materials." }; }
 
 export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const { q = "" } = await searchParams;
