@@ -763,3 +763,17 @@ model CustomerActivity {
   createdAt DateTime @default(now())
   @@index([userId, createdAt])
 }
+
+
+model SocialAccount {
+  id        String   @id @default(cuid())
+  platform  String
+  label     String
+  url       String
+  placement String   @default("footer")
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([isActive, placement, sortOrder])
+}
