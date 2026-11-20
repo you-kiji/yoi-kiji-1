@@ -6,8 +6,9 @@ import { CartCount } from "@/components/cart-count";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 
 type Category = { id: string; name: string; slug: string };
+type Labels = Record<string,string>;
 
-export function SiteHeaderClient({ categories }: { categories: Category[] }) {
+export function SiteHeaderClient({ categories, labels = {} }: { categories: Category[]; labels?: Labels }) {
   const [desktopOpen, setDesktopOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const desktopRef = useRef<HTMLDetailsElement>(null);
@@ -33,6 +34,7 @@ export function SiteHeaderClient({ categories }: { categories: Category[] }) {
     };
   }, []);
 
+  const text = (key: string, fallback: string) => labels[key] ?? fallback;
   const closeAll = () => {
     setDesktopOpen(false);
     setMobileOpen(false);
@@ -46,7 +48,7 @@ export function SiteHeaderClient({ categories }: { categories: Category[] }) {
       </Link>
 
       <nav className="desktop-navigation" aria-label="Main navigation">
-        <Link href="/shop" onClick={closeAll}>Shop</Link>
+        <Link href="/shop" onClick={closeAll}>{text("header.shop","Shop")}</Link>
         <details
           className="header-collections"
           ref={desktopRef}
@@ -59,9 +61,9 @@ export function SiteHeaderClient({ categories }: { categories: Category[] }) {
               event.preventDefault();
               setDesktopOpen(value => !value);
             }}
-          >Categories</summary>
+          >{text("header.categories","Categories")}</summary>
           <div className="header-collections-menu">
-            <Link href="/shop" onClick={closeAll}>Shop all categories</Link>
+            <Link href="/shop" onClick={closeAll}>{text("header.shopAllCategories","Shop all categories")}</Link>
             {categories.map(category => (
               <Link key={category.id} href={`/shop?category=${encodeURIComponent(category.slug)}`} onClick={closeAll}>
                 {category.name}
@@ -69,8 +71,8 @@ export function SiteHeaderClient({ categories }: { categories: Category[] }) {
             ))}
           </div>
         </details>
-        <Link href="/our-story" onClick={closeAll}>Our story</Link>
-        <Link href="/journal" onClick={closeAll}>Journal</Link>
+        <Link href="/our-story" onClick={closeAll}>{text("header.story","Our story")}</Link>
+        <Link href="/journal" onClick={closeAll}>{text("header.journal","Journal")}</Link>
       </nav>
 
       <details
@@ -86,10 +88,11 @@ export function SiteHeaderClient({ categories }: { categories: Category[] }) {
             event.preventDefault();
             setMobileOpen(value => !value);
           }}
-        >{mobileOpen ? "Close" : "Menu"}</summary>
+        >{mobileOpen ? text("header.close","Close") : text("header.menu","Menu")}</summary>
         <nav aria-label="Mobile navigation">
-          <LocaleSwitcher />\n          <Link href="/shop" onClick={closeAll}>Shop all</Link>
-          <p>Categories</p>
+          <LocaleSwitcher />
+          <Link href="/shop" onClick={closeAll}>{text("header.shopAll","Shop all")}</Link>
+          <p>{text("header.categories","Categories")}</p>
           {categories.map(category => (
             <Link key={category.id} href={`/shop?category=${encodeURIComponent(category.slug)}`} onClick={closeAll}>
               {category.name}
@@ -97,15 +100,16 @@ export function SiteHeaderClient({ categories }: { categories: Category[] }) {
           ))}
           <Link href="/our-story" onClick={closeAll}>Our story</Link>
           <Link href="/journal" onClick={closeAll}>Journal</Link>
-          <Link href="/search" onClick={closeAll}>Search</Link>
-          <Link href="/account" onClick={closeAll}>Account</Link>
-          <Link href="/cart" onClick={closeAll}>Bag <CartCount /></Link>
+          <Link href="/search" onClick={closeAll}>{text("header.search","Search")}</Link>
+          <Link href="/account" onClick={closeAll}>{text("header.account","Account")}</Link>
+          <Link href="/cart" onClick={closeAll}>{text("header.bag","Bag")} <CartCount /></Link>
         </nav>
       </details>
 
-      <div className="header-actions">\n        <LocaleSwitcher />
-        <Link href="/search" onClick={closeAll}>Search</Link>
-        <Link href="/account" onClick={closeAll}>Account</Link>
+      <div className="header-actions">
+        <LocaleSwitcher />
+        <Link href="/search" onClick={closeAll}>{text("header.search","Search")}</Link>
+        <Link href="/account" onClick={closeAll}>{text("header.account","Account")}</Link>
         <Link className="bag-link" href="/cart" onClick={closeAll}>Bag <CartCount /></Link>
       </div>
     </header>
