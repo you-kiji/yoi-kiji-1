@@ -15,7 +15,8 @@ function formatPrice(paise: number) {
   return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(paise / 100);
 }
 
-export function AdvancedSearch({ compact = false }: { compact?: boolean }) {
+export function AdvancedSearch({ compact = false, labels = {} }: { compact?: boolean; labels?: Record<string,string> }) {
+  const text = (key: string, fallback: string) => labels[key] ?? fallback;
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResponse | null>(null);
   const [recent, setRecent] = useState<string[]>([]);
@@ -80,7 +81,7 @@ export function AdvancedSearch({ compact = false }: { compact?: boolean }) {
   return (
     <div className={`advanced-search ${compact ? "advanced-search--compact" : ""}`} ref={root}>
       <form role="search" onSubmit={submit} className="advanced-search__form">
-        <label className="advanced-search__label" htmlFor={compact ? "yk-search-compact" : "yk-search-main"}>Search the collection</label>
+        <label className="advanced-search__label" htmlFor={compact ? "yk-search-compact" : "yk-search-main"}>{text("search.label","Search the collection")}</label>
         <div className="advanced-search__control">
           <span aria-hidden="true" className="advanced-search__icon">⌕</span>
           <input
@@ -91,16 +92,16 @@ export function AdvancedSearch({ compact = false }: { compact?: boolean }) {
             onChange={event => { setQuery(event.target.value); setOpen(true); setActive(-1); }}
             onFocus={() => setOpen(true)}
             onKeyDown={onKeyDown}
-            placeholder="Search products, categories, materials or SKU"
+            placeholder={text("search.placeholder","Search products, categories, materials or SKU")}
             autoComplete="off"
             aria-autocomplete="list"
             aria-expanded={open && query.trim().length >= 2}
             aria-controls="yk-search-suggestions"
           />
           {query && <button type="button" className="advanced-search__clear" onClick={() => { setQuery(""); setResults(null); input.current?.focus(); }} aria-label="Clear search">×</button>}
-          <button className="advanced-search__submit" type="submit">Search</button>
+          <button className="advanced-search__submit" type="submit">{text("search.button","Search")}</button>
         </div>
-        <p className="advanced-search__hint">Search by product name, SKU, category, colour, material or product specifications.</p>
+        <p className="advanced-search__hint">{text("search.hint","Search by product name, SKU, category, colour, material or product specifications.")}</p>
       </form>
 
       {open && query.trim().length >= 2 && (
@@ -118,14 +119,14 @@ export function AdvancedSearch({ compact = false }: { compact?: boolean }) {
               <span>Collection</span><strong>{item.name}</strong>
             </Link>
           ))}
-          {!loading && results && !results.products.length && !results.categories.length && <p className="advanced-search__empty">No exact matches. Try a material, colour or a shorter phrase.</p>}
-          <button type="button" className="advanced-search__all" onClick={() => { remember(query); window.location.assign(`/search?q=${encodeURIComponent(query.trim())}`); }}>View all search results</button>
+          {!loading && results && !results.products.length && !results.categories.length && <p className="advanced-search__empty">{text("search.noMatches","No exact matches. Try a material, colour or a shorter phrase.")}</p>}
+          <button type="button" className="advanced-search__all" onClick={() => { remember(query); window.location.assign(`/search?q=${encodeURIComponent(query.trim())}`); }}>{text("search.viewAll","View all search results")}</button>
         </div>
       )}
 
       {open && query.trim().length < 2 && recent.length > 0 && (
         <div className="advanced-search__panel advanced-search__recent">
-          <div className="advanced-search__panel-heading"><span>Recent searches</span><button type="button" onClick={() => { setRecent([]); try { localStorage.removeItem(RECENT_KEY); } catch {} }}>Clear</button></div>
+          <div className="advanced-search__panel-heading"><span>{text("search.recent","Recent searches")}</span><button type="button" onClick={() => { setRecent([]); try { localStorage.removeItem(RECENT_KEY); } catch {} }}>Clear</button></div>
           {recent.map(item => <button type="button" key={item} onClick={() => { setQuery(item); setOpen(true); }}>{item}</button>)}
         </div>
       )}
