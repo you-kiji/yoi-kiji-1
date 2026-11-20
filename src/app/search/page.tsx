@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getActiveProducts } from "@/lib/catalog";
 import { formatINR } from "@/lib/money";
 import { AdvancedSearch } from "@/components/advanced-search";
+import { getLocaleData } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Search" };
@@ -12,6 +13,7 @@ export default async function SearchPage({
   searchParams: Promise<{ q?: string }>;
 }) {
   const { q = "" } = await searchParams;
+  const locale = await getLocaleData();
   const term = q.trim().slice(0, 80);
   const all = term ? await getActiveProducts() : [];
   const products = all.filter((product) =>
@@ -33,7 +35,7 @@ export default async function SearchPage({
         <h1>Search the<br /><em>collections.</em></h1>
         <p>Find the textures, colours and considered details you have in mind.</p>
 
-        <AdvancedSearch compact />     </header>
+        <AdvancedSearch compact labels={locale.labels} />     </header>
 
       {term && (
         <>
