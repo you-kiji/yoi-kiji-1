@@ -30,10 +30,13 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const { slug } = await params;
   const post = await getPost(slug);
   if (!post) return { title: "Story not found", robots: { index: false, follow: false } };
+  const locale = await getLocaleData();
+  const translations = locale.code === "en" ? [] : await prisma.contentTranslation.findMany({ where: { localeCode: locale.code, entityType: "blogPost", entityId: post.id, fieldKey: { in: ["title", "excerpt", "seoTitle", "seoDescription"] } } });
+  const text = new Map(translations.map(item => [item.fieldKey, item.value]));
   const canonical = post.canonicalUrl || "/journal/" + post.slug;
   return {
-    title: post.seoTitle || post.title,
-    description: post.seoDescription || post.excerpt || undefined,
+    title: text.get("seoTitle") || text.get("title") || post.seoTitle || post.title,
+    description: text.get("seoDescription") || text.get("excerpt") || post.seoDescription || post.excerpt || undefined,
     alternates: { canonical },
     openGraph: {
       type: "article",
