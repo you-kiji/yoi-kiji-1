@@ -133,6 +133,52 @@ export default async function HomePage() {
             </section>
           );
         }
+        if (section.sectionType === "spacer") {
+          return <div className="storefront-spacer" aria-hidden="true" key={section.id} />;
+        }
+
+        if (section.sectionType === "image-banner") {
+          const eyebrow = getValue(section, "eyebrow", "");
+          const title = getValue(section, "title", "");
+          const body = getValue(section, "body", "");
+          const imageUrl = section.imageUrl ?? "";
+          const imageAlt = getValue(section, "imageAlt", title || "YOI KIJI editorial banner");
+          const ctaLabel = getValue(section, "ctaLabel", "");
+          const ctaHref = getValue(section, "ctaHref", "");
+          return (
+            <section className="storefront-image-banner" aria-label={imageAlt} key={section.id}
+              style={imageUrl ? { backgroundImage: `linear-gradient(90deg, rgba(8, 25, 13, .68), rgba(8, 25, 13, .12)), url("${imageUrl}")` } : undefined}>
+              <div className="storefront-image-banner__content">
+                {eyebrow && <p className="editorial-eyebrow"><span />{eyebrow}</p>}
+                {title && <h2>{title}</h2>}
+                {body && <p>{body}</p>}
+                {ctaLabel && ctaHref && <a className="editorial-cta" href={ctaHref}>{ctaLabel}</a>}
+              </div>
+            </section>
+          );
+        }
+
+        if (section.sectionType === "image-with-text") {
+          const eyebrow = getValue(section, "eyebrow", "");
+          const title = getValue(section, "title", "");
+          const body = getValue(section, "body", "");
+          const imageUrl = section.imageUrl ?? "";
+          const imageAlt = getValue(section, "imageAlt", title || "YOI KIJI textile story");
+          const ctaLabel = getValue(section, "ctaLabel", "");
+          const ctaHref = getValue(section, "ctaHref", "");
+          return (
+            <section className="editorial-custom-section storefront-image-with-text" key={section.id}>
+              {imageUrl && <div className="editorial-custom-section__image" role="img" aria-label={imageAlt} style={{ backgroundImage: `url("${imageUrl}")` }} />}
+              <div>
+                {eyebrow && <p className="editorial-eyebrow editorial-eyebrow--dark">{eyebrow}</p>}
+                {title && <h2>{title}</h2>}
+                {paragraphs(body).map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+                {ctaLabel && ctaHref && <a className="editorial-text-link" href={ctaHref}>{ctaLabel}</a>}
+              </div>
+            </section>
+          );
+        }
+
         if (key === "hero") {
           const eyebrow = getValue(section, "eyebrow", "A QUIETER KIND OF LUXURY");
           const title = getValue(section, "title", "");
