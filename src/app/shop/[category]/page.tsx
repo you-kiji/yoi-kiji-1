@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getActiveCategories, getActiveCategoryBySlug, getActiveProducts } from "@/lib/catalog";
 import { formatINR } from "@/lib/money";
+import { getLocaleData } from "@/lib/i18n";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 type Props = { params: Promise<{ category: string }>; searchParams: Promise<SearchParams> };
@@ -31,15 +32,27 @@ export default async function CategoryPage({ params, searchParams }: Props) {
     getActiveProducts(category),
   ]);
   if (!item) notFound();
+  const locale = await getLocaleData();
+  const translationTargets = [
+    ...categories.map(category => ({ entityType: "category", entityId: category.id })),
+    ...catalogueProducts.map(product => ({ entityType: "product", entityId: product.id })),
+  ];
+  const translations = locale.code === "en" || !translationTargets.length ? [] : await prisma.contentTranslation.findMany({
+    where: { localeCode: locale.code, OR: translationTargets.map(target => ({ entityType: target.entityType, entityId: target.entityId })) },
+    select: { entityType: true, entityId: true, fieldKey: true, value: true },
+  }).catch(() => []);
+  const localized = new Map(translations.map(entry => [`${entry.entityType}:${entry.entityId}:${entry.fieldKey}`, entry.value]));
+  const displayCategoryName = localized.get(`category:${item.id}:name`) ?? item.name;
+  const displayCategoryDescription = localized.get(`category:${item.id}:description`) ?? item.description;
 
-  const children = categories.filter(c => c.parentId === item.id);
-  const siblings = categories.filter(c => c.parentId === item.parentId && c.id !== item.id);
+  const children = categories.filter(c => c.parentId === item.id).map(c => ({ ...c, name: localized.get(`category:${c.id}:name`) ?? c.name }));
+  const siblings = categories.filter(c => c.parentId === item.parentId && c.id !== item.id).map(c => ({ ...c, name: localized.get(`category:${c.id}:name`) ?? c.name }));
   const ancestors: { name: string; slug: string }[] = [];
   let parentId = item.parentId;
   while (parentId) {
     const parent = categories.find(c => c.id === parentId);
     if (!parent || ancestors.some(a => a.slug === parent.slug)) break;
-    ancestors.unshift({ name: parent.name, slug: parent.slug });
+    ancestors.unshift({ name: localized.get(`category:${parent.id}:name`) ?? parent.name, slug: parent.slug });
     parentId = parent.parentId;
   }
 
@@ -103,7 +116,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
 
   return <main className="commerce-page">
     <div className="commerce-breadcrumb"><Link href="/">Home</Link><span>/</span><Link href="/shop">Shop</Link>{ancestors.map(a=><span key={a.slug}>/ <Link href={`/shop/${a.slug}`}>{a.name}</Link></span>)}<span>/</span> {item.name}</div>
-    <header className="commerce-heading"><p className="eyebrow">YOI KIJI / THE COLLECTION</p><h1>{item.name}<br/><em>for living well.</em></h1>{item.description&&<p>{item.description}</p>}</header>
+    <header className="commerce-heading"><p className="eyebrow">YOI KIJI / THE COLLECTION</p><h1>{displayCategoryName}<br/><em>for living well.</em></h1>{displayCategoryDescription&&<p>{displayCategoryDescription}</p>}</header>
     {children.length > 0 && <section className="category-subcollections"><p className="eyebrow">EXPLORE THIS COLLECTION</p><nav className="category-pills" aria-label={`Browse ${item.name} subcategories`}>{children.map(child=><Link key={child.id} href={`/shop/${child.slug}`}>{child.name}</Link>)}</nav></section>}
     {siblings.length > 0 && <nav className="category-pills" aria-label="Related categories">{siblings.map(c=><Link key={c.id} href={`/shop/${c.slug}`}>{c.name}</Link>)}</nav>}
     <div className="catalogue-toolbar">
@@ -122,6 +135,6 @@ export default async function CategoryPage({ params, searchParams }: Props) {
       </fieldset>)}</div>
       <button className="primary-link" type="submit">Apply filters <span>↗</span></button>
     </form>}
-    {products.length ? <section className="product-grid">{products.map(p=><Link className="product-card" href={`/products/${p.slug}`} key={p.id}><div className="product-card-image">{p.images[0] ? <img src={p.images[0].url} alt={p.images[0].alt}/> : <span>YOI KIJI</span>}</div><p className="product-card-category">{item.name}</p><h2>{p.name}</h2><p className="product-card-price">{formatINR(p.pricePaise)}</p></Link>)}</section> : <section className="catalogue-empty"><span className="empty-mark">✳</span><h2>{catalogueProducts.length ? "No pieces match these filters." : "Something thoughtful is on its way."}</h2><p>{catalogueProducts.length ? "Try removing one or more filters to see more of this collection." : `We are preparing the ${item.name.toLowerCase()} collection. In the meantime, explore the other collections.`}</p><Link className="primary-link" href={catalogueProducts.length ? `/shop/${item.slug}` : "/shop"}>{catalogueProducts.length ? "Clear filters" : "Explore all collections"} <span>↗</span></Link></section>}
+    {products.length ? <section className="product-grid">{products.map(p=><Link className="product-card" href={`/products/${p.slug}`} key={p.id}><div className="product-card-image">{p.images[0] ? <img src={p.images[0].url} alt={p.images[0].alt}/> : <span>YOI KIJI</span>}</div><p className="product-card-category">{displayCategoryName}</p><h2>{localized.get(`product:${p.id}:name`) ?? p.name}</h2><p className="product-card-price">{formatINR(p.pricePaise)}</p></Link>)}</section> : <section className="catalogue-empty"><span className="empty-mark">✳</span><h2>{catalogueProducts.length ? "No pieces match these filters." : "Something thoughtful is on its way."}</h2><p>{catalogueProducts.length ? "Try removing one or more filters to see more of this collection." : `We are preparing the ${item.name.toLowerCase()} collection. In the meantime, explore the other collections.`}</p><Link className="primary-link" href={catalogueProducts.length ? `/shop/${item.slug}` : "/shop"}>{catalogueProducts.length ? "Clear filters" : "Explore all collections"} <span>↗</span></Link></section>}
   </main>;
 }
