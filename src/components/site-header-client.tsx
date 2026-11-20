@@ -108,7 +108,7 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
       </details>
 
       <div className="header-actions">
-        <LocaleSwitcher />
+        <LocaleSwitcher locales={availableLocales} currentCode={currentLocale} />
         <Link href="/search" onClick={closeAll}>{text("header.search","Search")}</Link>
         <Link href="/account" onClick={closeAll}>{text("header.account","Account")}</Link>
         <Link className="bag-link" href="/cart" onClick={closeAll}>{text("header.bag","Bag")} <CartCount /></Link>
