@@ -39,7 +39,7 @@ export default async function AdminProducts() {
         type: link.attribute.type, unit: link.attribute.unit, options: link.attribute.options,
       })) ?? [];
       return <article key={product.id}>
-        <div><h2>{product.name}</h2><p>{product.sku} · {product.category?.name ?? "Uncategorised"}{product.productType ? ` · ${product.productType.name}` : ""}</p></div>
+        <div><h2><Link href={`/admin/products/${product.id}`}>{product.name}</Link></h2><p>{product.sku} · {product.category?.name ?? "Uncategorised"}{product.productType ? ` · ${product.productType.name}` : ""}</p><Link className="admin-product-open-link" href={`/admin/products/${product.id}`}>Open product details</Link></div>
         <div><strong>{formatINR(product.pricePaise)}</strong><p>{product.inventoryQty} in stock · {product.variants.length} SKU variant(s)</p></div>
         <div>
           <span className={product.isActive ? "active-state" : "inactive-state"}>{product.isActive ? "Published" : "Draft"}</span>
