@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 type SearchableProduct = {
-  id: string; name: string; slug: string; sku: string; description: string;
+  id: string; name: string; slug: string; sku: string; description: string; translatedName?: string; translatedDescription?: string;
   material: string | null; color: string | null; seoKeywords: string[];
   pricePaise: number; category: { name: string } | null;
   images: { url: string; alt: string }[];
@@ -33,13 +33,13 @@ function editDistance(a: string, b: string): number {
 
 function scoreProduct(product: SearchableProduct, query: string) {
   const fields = [
-    { value: product.name, weight: 12 },
+    { value: product.translatedName ? product.name + " " + product.translatedName : product.name, weight: 12 },
     { value: product.sku, weight: 11 },
     { value: product.category?.name ?? "", weight: 8 },
     { value: product.material ?? "", weight: 6 },
     { value: product.color ?? "", weight: 5 },
     { value: product.seoKeywords.join(" "), weight: 5 },
-    { value: product.description, weight: 2 },
+    { value: product.translatedDescription ? product.description + " " + product.translatedDescription : product.description, weight: 2 },
     { value: product.attributeValues.map(item => `${item.attribute.name} ${item.attribute.key} ${JSON.stringify(item.value)}`).join(" "), weight: 4 },
   ];
   const terms = query.split(" ").filter(Boolean);
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
       where: { isActive: true },
       select: {
         id: true, name: true, slug: true, sku: true, description: true, material: true, color: true,
-        seoKeywords: true, pricePaise: true, category: { select: { name: true } },
+        seoKeywords: true, pricePaise: true, category: { select: { id: true, name: true } },
         images: { where: { variantId: null }, orderBy: [{ isPrimary: "desc" }, { position: "asc" }], take: 1, select: { url: true, alt: true } },
         attributeValues: { select: { value: true, attribute: { select: { name: true, key: true } } } },
       },
@@ -81,12 +81,29 @@ export async function GET(request: NextRequest) {
     prisma.category.findMany({ where: { isActive: true }, select: { id: true, name: true, slug: true }, orderBy: { sortOrder: "asc" }, take: 100 }),
   ]);
 
-  const ranked = products
+  const localeCode = request.cookies.get("yk-locale")?.value ?? "en";
+  const translationTargets = [
+    ...products.map(product => ({ entityType: "product", entityId: product.id })),
+    ...categories.map(category => ({ entityType: "category", entityId: category.id })),
+  ];
+  const translations = localeCode === "en" || !translationTargets.length ? [] : await prisma.contentTranslation.findMany({
+    where: { localeCode, OR: translationTargets.map(target => ({ entityType: target.entityType, entityId: target.entityId })) },
+    select: { entityType: true, entityId: true, fieldKey: true, value: true },
+  }).catch(() => []);
+  const translated = new Map(translations.map(item => [`${item.entityType}:${item.entityId}:${item.fieldKey}`, item.value]));
+  const localizedProducts = products.map(product => ({
+    ...product,
+    translatedName: translated.get(`product:${product.id}:name`),
+    translatedDescription: translated.get(`product:${product.id}:description`),
+    category: product.category ? { ...product.category, name: translated.get(`category:${product.category.id}:name`) ?? product.category.name } : null,
+  }));
+
+  const ranked = localizedProducts
     .map(product => ({ product, score: scoreProduct(product, query) }))
     .filter(item => item.score > 0)
     .sort((a, b) => b.score - a.score || a.product.name.localeCompare(b.product.name))
     .slice(0, 8)
-    .map(({ product, score }) => ({ id: product.id, name: product.name, slug: product.slug, sku: product.sku, category: product.category?.name ?? "YOI KIJI", pricePaise: product.pricePaise, image: product.images[0] ?? null, score }));
+    .map(({ product, score }) => ({ id: product.id, name: product.translatedName ?? product.name, slug: product.slug, sku: product.sku, category: product.category?.name ?? "YOI KIJI", pricePaise: product.pricePaise, image: product.images[0] ?? null, score }));
 
   const categoryMatches = categories
     .map(category => ({ ...category, score: scoreProduct({ id: category.id, name: category.name, slug: category.slug, sku: "", description: "", material: null, color: null, seoKeywords: [], pricePaise: 0, category: null, images: [], attributeValues: [] }, query) }))
