@@ -14,6 +14,27 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
   const [mobileOpen, setMobileOpen] = useState(false);
   const desktopRef = useRef<HTMLDetailsElement>(null);
   const mobileRef = useRef<HTMLDetailsElement>(null);
+  const [headerHidden, setHeaderHidden] = useState(false);
+
+  useEffect(() => {
+    let previousY = window.scrollY;
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(() => {
+        const currentY = window.scrollY;
+        const delta = currentY - previousY;
+        if (currentY < 72) setHeaderHidden(false);
+        else if (delta > 5) setHeaderHidden(true);
+        else if (delta < -5) setHeaderHidden(false);
+        previousY = currentY;
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     const closeMenus = (event: PointerEvent) => {
@@ -42,7 +63,7 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
   };
 
   return (
-    <header className="site-header">
+    <header className={"site-header" + (headerHidden ? " site-header--hidden" : "")}>
       <Link className="wordmark" href="/" aria-label="YOI KIJI home" onClick={closeAll}>
         <span className="wordmark-main">YOI KIJI</span>
         <span className="wordmark-sub">THE ART OF TEXTILE LIVING</span>
