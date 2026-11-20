@@ -2,7 +2,8 @@
 
 import { FormEvent, useEffect, useState } from "react";
 
-type LegalForm = { slug: string; title: string; content: string; status: "DRAFT"|"PUBLISHED"|"ARCHIVED"; seoTitle: string; seoDescription: string };\ntype Page = { id: string; slug: string; title: string; content: string; status: "DRAFT"|"PUBLISHED"|"ARCHIVED"; seoTitle: string|null; seoDescription: string|null; updatedAt: string | Date; _count?: { revisions: number } };
+type LegalForm = { slug: string; title: string; content: string; status: "DRAFT"|"PUBLISHED"|"ARCHIVED"; seoTitle: string; seoDescription: string };
+type Page = { id: string; slug: string; title: string; content: string; status: "DRAFT"|"PUBLISHED"|"ARCHIVED"; seoTitle: string|null; seoDescription: string|null; updatedAt: string | Date; _count?: { revisions: number } };
 const blank: LegalForm = { slug:"", title:"", content:"", status:"DRAFT", seoTitle:"", seoDescription:"" };
 
 export function AdminLegalManager({ initialPages }: { initialPages: Page[] }) {
