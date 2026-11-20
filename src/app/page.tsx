@@ -82,6 +82,24 @@ export default async function HomePage() {
   return (
     <main className="home-redesign">
       {homepageItems.map(({ key, section }) => {
+        if (section.sectionType === "slideshow") {
+          const slides = Array.isArray(section.slides) ? section.slides as Array<{imageUrl:string;imageAlt?:string;eyebrow?:string;title?:string;body?:string;ctaLabel?:string;ctaHref?:string}> : [];
+          if (!slides.length) return null;
+          return (
+            <section className="storefront-slideshow" aria-label={section.title || "Featured stories"} key={section.id}>
+              {slides.map((slide,index)=><article className="storefront-slideshow__slide" key={index}>
+                {slide.imageUrl && <div className="storefront-slideshow__image" role="img" aria-label={slide.imageAlt || slide.title || "YOI KIJI collection"} style={{backgroundImage:"url(\\""+slide.imageUrl+"\\")"}}/>}
+                <div className="storefront-slideshow__shade"/>
+                <div className="storefront-slideshow__content">
+                  {slide.eyebrow && <p className="editorial-eyebrow"><span/>{slide.eyebrow}</p>}
+                  {slide.title && <h2>{slide.title}</h2>}
+                  {slide.body && <p>{slide.body}</p>}
+                  {slide.ctaLabel && slide.ctaHref && <a className="editorial-cta" href={slide.ctaHref}>{slide.ctaLabel}</a>}
+                </div>
+              </article>)}
+            </section>
+          );
+        }
         if (key === "hero") {
           const eyebrow = getValue(section, "eyebrow", "A QUIETER KIND OF LUXURY");
           const title = getValue(section, "title", "");
