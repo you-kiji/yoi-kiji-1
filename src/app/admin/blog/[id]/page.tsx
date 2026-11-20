@@ -53,7 +53,6 @@ export default async function AdminBlogPostDetailPage({ params }: { params: Prom
               <div><dt>Search indexing</dt><dd>{post.noIndex ? "No index" : "Indexable"}</dd></div>
               <div><dt>Canonical URL</dt><dd>{post.canonicalUrl ?? "Default article URL"}</dd></div>
             </dl>
-            <Link className="admin-product-open-link" href={"/admin/blog?edit=" + post.id}>Open editor in blog studio</Link>
           </section>
           <section className="admin-detail-card">
             <div className="admin-detail-card-heading"><div><p className="eyebrow">TAXONOMY</p><h2>Categories & tags</h2></div></div>
