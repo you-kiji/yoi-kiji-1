@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Slide = { imageUrl:string; imageAlt:string; eyebrow:string; title:string; body:string; ctaLabel:string; ctaHref:string };
 type Section = { id:string; key:string; sectionType:string; title:string|null; position:number; isActive:boolean; slides:Slide[]|null };
@@ -26,7 +26,7 @@ export function StorefrontThemeBuilder(){
     setSections(data.sections.map((s:Section)=>({...s,slides:Array.isArray(s.slides)?s.slides:[]})));
     setMessage("");
   }
-  useState(()=>{void refresh().catch(e=>setMessage(e.message));});
+  useEffect(()=>{void refresh().catch(e=>setMessage(e.message));},[]);
   function updateSlide(index:number,patch:Partial<Slide>){
     setSlides(current=>current.map((slide,i)=>i===index?{...slide,...patch}:slide));
   }
