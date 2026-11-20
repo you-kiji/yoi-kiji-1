@@ -9,7 +9,7 @@ export default async function HomePage() {
   const locale = await getLocaleData();
   const localeCode = locale.code;
   const [sections, collections, categoryRecords] = await Promise.all([
-    prisma.homepageSection.findMany({ where: { isActive: true }, orderBy: [{ position: "asc" }, { key: "asc" }] }),
+    prisma.homepageSection.findMany({ where: { isActive: true, key: { not: "announcement" } }, orderBy: [{ position: "asc" }, { key: "asc" }] }),
     prisma.storeCollection.findMany({ where: { isActive: true }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] }),
     getActiveCategories(),
   ]);
