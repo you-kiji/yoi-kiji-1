@@ -1,24 +1,27 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { cookies } from "next/headers";
+import { getLocaleData } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
 type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const page = await prisma.legalPage.findFirst({ where: { slug, status: "PUBLISHED" }, select: { title: true, seoTitle: true, seoDescription: true } });
-  return page ? { title: page.seoTitle ?? page.title, description: page.seoDescription ?? undefined } : {};
+  const page = await prisma.legalPage.findFirst({ where: { slug, status: "PUBLISHED" }, select: { id: true, title: true, seoTitle: true, seoDescription: true } });
+  if (!page) return {};
+  const locale = await getLocaleData();
+  const translations = locale.code === "en" ? [] : await prisma.contentTranslation.findMany({ where: { localeCode: locale.code, entityType: "legalPage", entityId: page.id, fieldKey: { in: ["title", "seoTitle", "seoDescription"] } } });
+  const text = new Map(translations.map(item => [item.fieldKey, item.value]));
+  return { title: text.get("seoTitle") ?? text.get("title") ?? page.seoTitle ?? page.title, description: text.get("seoDescription") ?? page.seoDescription ?? undefined };
 }
 
 export default async function LegalPageView({ params }: Props) {
   const { slug } = await params;
   const page = await prisma.legalPage.findFirst({ where: { slug, status: "PUBLISHED" } });
   if (!page) notFound();
-  const requestedLocale = (await cookies()).get("yk-locale")?.value ?? "en";
-  const locale = await prisma.locale.findFirst({ where: { code: requestedLocale, isEnabled: true }, select: { code: true } }).catch(() => null);
-  const translations = locale?.code && locale.code !== "en" ? await prisma.contentTranslation.findMany({ where: { localeCode: locale.code, entityType: "legalPage", entityId: page.id } }) : [];
+  const locale = await getLocaleData();
+  const translations = locale.code !== "en" ? await prisma.contentTranslation.findMany({ where: { localeCode: locale.code, entityType: "legalPage", entityId: page.id } }) : [];
   const translated = new Map(translations.map(item => [item.fieldKey, item.value]));
   const title = translated.get("title") ?? page.title;
   const content = translated.get("content") ?? page.content;
