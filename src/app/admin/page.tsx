@@ -8,10 +8,10 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "YOI KIJI · Operations" };
 
 const navigation = [
-  { title: "Catalogue", description: "Products, collections and product specifications", links: [{ label: "Products", href: "/admin/products" }, { label: "Categories", href: "/admin/categories" }, { label: "Product types & attributes", href: "/admin/product-types" }, { label: "Media library", href: "/admin/media" }] },
-  { title: "Fulfilment", description: "Orders, stock movement and fulfilment operations", links: [{ label: "Orders", href: "/admin/orders" }, { label: "Inventory ledger", href: "/admin/inventory" }, { label: "Back-in-stock alerts", href: "/admin/stock-alerts" }] },
-  { title: "Storefront", description: "Homepage storytelling and product merchandising", links: [{ label: "Content studio", href: "/admin/storefront" }, { label: "Categories", href: "/admin/categories" }, { label: "Products", href: "/admin/products" }] },
-  { title: "Growth", description: "Promotions and customer relationships", links: [{ label: "Promotions & coupons", href: "/admin/promotions" }, { label: "Customer intelligence", href: "/admin/customers" }, { label: "Reviews & social proof", href: "/admin/reviews" }, { label: "Blog studio", href: "/admin/blog" }] },
+  { title: "Catalogue", description: "Products, categories, product specifications and media.", links: [{ label: "Products", href: "/admin/products", detail: "Manage listings, pricing and availability" }, { label: "Categories", href: "/admin/categories", detail: "Organise the store catalogue" }, { label: "Product types & attributes", href: "/admin/product-types", detail: "Maintain product specifications" }, { label: "Media library", href: "/admin/media", detail: "Organise images and creative assets" }] },
+  { title: "Fulfilment", description: "Orders, stock movement and fulfilment operations.", links: [{ label: "Orders", href: "/admin/orders", detail: "Review and process customer orders" }, { label: "Inventory ledger", href: "/admin/inventory", detail: "Track stock and adjustments" }, { label: "Back-in-stock alerts", href: "/admin/stock-alerts", detail: "Review availability requests" }] },
+  { title: "Storefront", description: "Homepage storytelling and product merchandising.", links: [{ label: "Content studio", href: "/admin/storefront", detail: "Manage homepage sections and collections" }, { label: "SEO audit & metadata", href: "/admin/seo", detail: "Improve catalogue discoverability" }] },
+  { title: "Growth", description: "Promotions, customer relationships and editorial content.", links: [{ label: "Promotions & coupons", href: "/admin/promotions", detail: "Create and manage offers" }, { label: "Customer intelligence", href: "/admin/customers", detail: "Understand customer activity" }, { label: "Reviews & social proof", href: "/admin/reviews", detail: "Moderate product feedback" }, { label: "Blog studio", href: "/admin/blog", detail: "Publish editorial content" }, { label: "Sales reports & exports", href: "/admin/reports", detail: "Review store performance" }] },
 ];
 
 export default async function AdminPage() {
@@ -38,51 +38,66 @@ export default async function AdminPage() {
     { label: "Published products", value: String(activeProducts), note: `${products} products in catalogue` },
   ];
 
-  return <main className="commerce-page admin-page">
-    <div className="commerce-breadcrumb"><Link href="/">YOI KIJI</Link><span>/</span> Operations</div>
-    <header className="commerce-heading">
-      <p className="eyebrow">YOI KIJI / STORE OPERATIONS</p>
-      <h1>Good work,<br/><em>well managed.</em></h1>
-      <p>One clear view of your store, its customers and the work that needs attention.</p>
-      <p>Signed in as {admin.email} · {admin.role}</p>
-    </header>
+  return (
+    <main className="commerce-page admin-page admin-workspace">
+      <div className="commerce-breadcrumb"><Link href="/">YOI KIJI</Link><span>/</span> Operations</div>
+      <header className="admin-welcome">
+        <div>
+          <p className="eyebrow">YOI KIJI / STORE OPERATIONS</p>
+          <h1>Your store,<br /><em>at a glance.</em></h1>
+          <p>A clear workspace for the catalogue, customers and daily operations.</p>
+        </div>
+        <div className="admin-account-chip"><span className="admin-account-dot" /> Signed in as <strong>{admin.email}</strong></div>
+      </header>
 
-    <section className="admin-stats" aria-label="Store performance">
-      {metrics.map(metric => <article key={metric.label}><span>{metric.label}</span><strong>{metric.value}</strong><small>{metric.note}</small></article>)}
-    </section>
+      <section className="admin-metric-grid" aria-label="Store performance">
+        {metrics.map((metric, index) => (
+          <article className="admin-metric-card" key={metric.label}>
+            <span className="admin-metric-index">0{index + 1}</span>
+            <p>{metric.label}</p>
+            <strong>{metric.value}</strong>
+            <small>{metric.note}</small>
+          </article>
+        ))}
+      </section>
 
-    <section className="admin-control-alerts" aria-label="Items requiring attention">
-      <div className="admin-section-heading"><h2>Needs attention</h2><span>Live operational signals</span></div>
-      <div className="admin-stats">
-        <article><span>LOW STOCK</span><strong>{lowStock}</strong><small>Published products with 5 or fewer units</small></article>
-        <article><span>FAILED PAYMENTS</span><strong>{failedPayments}</strong><small>Payment attempts requiring review</small></article>
-        <article><span>PENDING ORDERS</span><strong>{pendingOrders}</strong><small>Orders not yet confirmed</small></article>
-      </div>
-      {stockAlerts.length > 0 && <div className="inventory-list">{stockAlerts.map(product => <article key={product.id}><div><strong>{product.name}</strong><p>{product.sku}</p></div><strong className="stock-negative">{product.inventoryQty} left</strong></article>)}</div>}
-      <p><Link className="text-link" href="/admin/inventory">Review inventory ledger ↗</Link></p>
-    </section>
+      <section className="admin-attention">
+        <div className="admin-workspace-heading"><div><p className="eyebrow">DAILY OPERATIONS</p><h2>Needs attention</h2></div><span>Live operational signals</span></div>
+        <div className="admin-attention-grid">
+          <article><span>Low stock</span><strong>{lowStock}</strong><small>Published products with 5 or fewer units</small></article>
+          <article><span>Failed payments</span><strong>{failedPayments}</strong><small>Payment attempts requiring review</small></article>
+          <article><span>Pending orders</span><strong>{pendingOrders}</strong><small>Orders awaiting confirmation</small></article>
+        </div>
+        {stockAlerts.length > 0 && <div className="admin-stock-list">{stockAlerts.map(product => <article key={product.id}><div><strong>{product.name}</strong><small>{product.sku}</small></div><strong>{product.inventoryQty} left</strong></article>)}</div>}
+        <Link className="admin-text-action" href="/admin/inventory">Open inventory ledger</Link>
+      </section>
 
-    <section className="admin-control-navigation">
-      <div className="admin-section-heading"><h2>Manage your store</h2><span>Administration workspace</span></div>
-      <div className="admin-links">
-        {navigation.map(group => <section key={group.title}><h3>{group.title}</h3><p>{group.description}</p>{group.links.map(link => <Link className="text-link" href={link.href} key={link.href}>{link.label} <span>↗</span></Link>)}</section>)}
-      </div>
-    </section>
+      <section className="admin-management">
+        <div className="admin-workspace-heading"><div><p className="eyebrow">WORKSPACE</p><h2>Manage your store</h2></div><span>Choose an area to continue</span></div>
+        <div className="admin-module-grid">
+          {navigation.map((group, index) => (
+            <section className="admin-module-card" key={group.title}>
+              <span className="admin-module-number">0{index + 1}</span>
+              <h3>{group.title}</h3>
+              <p>{group.description}</p>
+              <div className="admin-module-links">
+                {group.links.map(item => <Link href={item.href} key={item.href}><span><strong>{item.label}</strong><small>{item.detail}</small></span><span className="admin-link-indicator" aria-hidden="true" /></Link>)}
+              </div>
+            </section>
+          ))}
+        </div>
+      </section>
 
-    <section className="admin-recent-orders">
-      <div className="admin-section-heading"><h2>Recent orders</h2><Link href="/admin/orders">View all orders ↗</Link></div>
-      <div className="orders-list">{recentOrders.map(order => <article className="order-card" key={order.id}>
-        <div><p className="order-number">{order.orderNumber}</p><p>{order.user?.name ?? order.user?.email ?? order.guestName ?? order.guestEmail ?? "Guest customer"}</p><small>{new Intl.DateTimeFormat("en-IN", { dateStyle: "medium" }).format(order.createdAt)}</small></div>
-        <div><strong>{formatINR(order.totalPaise)}</strong><p>{order.items.length} item(s)</p></div>
-        <span className="order-status">{order.status.toLowerCase()}</span>
-      </article>)}</div>
-    </section>
-    <section className="admin-control-navigation admin-insights-navigation">
-      <div className="admin-section-heading"><h2>Insights & optimisation</h2><span>Performance and discoverability</span></div>
-      <div className="admin-links">
-        <section><h3>Business intelligence</h3><p>Revenue trends, best sellers and downloadable reports.</p><Link className="text-link" href="/admin/reports">Sales reports & exports <span>↗</span></Link></section>
-        <section><h3>Search visibility</h3><p>Find missing product metadata and improve catalogue discoverability.</p><Link className="text-link" href="/admin/seo">SEO audit & metadata <span>↗</span></Link></section>
-      </div>
-    </section>
-  </main>;
+      <section className="admin-recent-orders admin-recent-orders-refined">
+        <div className="admin-workspace-heading"><div><p className="eyebrow">LATEST ACTIVITY</p><h2>Recent orders</h2></div><Link className="admin-text-action" href="/admin/orders">View all orders</Link></div>
+        <div className="admin-recent-list">{recentOrders.map(order => (
+          <article key={order.id}>
+            <div><strong>{order.orderNumber}</strong><p>{order.user?.name ?? order.user?.email ?? order.guestName ?? order.guestEmail ?? "Guest customer"}</p><small>{new Intl.DateTimeFormat("en-IN", { dateStyle: "medium" }).format(order.createdAt)}</small></div>
+            <div><strong>{formatINR(order.totalPaise)}</strong><small>{order.items.length} item(s)</small></div>
+            <span className="admin-order-status">{order.status.toLowerCase()}</span>
+          </article>
+        ))}</div>
+      </section>
+    </main>
+  );
 }
