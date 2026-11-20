@@ -21,7 +21,7 @@ function formatPrice(paise: number) {
   return "₹" + (paise / 100).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-export function CartView() {
+export function CartView({ labels = {} }: { labels?: Record<string,string> }) {\n  const t = (key: string, fallback: string) => labels[key] ?? fallback;
   const [cart, setCart] = useState<Line[]>([]);
   const [lines, setLines] = useState<Quoted[]>([]);
   const [error, setError] = useState("");
@@ -103,22 +103,22 @@ export function CartView() {
   const subtotal = lines.reduce((sum, line) => sum + line.lineTotalPaise, 0);
 
   return (
-    <section className="cart-layout" aria-label="Your shopping bag">
-      {loading && <p className="cart-loading" role="status">Preparing your bag…</p>}
+    <section className="cart-layout" aria-label={t("cart.aria","Your shopping bag")}>
+      {loading && <p className="cart-loading" role="status">{t("cart.loading","Preparing your bag…")}</p>}
 
       {error && (
         <div className="cart-error-state" role="alert">
           <p>{error}</p>
-          <button type="button" onClick={clearSavedBag}>Clear saved bag</button>
+          <button type="button" onClick={clearSavedBag}>{t("cart.clearSaved","Clear saved bag")}</button>
         </div>
       )}
 
       {!loading && !error && lines.length === 0 && (
         <div className="catalogue-empty cart-empty-state">
-          <p className="eyebrow">YOUR BAG, YOUR PACE</p>
-          <h2>Your bag is waiting.</h2>
-          <p>Explore the collections and find something that feels like home.</p>
-          <Link className="primary-link" href="/shop">Explore collections</Link>
+          <p className="eyebrow">{t("cart.eyebrow","YOUR BAG, YOUR PACE")}</p>
+          <h2>{t("cart.emptyTitle","Your bag is waiting.")}</h2>
+          <p>{t("cart.emptyHint","Explore the collections and find something that feels like home.")}</p>
+          <Link className="primary-link" href="/shop">{t("cart.explore","Explore collections")}</Link>
         </div>
       )}
 
@@ -136,14 +136,14 @@ export function CartView() {
             <div className="cart-line-info">
               <div className="cart-line-heading">
                 <div>
-                  <p className="cart-line-category">{line.variantLabel ?? "Home textile"}</p>
+                  <p className="cart-line-category">{line.variantLabel ?? t("cart.homeTextile","Home textile")}</p>
                   <h2>{line.name}</h2>
-                  <p className="cart-line-sku">Item code: {line.sku}</p>
+                  <p className="cart-line-sku">{t("cart.itemCode","Item code")}: {line.sku}</p>
                 </div>
                 <strong className="cart-line-total">{formatPrice(line.lineTotalPaise)}</strong>
               </div>
 
-              <p className="cart-unit-price">{formatPrice(line.unitPricePaise)} each</p>
+              <p className="cart-unit-price">{formatPrice(line.unitPricePaise)} {t("cart.each","each")}</p>
 
               <div className="quantity-control" aria-label={"Quantity for " + line.name}>
                 <button
@@ -185,7 +185,7 @@ export function CartView() {
 
               {line.availableQty < line.quantity && (
                 <p className="cart-stock-warning" role="alert">
-                  Only {line.availableQty} currently available. Update the quantity to continue.
+                  {t("cart.stockWarning","Only " + line.availableQty + " currently available. Update the quantity to continue.")}
                 </p>
               )}
             </div>
@@ -195,9 +195,9 @@ export function CartView() {
 
       {!loading && !error && lines.length > 0 && (
         <aside className="cart-summary">
-          <p><span>Subtotal</span><strong>{formatPrice(subtotal)}</strong></p>
-          <small>Shipping and applicable taxes are confirmed at checkout.</small>
-          <Link className="primary-link" href="/checkout">Continue to checkout</Link>
+          <p><span>{t("cart.subtotal","Subtotal")}</span><strong>{formatPrice(subtotal)}</strong></p>
+          <small>{t("cart.shippingNote","Shipping and applicable taxes are confirmed at checkout.")}</small>
+          <Link className="primary-link" href="/checkout">{t("cart.checkout","Continue to checkout")}</Link>
         </aside>
       )}
     </section>
