@@ -74,16 +74,31 @@ export async function GET(request: NextRequest) {
   }
   if (query.length < 2) return NextResponse.json({ query, products: [], categories: [], suggestions: [] }, { headers: { "Cache-Control": "private, no-store" } });
 
+  // Narrow candidates in PostgreSQL before loading related images, attributes and translations.
+  // The previous implementation hydrated up to 1,500 products for every keystroke.
+  const terms = query.split(" ").filter(Boolean).slice(0, 6);
+  const candidateWhere = {
+    isActive: true,
+    AND: terms.map(term => ({
+      OR: [
+        { name: { contains: term, mode: "insensitive" as const } },
+        { sku: { contains: term, mode: "insensitive" as const } },
+        { description: { contains: term, mode: "insensitive" as const } },
+        { material: { contains: term, mode: "insensitive" as const } },
+        { color: { contains: term, mode: "insensitive" as const } },
+      ],
+    })),
+  };
   const [products, categories] = await Promise.all([
     prisma.product.findMany({
-      where: { isActive: true },
+      where: candidateWhere,
       select: {
         id: true, name: true, slug: true, sku: true, description: true, material: true, color: true,
         seoKeywords: true, pricePaise: true, category: { select: { id: true, name: true } },
         images: { where: { variantId: null }, orderBy: [{ isPrimary: "desc" }, { position: "asc" }], take: 1, select: { url: true, alt: true } },
         attributeValues: { select: { value: true, attribute: { select: { id: true, name: true, key: true } } } },
       },
-      take: 1500,
+      take: 250,
     }) as Promise<SearchableProduct[]>,
     prisma.category.findMany({ where: { isActive: true }, select: { id: true, name: true, slug: true }, orderBy: { sortOrder: "asc" }, take: 100 }),
   ]);
