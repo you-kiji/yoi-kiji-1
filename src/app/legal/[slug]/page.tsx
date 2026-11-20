@@ -19,6 +19,6 @@ export default async function LegalPageView({ params }: Props) {
   return <main className="commerce-page legal-page">
     <div className="commerce-breadcrumb"><a href="/">Home</a><span>/</span> Legal</div>
     <header className="commerce-heading"><p className="eyebrow">YOI KIJI / POLICIES</p><h1>{title}</h1><p>Last updated {new Intl.DateTimeFormat("en-IN",{dateStyle:"long"}).format(page.updatedAt)}</p></header>
-    <article className="legal-page-content">{page.content.split(/\n{2,}/).map((paragraph,index)=><p key={index}>{paragraph.split("\n").map((line,lineIndex)=><span key={lineIndex}>{line}{lineIndex<paragraph.split("\n").length-1?<br/>:null}</span>)}</p>)}</article>
+    <article className="legal-page-content">{content.split(/\n{2,}/).map((paragraph,index)=><p key={index}>{paragraph.split("\n").map((line,lineIndex)=><span key={lineIndex}>{line}{lineIndex<paragraph.split("\n").length-1?<br/>:null}</span>)}</p>)}</article>
   </main>;
 }
