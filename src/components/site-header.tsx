@@ -17,7 +17,7 @@ export async function SiteHeader() {
     // Keep navigation available when catalogue data is temporarily unavailable.
   }
   const roots = (categories.length ? categories : fallbackCategories)
-    .filter(category => category.parentId === null && category.showInMenu)
+    .filter(category => category.showInMenu)
     .map(({ id, name, slug }) => ({ id, name, slug }));
 
   return <SiteHeaderClient categories={roots} />;
