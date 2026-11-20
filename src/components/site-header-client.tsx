@@ -7,8 +7,9 @@ import { LocaleSwitcher } from "@/components/locale-switcher";
 
 type Category = { id: string; name: string; slug: string };
 type Labels = Record<string,string>;
+type Locale = { code:string; name:string; nativeName:string; isDefault:boolean; direction:string };
 
-export function SiteHeaderClient({ categories, labels = {} }: { categories: Category[]; labels?: Labels }) {
+export function SiteHeaderClient({ categories, labels = {}, availableLocales = [], currentLocale = "en" }: { categories: Category[]; labels?: Labels; availableLocales?: Locale[]; currentLocale?: string }) {
   const [desktopOpen, setDesktopOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const desktopRef = useRef<HTMLDetailsElement>(null);
@@ -90,7 +91,7 @@ export function SiteHeaderClient({ categories, labels = {} }: { categories: Cate
           }}
         >{mobileOpen ? text("header.close","Close") : text("header.menu","Menu")}</summary>
         <nav aria-label="Mobile navigation">
-          <LocaleSwitcher />
+          <LocaleSwitcher locales={availableLocales} currentCode={currentLocale} />
           <Link href="/shop" onClick={closeAll}>{text("header.shopAll","Shop all")}</Link>
           <p>{text("header.categories","Categories")}</p>
           {categories.map(category => (
