@@ -131,3 +131,33 @@ JOIN (VALUES
   ('kitchen-linen','name','キッチンリネン'),('kitchen-linen','description','暮らしの中心に寄り添う、細やかな心づかい。')
 ) AS field(category_slug, field_key, translated_value) ON field.category_slug = "Category"."slug"
 ON CONFLICT ("localeCode","entityType","entityId","fieldKey") DO NOTHING;
+
+-- Storefront interface dictionary (Japanese). Administrators can extend or override any key from Languages & translations.
+INSERT INTO "ContentTranslation" ("id","localeCode","entityType","entityId","fieldKey","value","createdAt","updatedAt")
+VALUES
+('tr_ja_ui_header_shop','ja','ui','storefront','header.shop','ショップ',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_header_categories','ja','ui','storefront','header.categories','カテゴリー',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_header_shopall','ja','ui','storefront','header.shopAll','すべての商品',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_header_shopallcats','ja','ui','storefront','header.shopAllCategories','すべてのカテゴリー',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_header_story','ja','ui','storefront','header.story','私たちについて',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_header_journal','ja','ui','storefront','header.journal','ジャーナル',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_header_search','ja','ui','storefront','header.search','検索',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_header_account','ja','ui','storefront','header.account','アカウント',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_header_bag','ja','ui','storefront','header.bag','バッグ',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_header_menu','ja','ui','storefront','header.menu','メニュー',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_header_close','ja','ui','storefront','header.close','閉じる',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_home_search','ja','ui','storefront','home.searchTitle','コレクションを検索',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_search_label','ja','ui','storefront','search.label','コレクションを検索',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_search_placeholder','ja','ui','storefront','search.placeholder','商品名、カテゴリー、素材、色、SKUで検索',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_search_button','ja','ui','storefront','search.button','検索',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_search_hint','ja','ui','storefront','search.hint','商品名、SKU、カテゴリー、色、素材、商品仕様から検索できます。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_search_suggested','ja','ui','storefront','search.suggested','おすすめの商品',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_search_recent','ja','ui','storefront','search.recent','最近の検索',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_search_empty','ja','ui','storefront','search.noMatches','一致する商品がありません。素材、色、または短い言葉でお試しください。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_search_viewall','ja','ui','storefront','search.viewAll','すべての検索結果を見る',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_footer_shop','ja','ui','storefront','footer.shopAll','すべての商品',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_footer_story','ja','ui','storefront','footer.story','私たちについて',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_footer_journal','ja','ui','storefront','footer.journal','ジャーナル',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_footer_contact','ja','ui','storefront','footer.contact','お問い合わせ',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_footer_backtop','ja','ui','storefront','footer.backTop','ページ上部へ',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+ON CONFLICT ("localeCode","entityType","entityId","fieldKey") DO NOTHING;
