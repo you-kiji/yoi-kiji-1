@@ -918,3 +918,7 @@ dialog::backdrop { background: rgba(5,20,8,.46); backdrop-filter: blur(5px); }
  .storefront-product-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
  .storefront-article-grid,.storefront-testimonials > div { grid-template-columns:1fr; }
 }
+
+.storefront-admin-shortcuts { display:flex; flex-wrap:wrap; gap:10px; margin:0 0 26px; }
+.storefront-admin-shortcuts a { display:inline-flex; align-items:center; min-height:42px; padding:9px 15px; border:1px solid #24452c; color:#17371d; text-decoration:none; background:#fff; font-size:13px; }
+.storefront-admin-shortcuts a:hover { background:#edf1e9; }
