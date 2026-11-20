@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
   const query = normalise(raw).slice(0, 80);
   if (request.nextUrl.searchParams.get("popular") === "1") {
     const categories = await prisma.category.findMany({ where: { isActive: true, showInMenu: true }, select: { id: true, name: true, slug: true }, orderBy: { sortOrder: "asc" }, take: 6 });
-    const localeCode = request.cookies.get("yk-locale")?.value ?? "en";
+    const localeCode = request.cookies.get("yk-locale")?.value ?? (await prisma.locale.findFirst({ where: { isDefault: true, isEnabled: true }, select: { code: true } }).catch(() => null))?.code ?? "en";
     const translations = localeCode === "en" ? [] : await prisma.contentTranslation.findMany({ where: { localeCode, entityType: "category", entityId: { in: categories.map(item => item.id) }, fieldKey: "name" }, select: { entityId: true, value: true } }).catch(() => []);
     const names = new Map(translations.map(item => [item.entityId, item.value]));
     return NextResponse.json({ categories: categories.map(item => ({ ...item, name: names.get(item.id) ?? item.name })), products: [], suggestions: [] }, { headers: { "Cache-Control": "private, no-store" } });
