@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getActiveProducts } from "@/lib/catalog";
 import { formatINR } from "@/lib/money";
+import { AdvancedSearch } from "@/components/advanced-search";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Search" };
@@ -32,22 +33,7 @@ export default async function SearchPage({
         <h1>Search the<br /><em>collections.</em></h1>
         <p>Find the textures, colours and considered details you have in mind.</p>
 
-        <form className="search-form premium-search-form" role="search" action="/search" method="get">
-          <label htmlFor="site-search">What are you looking for?</label>
-          <div className="search-form-controls">
-            <input
-              id="site-search"
-              type="search"
-              name="q"
-              maxLength={80}
-              defaultValue={term}
-              placeholder="Try bedsheets, curtains, bath linen…"
-              autoComplete="off"
-            />
-            <button className="primary-link" type="submit">Search</button>
-          </div>
-        </form>
-      </header>
+        <AdvancedSearch compact />     </header>
 
       {term && (
         <>
