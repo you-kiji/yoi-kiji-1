@@ -34,6 +34,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   ]);
   if (!item) notFound();
   const locale = await getLocaleData();
+  const t = (key: string, fallback: string) => locale.labels[key] ?? fallback;
   const translationTargets = [
     ...categories.map(category => ({ entityType: "category", entityId: category.id })),
     ...catalogueProducts.map(product => ({ entityType: "product", entityId: product.id })),
@@ -117,26 +118,26 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   });
 
   return <main className="commerce-page">
-    <div className="commerce-breadcrumb"><Link href="/">Home</Link><span>/</span><Link href="/shop">Shop</Link>{ancestors.map(a=><span key={a.slug}>/ <Link href={`/shop/${a.slug}`}>{a.name}</Link></span>)}<span>/</span> {displayCategoryName}</div>
-    <header className="commerce-heading"><p className="eyebrow">YOI KIJI / THE COLLECTION</p><h1>{displayCategoryName}<br/><em>for living well.</em></h1>{displayCategoryDescription&&<p>{displayCategoryDescription}</p>}</header>
-    {children.length > 0 && <section className="category-subcollections"><p className="eyebrow">EXPLORE THIS COLLECTION</p><nav className="category-pills" aria-label={`Browse ${displayCategoryName} subcategories`}>{children.map(child=><Link key={child.id} href={`/shop/${child.slug}`}>{child.name}</Link>)}</nav></section>}
+    <div className="commerce-breadcrumb"><Link href="/">{t("common.home","Home")}</Link><span>/</span><Link href="/shop">{t("common.shop","Shop")}</Link>{ancestors.map(a=><span key={a.slug}>/ <Link href={`/shop/${a.slug}`}>{a.name}</Link></span>)}<span>/</span> {displayCategoryName}</div>
+    <header className="commerce-heading"><p className="eyebrow">{t("category.eyebrow","YOI KIJI / THE COLLECTION")}</p><h1>{displayCategoryName}<br/><em>{t("category.subtitle","for living well.")}</em></h1>{displayCategoryDescription&&<p>{displayCategoryDescription}</p>}</header>
+    {children.length > 0 && <section className="category-subcollections"><p className="eyebrow">{t("category.explore","EXPLORE THIS COLLECTION")}</p><nav className="category-pills" aria-label={`Browse ${displayCategoryName} subcategories`}>{children.map(child=><Link key={child.id} href={`/shop/${child.slug}`}>{child.name}</Link>)}</nav></section>}
     {siblings.length > 0 && <nav className="category-pills" aria-label="Related categories">{siblings.map(c=><Link key={c.id} href={`/shop/${c.slug}`}>{c.name}</Link>)}</nav>}
     <div className="catalogue-toolbar">
-      <p>{products.length} {products.length === 1 ? "piece" : "pieces"}</p>
+      <p>{products.length} {products.length === 1 ? t("shop.piece","piece") : t("shop.pieces","pieces")}</p>
       <form method="get" className="catalogue-sort">
         {Object.entries(activeFilters).flatMap(([key, values]) => values.map(value => <input key={key + value} type="hidden" name={`f_${key}`} value={value}/>))}
-        <label>Sort by <select name="sort" defaultValue={sort}><option value="newest">Newest</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="name">Name</option></select></label><button type="submit">Sort</button>
+        <label>{t("shop.sortBy","Sort by")} <select name="sort" defaultValue={sort}><option value="newest">{t("shop.newest","Newest")}</option><option value="price-asc">{t("shop.priceLow","Price: low to high")}</option><option value="price-desc">{t("shop.priceHigh","Price: high to low")}</option><option value="name">{t("shop.nameSort","Name")}</option></select></label><button type="submit">Sort</button>
       </form>
     </div>
     {facets.length > 0 && <form method="get" className="catalogue-filters">
-      <div className="catalogue-filter-heading"><p className="eyebrow">REFINE THE COLLECTION</p><Link href={`/shop/${item.slug}`}>Clear filters</Link></div>
+      <div className="catalogue-filter-heading"><p className="eyebrow">{t("category.refine","REFINE THE COLLECTION")}</p><Link href={`/shop/${item.slug}`}>{t("category.clearFilters","Clear filters")}</Link></div>
       <input type="hidden" name="sort" value={sort}/>
       <div className="catalogue-filter-grid">{facets.map(facet => <fieldset key={facet.key}>
         <legend>{facet.name}{facet.unit ? ` · ${facet.unit}` : ""}</legend>
         {facet.options.map(option => <label key={option}><input type="checkbox" name={`f_${facet.key}`} value={option} defaultChecked={activeFilters[facet.key]?.includes(option) ?? false}/><span>{option}</span></label>)}
       </fieldset>)}</div>
-      <button className="primary-link" type="submit">Apply filters <span>↗</span></button>
+      <button className="primary-link" type="submit">{t("shop.applyFilters","Apply filters")} <span>↗</span></button>
     </form>}
-    {products.length ? <section className="product-grid">{products.map(p=><Link className="product-card" href={`/products/${p.slug}`} key={p.id}><div className="product-card-image">{p.images[0] ? <img src={p.images[0].url} alt={p.images[0].alt}/> : <span>YOI KIJI</span>}</div><p className="product-card-category">{displayCategoryName}</p><h2>{localized.get(`product:${p.id}:name`) ?? p.name}</h2><p className="product-card-price">{formatINR(p.pricePaise)}</p></Link>)}</section> : <section className="catalogue-empty"><span className="empty-mark">✳</span><h2>{catalogueProducts.length ? "No pieces match these filters." : "Something thoughtful is on its way."}</h2><p>{catalogueProducts.length ? "Try removing one or more filters to see more of this collection." : `We are preparing the ${item.name.toLowerCase()} collection. In the meantime, explore the other collections.`}</p><Link className="primary-link" href={catalogueProducts.length ? `/shop/${item.slug}` : "/shop"}>{catalogueProducts.length ? "Clear filters" : "Explore all collections"} <span>↗</span></Link></section>}
+    {products.length ? <section className="product-grid">{products.map(p=><Link className="product-card" href={`/products/${p.slug}`} key={p.id}><div className="product-card-image">{p.images[0] ? <img src={p.images[0].url} alt={p.images[0].alt}/> : <span>YOI KIJI</span>}</div><p className="product-card-category">{displayCategoryName}</p><h2>{localized.get(`product:${p.id}:name`) ?? p.name}</h2><p className="product-card-price">{formatINR(p.pricePaise)}</p></Link>)}</section> : <section className="catalogue-empty"><span className="empty-mark">✳</span><h2>{catalogueProducts.length ? "{t("category.noFilterMatches","No pieces match these filters.")}" : "{t("category.comingSoon","Something thoughtful is on its way.")}"}</h2><p>{catalogueProducts.length ? "{t("category.removeFilters","Try removing one or more filters to see more of this collection.")}" : `We are preparing the ${item.name.toLowerCase()} collection. In the meantime, explore the other collections.`}</p><Link className="primary-link" href={catalogueProducts.length ? `/shop/${item.slug}` : "/shop"}>{catalogueProducts.length ? "Clear filters" : "Explore all collections"} <span>↗</span></Link></section>}
   </main>;
 }
