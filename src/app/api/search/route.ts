@@ -96,6 +96,9 @@ export async function GET(request: NextRequest) {
     ...product,
     translatedName: translated.get(`product:${product.id}:name`),
     translatedDescription: translated.get(`product:${product.id}:description`),
+    material: translated.get(`product:${product.id}:material`) ?? product.material,
+    color: translated.get(`product:${product.id}:color`) ?? product.color,
+    attributeValues: product.attributeValues.map(item => ({ value: translated.get(`product:${product.id}:attribute_${item.attribute.key}`) ?? item.value, attribute: { ...item.attribute, name: translated.get(`attribute:${item.attribute.id}:name`) ?? item.attribute.name } })),
     category: product.category ? { ...product.category, name: translated.get(`category:${product.category.id}:name`) ?? product.category.name } : null,
   }));
 
@@ -107,7 +110,7 @@ export async function GET(request: NextRequest) {
     .map(({ product, score }) => ({ id: product.id, name: product.translatedName ?? product.name, slug: product.slug, sku: product.sku, category: product.category?.name ?? "YOI KIJI", pricePaise: product.pricePaise, image: product.images[0] ?? null, score }));
 
   const categoryMatches = categories
-    .map(category => ({ ...category, score: scoreProduct({ id: category.id, name: category.name, slug: category.slug, sku: "", description: "", material: null, color: null, seoKeywords: [], pricePaise: 0, category: null, images: [], attributeValues: [] }, query) }))
+    .map(category => { const name = translated.get(`category:${category.id}:name`) ?? category.name; return { ...category, name, score: scoreProduct({ id: category.id, name, slug: category.slug, sku: "", description: "", material: null, color: null, seoKeywords: [], pricePaise: 0, category: null, images: [], attributeValues: [] }, query) }; })
     .filter(category => category.score > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, request.nextUrl.searchParams.get("full") === "1" ? 20 : 4);
