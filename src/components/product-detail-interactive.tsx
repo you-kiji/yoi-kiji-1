@@ -14,7 +14,7 @@ type PurchaseVariant = {
 };
 
 export function ProductDetailInteractive({
-  productId, images, variants, hasVariants, inventoryQty, basePricePaise, children,
+  productId, images, variants, hasVariants, inventoryQty, basePricePaise, children, labels = {},
 }: {
   productId: string;
   images: MediaImage[];
@@ -23,7 +23,9 @@ export function ProductDetailInteractive({
   inventoryQty: number;
   basePricePaise: number;
   children: ReactNode;
+  labels?: Record<string,string>;
 }) {
+  const t = (key: string, fallback: string) => labels[key] ?? fallback;
   const [activeVariantId, setActiveVariantId] = useState("");
   const activeVariant = variants.find(variant => variant.id === activeVariantId);
   const variantImages = activeVariant?.images ?? [];
@@ -40,21 +42,21 @@ export function ProductDetailInteractive({
   }
 
   return <section className="product-detail">
-    <div className="product-gallery" aria-label="Product images">
+    <div className="product-gallery" aria-label={t("product.gallery","Product images")}>
       {activeImage ? (
         <>
           <div className="product-gallery-main">
-            <img src={activeImage.url} alt={activeImage.alt || "YOI KIJI product image"} fetchPriority="high" />
+            <img src={activeImage.url} alt={activeImage.alt || t("product.imageAlt","YOI KIJI product image")} fetchPriority="high" />
           </div>
           {gallery.length > 1 && (
-            <div className="product-gallery-thumbnails" role="group" aria-label="Choose product image">
+            <div className="product-gallery-thumbnails" role="group" aria-label={t("product.chooseImage","Choose product image")}>
               {gallery.map((image, index) => (
                 <button
                   key={image.id}
                   type="button"
                   className={activeImage.id === image.id ? "product-gallery-thumbnail is-active" : "product-gallery-thumbnail"}
                   onClick={() => setActiveImageId(image.id)}
-                  aria-label={`View image ${index + 1}: ${image.alt || "Product view"}`}
+                  aria-label={`${t("product.viewImage","View image")} ${index + 1}: ${image.alt || t("product.productView","Product view")}`}
                   aria-pressed={activeImage.id === image.id}
                 >
                   <img src={image.url} alt="" loading="lazy" />
@@ -75,9 +77,10 @@ export function ProductDetailInteractive({
         hasVariants={hasVariants}
         inventoryQty={inventoryQty}
         basePricePaise={basePricePaise}
+        labels={labels}
         onVariantChange={handleVariantChange}
       />
-      <p className="product-detail-note">Prices are shown in INR. Delivery availability and charges are confirmed during checkout.</p>
+      <p className="product-detail-note">{t("product.priceNote","Prices are shown in INR. Delivery availability and charges are confirmed during checkout.")}</p>
     </div>
   </section>;
 }

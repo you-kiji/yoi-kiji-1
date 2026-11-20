@@ -1,3 +1,2 @@
-import Link from "next/link";
-export const metadata={title:"Shipping information"};
-export default function Shipping(){return <main className="editorial-page"><div className="commerce-breadcrumb"><Link href="/">Home</Link><span>/</span> Shipping</div><p className="eyebrow">DELIVERY, WITH CARE</p><h1>On its way<br/><em>to your home.</em></h1><p>YOI KIJI is preparing delivery coverage with Delhivery and ATS. Delivery timelines, serviceable PIN codes, shipping fees and tracking details will be published after the courier accounts and service rules are confirmed.</p><p>For now, please treat shipping information as pending confirmation.</p></main>}
+import { redirect } from "next/navigation";
+export default function LegacyLegalRoute(){redirect("/legal/shipping-policy");}

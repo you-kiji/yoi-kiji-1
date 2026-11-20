@@ -1,12 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
-export const storefrontCategories = [
-  { name: "Bedsheets", slug: "bedsheets", description: "Thoughtful layers for a more restful everyday.", sizes: ["Single", "Double", "King", "Fitted"] },
-  { name: "Curtains", slug: "curtains", description: "A considered way to soften light and frame a room." },
-  { name: "Upholstery", slug: "upholstery", description: "Tactile textiles for the spaces you make your own." },
-  { name: "Bath Linen", slug: "bath-linen", description: "Everyday rituals, wrapped in comfort." },
-  { name: "Kitchen Linen", slug: "kitchen-linen", description: "Useful details for the heart of the home." },
-] as const;
+
 
 export async function getActiveCategories() {
   try {
@@ -62,6 +56,7 @@ export async function getActiveProducts(categorySlug?: string) {
         category: true,
         categoryLinks: { include: { category: true } },
         variants: { where: { isActive: true }, orderBy: { label: "asc" } },
+        // Category pages use these relations to build live, product-type-aware filters.
         attributeValues: { include: { attribute: true } },
         productType: { include: { attributes: { include: { attribute: true }, orderBy: { sortOrder: "asc" } } } },
       },

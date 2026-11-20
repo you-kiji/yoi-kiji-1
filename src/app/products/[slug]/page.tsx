@@ -10,15 +10,20 @@ import { BackInStockForm } from "@/components/back-in-stock-form";
 import { formatINR } from "@/lib/money";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getLocaleData } from "@/lib/i18n";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const product = await getActiveProductBySlug(slug);
-  return product ? {
-    title: product.seoTitle ?? product.name,
-    description: product.seoDescription ?? product.description.slice(0, 155),
+  if (!product) return {};
+  const locale = await getLocaleData();
+  const translations = locale.code === "en" ? [] : await prisma.contentTranslation.findMany({ where: { localeCode: locale.code, entityType: "product", entityId: product.id, fieldKey: { in: ["name", "description", "seoTitle", "seoDescription"] } } });
+  const text = new Map(translations.map(item => [item.fieldKey, item.value]));
+  return {
+    title: text.get("seoTitle") ?? text.get("name") ?? product.seoTitle ?? product.name,
+    description: text.get("seoDescription") ?? text.get("description") ?? product.seoDescription ?? product.description.slice(0, 155),
     keywords: product.seoKeywords,
     alternates: product.canonicalUrl ? { canonical: product.canonicalUrl } : undefined,
     robots: product.noIndex ? { index: false, follow: false } : { index: true, follow: true },
@@ -27,13 +32,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: product.seoDescription ?? product.description.slice(0, 155),
       images: product.images[0] ? [{ url: product.images[0].url, alt: product.images[0].alt }] : undefined,
     },
-  } : {};
+  };
 }
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
   const product = await getActiveProductBySlug(slug);
   if (!product) notFound();
+  const locale = await getLocaleData();
+  const t = (key: string, fallback: string) => locale.labels[key] ?? fallback;
+  const translationTargets = [
+    { entityType: "product", entityId: product.id },
+    ...(product.categoryId ? [{ entityType: "category", entityId: product.categoryId }] : []),
+    ...product.attributeValues.map(entry => ({ entityType: "attribute", entityId: entry.attribute.id })),
+  ];
+  const productTranslations = locale?.code && locale.code !== "en" ? await prisma.contentTranslation.findMany({
+    where: { localeCode: locale.code, OR: translationTargets.map(target => ({ entityType: target.entityType, entityId: target.entityId })) },
+  }) : [];
+  const productText = new Map(productTranslations.filter(entry => entry.entityType === "product").map(entry => [entry.fieldKey, entry.value]));
+  const translated = new Map(productTranslations.map(entry => [`${entry.entityType}:${entry.entityId}:${entry.fieldKey}`, entry.value]));
+  const displayName = productText.get("name") ?? product.name;
+  const displayDescription = productText.get("description") ?? product.description;
+  const displayCategory = product.category ? translated.get(`category:${product.category.id}:name`) ?? product.category.name : "YOI KIJI COLLECTION";
+  const displayMaterial = productText.get("material") ?? product.material;
+  const displayColor = productText.get("color") ?? product.color;
+  const displayCare = productText.get("careInstructions") ?? product.careInstructions;
 
   const user=await getCurrentUser();
   const [reviews,reviewSummary,eligiblePurchase,relatedProducts]=await Promise.all([
@@ -44,12 +67,14 @@ export default async function ProductPage({ params }: Props) {
   ]);
   const dynamicSpecs = product.attributeValues.map(entry => {
     const value = entry.value;
-    const formatted = Array.isArray(value) ? value.join(", ") : typeof value === "boolean" ? (value ? "Yes" : "No") : typeof value === "object" && value !== null ? JSON.stringify(value) : String(value);
-    return { name: entry.attribute.name, value: entry.attribute.unit ? `${formatted} ${entry.attribute.unit}` : formatted };
+    const translatedValue = productText.get(`attribute_${entry.attribute.key}`);
+    const formatted = translatedValue ?? (Array.isArray(value) ? value.join(", ") : typeof value === "boolean" ? (value ? "Yes" : "No") : typeof value === "object" && value !== null ? JSON.stringify(value) : String(value));
+    const name = translated.get(`attribute:${entry.attribute.id}:name`) ?? entry.attribute.name;
+    return { name, value: entry.attribute.unit ? `${formatted} ${entry.attribute.unit}` : formatted };
   });
 
   return <main className="commerce-page">
-    <div className="commerce-breadcrumb"><Link href="/">Home</Link><span>/</span><Link href="/shop">Shop</Link><span>/</span>{product.name}</div>
+    <div className="commerce-breadcrumb"><Link href="/">Home</Link><span>/</span><Link href="/shop">Shop</Link><span>/</span>{displayName}</div>
     <ProductDetailInteractive
       productId={product.id}
       images={product.images.map(image => ({ id: image.id, url: image.url, alt: image.alt, isPrimary: image.isPrimary, position: image.position }))}
@@ -61,17 +86,18 @@ export default async function ProductPage({ params }: Props) {
       hasVariants={product.hasVariants}
       inventoryQty={product.inventoryQty}
       basePricePaise={product.pricePaise}
+      labels={locale.labels}
     >
-      <p className="eyebrow">{product.category?.name ?? "YOI KIJI COLLECTION"}</p>
-      <h1>{product.name}</h1>
+      <p className="eyebrow">{displayCategory}</p>
+      <h1>{displayName}</h1>
       <WishlistButton productId={product.id}/>
       {(product.hasVariants?product.variants.every(v=>v.inventoryQty<=0):product.inventoryQty<=0)&&<BackInStockForm productId={product.id}/>}
-      <p className="product-description">{product.description}</p>
-      {(product.material || product.color || product.careInstructions || product.lengthMm || product.widthMm || product.heightMm || dynamicSpecs.length > 0) && <dl className="product-specs">
-        {product.material && <div><dt>Material</dt><dd>{product.material}</dd></div>}
-        {product.color && <div><dt>Colour</dt><dd>{product.color}</dd></div>}
-        {(product.lengthMm || product.widthMm || product.heightMm) && <div><dt>Dimensions</dt><dd>{[product.lengthMm, product.widthMm, product.heightMm].filter(Boolean).join(" × ")} mm</dd></div>}
-        {product.careInstructions && <div><dt>Care</dt><dd>{product.careInstructions}</dd></div>}
+      <p className="product-description">{displayDescription}</p>
+      {(displayMaterial || displayColor || displayCare || product.lengthMm || product.widthMm || product.heightMm || dynamicSpecs.length > 0) && <dl className="product-specs">
+        {displayMaterial && <div><dt>{t("product.material","Material")}</dt><dd>{displayMaterial}</dd></div>}
+        {displayColor && <div><dt>{t("product.colour","Colour")}</dt><dd>{displayColor}</dd></div>}
+        {(product.lengthMm || product.widthMm || product.heightMm) && <div><dt>{t("product.dimensions","Dimensions")}</dt><dd>{[product.lengthMm, product.widthMm, product.heightMm].filter(Boolean).join(" × ")} mm</dd></div>}
+        {displayCare && <div><dt>{t("product.care","Care")}</dt><dd>{displayCare}</dd></div>}
         {dynamicSpecs.map(spec => <div key={spec.name}><dt>{spec.name}</dt><dd>{spec.value}</dd></div>)}
       </dl>}
     </ProductDetailInteractive>
@@ -83,6 +109,6 @@ export default async function ProductPage({ params }: Props) {
       canReview={!!eligiblePurchase}
       isSignedIn={!!user}
     />
-    {relatedProducts.length>0&&<section className="related-products"><div className="related-products__heading"><p className="eyebrow">CONSIDER THESE TOO</p><h2>Made to <em>belong together.</em></h2></div><div className="product-grid">{relatedProducts.map(item=><Link className="product-card" href={"/products/"+item.slug} key={item.id}><div className="product-card-image">{item.images[0]?<img src={item.images[0].url} alt={item.images[0].alt}/>:<span>YOI KIJI</span>}</div><p className="product-card-category">{item.category?.name??"YOI KIJI"}</p><h3>{item.name}</h3><p className="product-card-price">{formatINR(item.pricePaise)}</p></Link>)}</div></section>}
+    {relatedProducts.length>0&&<section className="related-products"><div className="related-products__heading"><p className="eyebrow">{t("product.relatedEyebrow","CONSIDER THESE TOO")}</p><h2>{t("product.relatedTitle","Made to")} <em>{t("product.relatedTitleAccent","belong together.")}</em></h2></div><div className="product-grid">{relatedProducts.map(item=><Link className="product-card" href={"/products/"+item.slug} key={item.id}><div className="product-card-image">{item.images[0]?<img src={item.images[0].url} alt={item.images[0].alt}/>:<span>YOI KIJI</span>}</div><p className="product-card-category">{item.category?.name??"YOI KIJI"}</p><h3>{item.name}</h3><p className="product-card-price">{formatINR(item.pricePaise)}</p></Link>)}</div></section>}
   </main>;
 }

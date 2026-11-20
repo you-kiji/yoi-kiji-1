@@ -6,31 +6,42 @@ import "./journal.css";
 import "./visual-stability.css";
 import "./premium-system.css";
 import "./experience-overrides.css";
+import "./advanced-search.css";
+import "./content-management.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { JapaneseLoader } from "@/components/japanese-loader";
 import { Analytics } from "@/components/analytics";
 import { CookieConsent } from "@/components/cookie-consent";
 import { ScrollMotion } from "@/components/scroll-motion";
+import { getLocaleData } from "@/lib/i18n";
+import { AnnouncementBar } from "@/components/announcement-bar";
 
-export const metadata: Metadata = {
-  title: { default: "YOI KIJI — Textiles for the Way You Live", template: "%s | YOI KIJI" },
-  description: "Thoughtfully chosen bedsheets, curtains, upholstery, bath linen and kitchen linen. Comfort, considered.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
-  openGraph: {
-    title: "YOI KIJI — Textiles for the Way You Live",
-    description: "Thoughtfully chosen home textiles. Comfort, considered.",
-    type: "website",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocaleData();
+  const title = locale.labels["seo.homeTitle"] ?? "YOI KIJI — Textiles for the Way You Live";
+  const description = locale.labels["seo.homeDescription"] ?? "Thoughtfully chosen bedsheets, curtains, upholstery, bath linen and kitchen linen. Comfort, considered.";
+  return {
+    title: { default: title, template: "%s | YOI KIJI" },
+    description,
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+    openGraph: { title, description, type: "website" },
+  };
+}
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const locale = await getLocaleData();
   return (
-    <html lang="en">
+    <html lang={locale.code} dir={locale.direction}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://images.unsplash.com" />
+      </head>
       <body>
         <JapaneseLoader />
         <ScrollMotion />
-        <div className="announcement"><span>TEXTILES FOR THE WAY YOU LIVE</span><i>✳</i><span>COMFORT, CONSIDERED</span></div>
+        <AnnouncementBar />
         <SiteHeader />
         {children}
         <SiteFooter />

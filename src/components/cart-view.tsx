@@ -21,7 +21,8 @@ function formatPrice(paise: number) {
   return "₹" + (paise / 100).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-export function CartView() {
+export function CartView({ labels = {} }: { labels?: Record<string,string> }) {
+  const t = (key: string, fallback: string) => labels[key] ?? fallback;
   const [cart, setCart] = useState<Line[]>([]);
   const [lines, setLines] = useState<Quoted[]>([]);
   const [error, setError] = useState("");
@@ -43,7 +44,7 @@ export function CartView() {
         signal: controller.signal,
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error ?? "Unable to load your bag.");
+      if (!response.ok) throw new Error(data.error ?? t("cart.loadError","Unable to load your bag."));
       if (requestId !== quoteRequestId.current) return;
       setLines(Array.isArray(data.items) ? data.items : []);
       setError("");
@@ -51,11 +52,11 @@ export function CartView() {
       if (reason instanceof DOMException && reason.name === "AbortError") return;
       if (requestId !== quoteRequestId.current) return;
       setLines([]);
-      setError(reason instanceof Error ? reason.message : "Unable to load your bag.");
+      setError(reason instanceof Error ? reason.message : t("cart.loadError","Unable to load your bag."));
     } finally {
       if (requestId === quoteRequestId.current) setLoading(false);
     }
-  }, []);
+  }, [labels]);
 
   useEffect(() => {
     try {
@@ -72,7 +73,7 @@ export function CartView() {
       setCart(initial);
       void refresh(initial);
     } catch {
-      setError("Your saved bag could not be read. Clear it and add your pieces again.");
+      setError(t("cart.savedError","Your saved bag could not be read. Clear it and add your pieces again."));
       setLoading(false);
     }
     return () => {
@@ -88,7 +89,7 @@ export function CartView() {
       window.dispatchEvent(new Event("yoikiji-cart-updated"));
       void refresh(next);
     } catch {
-      setError("Your browser could not save this bag. Check your browser storage settings and try again.");
+      setError(t("cart.storageError","Your browser could not save this bag. Check your browser storage settings and try again."));
     }
   }
 
@@ -103,22 +104,22 @@ export function CartView() {
   const subtotal = lines.reduce((sum, line) => sum + line.lineTotalPaise, 0);
 
   return (
-    <section className="cart-layout" aria-label="Your shopping bag">
-      {loading && <p className="cart-loading" role="status">Preparing your bag…</p>}
+    <section className="cart-layout" aria-label={t("cart.aria","Your shopping bag")}>
+      {loading && <p className="cart-loading" role="status">{t("cart.loading","Preparing your bag…")}</p>}
 
       {error && (
         <div className="cart-error-state" role="alert">
           <p>{error}</p>
-          <button type="button" onClick={clearSavedBag}>Clear saved bag</button>
+          <button type="button" onClick={clearSavedBag}>{t("cart.clearSaved","Clear saved bag")}</button>
         </div>
       )}
 
       {!loading && !error && lines.length === 0 && (
         <div className="catalogue-empty cart-empty-state">
-          <p className="eyebrow">YOUR BAG, YOUR PACE</p>
-          <h2>Your bag is waiting.</h2>
-          <p>Explore the collections and find something that feels like home.</p>
-          <Link className="primary-link" href="/shop">Explore collections</Link>
+          <p className="eyebrow">{t("cart.eyebrow","YOUR BAG, YOUR PACE")}</p>
+          <h2>{t("cart.emptyTitle","Your bag is waiting.")}</h2>
+          <p>{t("cart.emptyHint","Explore the collections and find something that feels like home.")}</p>
+          <Link className="primary-link" href="/shop">{t("cart.explore","Explore collections")}</Link>
         </div>
       )}
 
@@ -136,19 +137,19 @@ export function CartView() {
             <div className="cart-line-info">
               <div className="cart-line-heading">
                 <div>
-                  <p className="cart-line-category">{line.variantLabel ?? "Home textile"}</p>
+                  <p className="cart-line-category">{line.variantLabel ?? t("cart.homeTextile","Home textile")}</p>
                   <h2>{line.name}</h2>
-                  <p className="cart-line-sku">Item code: {line.sku}</p>
+                  <p className="cart-line-sku">{t("cart.itemCode","Item code")}: {line.sku}</p>
                 </div>
                 <strong className="cart-line-total">{formatPrice(line.lineTotalPaise)}</strong>
               </div>
 
-              <p className="cart-unit-price">{formatPrice(line.unitPricePaise)} each</p>
+              <p className="cart-unit-price">{formatPrice(line.unitPricePaise)} {t("cart.each","each")}</p>
 
-              <div className="quantity-control" aria-label={"Quantity for " + line.name}>
+              <div className="quantity-control" aria-label={t("cart.quantityFor","Quantity for") + " " + line.name}>
                 <button
                   type="button"
-                  aria-label={"Decrease quantity of " + line.name}
+                  aria-label={t("cart.decrease","Decrease quantity of") + " " + line.name}
                   disabled={line.quantity <= 1 || loading}
                   onClick={() => update(cart.map((item) =>
                     item.productId === line.productId && item.variantId === line.variantId
@@ -158,10 +159,10 @@ export function CartView() {
                 >
                   −
                 </button>
-                <span aria-live="polite" aria-label={"Quantity " + line.quantity}>{line.quantity}</span>
+                <span aria-live="polite" aria-label={t("cart.quantity","Quantity") + " " + line.quantity}>{line.quantity}</span>
                 <button
                   type="button"
-                  aria-label={"Increase quantity of " + line.name}
+                  aria-label={t("cart.increase","Increase quantity of") + " " + line.name}
                   disabled={atMaximum || loading}
                   onClick={() => update(cart.map((item) =>
                     item.productId === line.productId && item.variantId === line.variantId
@@ -179,13 +180,13 @@ export function CartView() {
                     !(item.productId === line.productId && item.variantId === line.variantId),
                   ))}
                 >
-                  Remove
+                  {t("cart.remove","Remove")}
                 </button>
               </div>
 
               {line.availableQty < line.quantity && (
                 <p className="cart-stock-warning" role="alert">
-                  Only {line.availableQty} currently available. Update the quantity to continue.
+                  {t("cart.stockWarning","Only {availableQty} currently available. Update the quantity to continue.").replace("{availableQty}",String(line.availableQty))}
                 </p>
               )}
             </div>
@@ -195,9 +196,9 @@ export function CartView() {
 
       {!loading && !error && lines.length > 0 && (
         <aside className="cart-summary">
-          <p><span>Subtotal</span><strong>{formatPrice(subtotal)}</strong></p>
-          <small>Shipping and applicable taxes are confirmed at checkout.</small>
-          <Link className="primary-link" href="/checkout">Continue to checkout</Link>
+          <p><span>{t("cart.subtotal","Subtotal")}</span><strong>{formatPrice(subtotal)}</strong></p>
+          <small>{t("cart.shippingNote","Shipping and applicable taxes are confirmed at checkout.")}</small>
+          <Link className="primary-link" href="/checkout">{t("cart.checkout","Continue to checkout")}</Link>
         </aside>
       )}
     </section>
