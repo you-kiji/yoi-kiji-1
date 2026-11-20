@@ -134,3 +134,41 @@ body:has(.admin-shopify-shell) .admin-shopify-shell{min-height:100vh;display:gri
 .admin-media-url{overflow-wrap:anywhere;font-size:10px}
 .admin-media-title a{color:inherit}
 @media(max-width:900px){.admin-media-detail-grid{grid-template-columns:1fr}}
+
+
+/* Consistent Shopify-style density across module list pages */
+.admin-shopify-content .commerce-heading h1 br{display:none}
+.admin-shopify-content .commerce-heading{display:flex;flex-direction:column;gap:2px}
+.admin-shopify-content .commerce-heading h1{margin:5px 0 3px;line-height:1.12}
+.admin-shopify-content .commerce-heading>p:last-child{margin:0}
+.admin-shopify-content :is(.admin-product-list,.orders-list,.admin-content-list,.admin-review-list,.admin-stock-alerts,.product-type-list){min-width:0}
+.admin-shopify-content .admin-product-list{display:grid;gap:0;overflow:hidden;border:1px solid #e1e2e4;border-radius:10px;background:#fff}
+.admin-shopify-content .admin-product-list>article{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(130px,.7fr) minmax(220px,1fr);align-items:center;gap:16px;margin:0;padding:13px 16px;border:0;border-bottom:1px solid #eff0f1;border-radius:0;background:#fff;box-shadow:none}
+.admin-shopify-content .admin-product-list>article:last-child{border-bottom:0}
+.admin-shopify-content .admin-product-list>article h2{margin:0 0 3px;font-size:12px;font-weight:650}
+.admin-shopify-content .admin-product-list>article p{margin:0;color:#737a7e;font-size:10px}
+.admin-shopify-content .admin-product-list>article>div:nth-child(2)>strong{font-size:12px}
+.admin-shopify-content .admin-product-list>article>div:last-child{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.admin-shopify-content .admin-product-list .admin-row-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.admin-shopify-content .admin-product-list .admin-row-controls label{display:flex;align-items:center;gap:5px;font-size:9px}
+.admin-shopify-content .admin-product-list .admin-row-controls input{width:64px;min-height:32px;padding:5px}
+.admin-shopify-content .admin-product-list button,.admin-shopify-content .admin-product-list .primary-link{min-height:32px;padding:0 9px;font-size:9px}
+.admin-shopify-content .orders-list{display:grid;gap:0;overflow:hidden;border:1px solid #e1e2e4;border-radius:10px;background:#fff}
+.admin-shopify-content .orders-list>.order-card{margin:0;padding:13px 15px;border:0;border-bottom:1px solid #eff0f1;border-radius:0;background:#fff;box-shadow:none}
+.admin-shopify-content .orders-list>.order-card:last-child{border-bottom:0}
+.admin-shopify-content .admin-content-list{display:grid;gap:0;overflow:hidden;border:1px solid #e1e2e4;border-radius:10px;background:#fff}
+.admin-shopify-content .admin-content-list>article{padding:12px 15px;border:0;border-bottom:1px solid #eff0f1;border-radius:0;background:#fff}
+.admin-shopify-content .admin-content-list>article:last-child{border-bottom:0}
+.admin-shopify-content .admin-review-list{display:grid;gap:10px}
+.admin-shopify-content .admin-review-list>article{padding:16px;border:1px solid #e1e2e4;border-radius:10px;background:#fff}
+.admin-shopify-content .admin-stock-alerts>article{padding:12px 15px;border:0;border-bottom:1px solid #eff0f1;border-radius:0;background:#fff}
+.admin-shopify-content .product-type-list{display:grid;gap:0;border:1px solid #e1e2e4;border-radius:10px;background:#fff;overflow:hidden}
+.admin-shopify-content .product-type-list>article{padding:13px 15px;border:0;border-bottom:1px solid #eff0f1;border-radius:0;background:#fff}
+.admin-shopify-content .product-type-list>article:last-child{border-bottom:0}
+.admin-shopify-content :is(input:not([type=checkbox]):not([type=radio]),select,textarea){min-height:38px;border:1px solid #d5d8da;background:#fff;color:#202223;font:inherit;font-size:11px}
+.admin-shopify-content textarea{min-height:90px}
+.admin-shopify-content button{min-height:34px;font-size:10px}
+.admin-shopify-content :is(.commerce-button,.primary-link){min-height:36px;font-size:10px}
+.admin-shopify-content .admin-section-heading{margin-bottom:12px}
+@media(max-width:900px){.admin-shopify-content .admin-product-list>article{grid-template-columns:minmax(0,1fr) minmax(100px,.6fr)}.admin-shopify-content .admin-product-list>article>div:last-child{grid-column:1/-1}}
+@media(max-width:560px){.admin-shopify-content .admin-product-list>article{grid-template-columns:1fr;gap:9px}.admin-shopify-content .admin-product-list>article>div:last-child{grid-column:auto}.admin-shopify-content .orders-list>.order-card{grid-template-columns:1fr}}
