@@ -18,7 +18,7 @@ export default async function AccountPage() {
       <div className="commerce-breadcrumb">
         <Link href="/">{t("common.home","Home")}</Link>
         <span>/</span>
-        Account
+        {t("account.title","Account")}
       </div>
 
       <section className="account-panel">
@@ -34,12 +34,12 @@ export default async function AccountPage() {
               <Link className="primary-link" href="/account/orders">{t("account.orders","View your orders")}</Link>
               <Link className="text-link" href="/account/addresses">{t("account.addresses","Saved addresses")}</Link>
               <Link className="text-link" href="/account/wishlist">{t("account.wishlist","Saved wishlist")}</Link>
-              <LogoutButton />
+              <LogoutButton labels={locale.labels} />
             </div>
             <div className="account-preferences">
               <h2>{t("account.communication","Order communication")}</h2>
               <p>{t("account.whatsappHint","Choose whether you would like transactional order updates on WhatsApp.")}</p>
-              <WhatsAppPreference initialValue={user.whatsappOptIn} />
+              <WhatsAppPreference initialValue={user.whatsappOptIn} labels={locale.labels} />
             </div>
           </>
         ) : (
