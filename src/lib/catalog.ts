@@ -62,6 +62,9 @@ export async function getActiveProducts(categorySlug?: string) {
         category: true,
         categoryLinks: { include: { category: true } },
         variants: { where: { isActive: true }, orderBy: { label: "asc" } },
+        // Category pages use these relations to build live, product-type-aware filters.
+        attributeValues: { include: { attribute: true } },
+        productType: { include: { attributes: { include: { attribute: true }, orderBy: { sortOrder: "asc" } } } },
       },
       orderBy: [{ createdAt: "desc" }],
     });
