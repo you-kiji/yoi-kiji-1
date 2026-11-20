@@ -412,3 +412,27 @@ VALUES
 ('tr_ja_ui_account_whatsapp','ja','ui','storefront','account.whatsappHint','WhatsAppで注文に関する更新を受け取るか選択してください。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
 ('tr_ja_ui_account_guesthint','ja','ui','storefront','account.guestHint','ログインまたはアカウントを作成して、住所や注文を管理できます。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
 ON CONFLICT ("localeCode","entityType","entityId","fieldKey") DO NOTHING;
+
+INSERT INTO "ContentTranslation" ("id","localeCode","entityType","entityId","fieldKey","value","createdAt","updatedAt")
+VALUES
+('tr_ja_ui_cart_quantityfor','ja','ui','storefront','cart.quantityFor','数量：',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_cart_decrease','ja','ui','storefront','cart.decrease','数量を減らす：',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_cart_increase','ja','ui','storefront','cart.increase','数量を増やす：',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_cart_quantity','ja','ui','storefront','cart.quantity','数量',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_cart_storageerror','ja','ui','storefront','cart.storageError','バッグを保存できませんでした。ブラウザーのストレージ設定をご確認ください。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_account_signout','ja','ui','storefront','account.signOut','ログアウト',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_account_signingout','ja','ui','storefront','account.signingOut','ログアウト中…',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_account_whatsappenabled','ja','ui','storefront','account.whatsappEnabled','WhatsAppの注文通知を有効にしました。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_account_whatsappdisabled','ja','ui','storefront','account.whatsappDisabled','WhatsAppの注文通知を無効にしました。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_account_whatsapperror','ja','ui','storefront','account.whatsappError','設定を更新できませんでした。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_account_whatsappoptin','ja','ui','storefront','account.whatsappOptIn','WhatsAppで注文に関する更新を受け取る',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_account_whatsappsmall','ja','ui','storefront','account.whatsappSmall','この設定はいつでも変更できます。注文に関するメッセージのみをお送りします。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_checkout_couponmin','ja','ui','storefront','checkout.couponMin','プロモーションコードは3文字以上入力するか、入力欄を空にしてください。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_checkout_quoteerror','ja','ui','storefront','checkout.quoteError','バッグの内容を確認できませんでした。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_checkout_onlineaccountrequired','ja','ui','storefront','checkout.onlineAccountRequired','オンライン決済にはアカウント登録またはログインが必要です。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_checkout_starterror','ja','ui','storefront','checkout.startError','チェックアウトを開始できませんでした。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_checkout_paymentloading','ja','ui','storefront','checkout.paymentLoading','決済画面を読み込んでいます。しばらくしてからお試しください。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_checkout_paymentpending','ja','ui','storefront','checkout.paymentPending','決済確認中です。注文履歴を後ほどご確認ください。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_checkout_paymentverify','ja','ui','storefront','checkout.paymentVerifyError','決済結果を確認できませんでした。再試行する前に注文履歴をご確認ください。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_common_optional','ja','ui','storefront','common.optional','任意',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+ON CONFLICT ("localeCode","entityType","entityId","fieldKey") DO NOTHING;
