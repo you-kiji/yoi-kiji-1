@@ -84,7 +84,8 @@ export async function GET(request: NextRequest) {
   const localeCode = request.cookies.get("yk-locale")?.value ?? "en";
   const translationTargets = [
     ...products.map(product => ({ entityType: "product", entityId: product.id })),
-    ...categories.map(category => ({ entityType: "category", entityId: category.id })),\n    ...products.flatMap(product => product.attributeValues.map(item => ({ entityType: "attribute", entityId: item.attribute.id }))),
+    ...categories.map(category => ({ entityType: "category", entityId: category.id })),
+    ...products.flatMap(product => product.attributeValues.map(item => ({ entityType: "attribute", entityId: item.attribute.id }))),
   ];
   const translations = localeCode === "en" || !translationTargets.length ? [] : await prisma.contentTranslation.findMany({
     where: { localeCode, OR: translationTargets.map(target => ({ entityType: target.entityType, entityId: target.entityId })) },
