@@ -455,6 +455,9 @@ model ProductCategory {
 model HomepageSection {
   id        String   @id @default(cuid())
   key       String   @unique
+  sectionType String @default("rich-text")
+  settings  Json?
+  slides    Json?
   eyebrow   String?
   title     String?
   body      String?  @db.Text
