@@ -1,6 +1,5 @@
-import Link from "next/link";
-import { CartCount } from "@/components/cart-count";
 import { getActiveCategories } from "@/lib/catalog";
+import { SiteHeaderClient } from "@/components/site-header-client";
 
 const fallbackCategories = [
   { id: "fallback-bedsheets", name: "Bedsheets", slug: "bedsheets", parentId: null, showInMenu: true },
@@ -15,52 +14,11 @@ export async function SiteHeader() {
   try {
     categories = await getActiveCategories();
   } catch {
-    // Keep the primary navigation available even if catalogue data is temporarily unavailable.
+    // Keep navigation available when catalogue data is temporarily unavailable.
   }
   const roots = (categories.length ? categories : fallbackCategories)
-    .filter(category => category.parentId === null && category.showInMenu);
+    .filter(category => category.parentId === null && category.showInMenu)
+    .map(({ id, name, slug }) => ({ id, name, slug }));
 
-  return (
-    <header className="site-header">
-      <Link className="wordmark" href="/" aria-label="YOI KIJI home">
-        <span className="wordmark-main">YOI KIJI</span>
-        <span className="wordmark-sub">THE ART OF TEXTILE LIVING</span>
-      </Link>
-
-      <nav className="desktop-navigation" aria-label="Main navigation">
-        <Link href="/shop">Shop</Link>
-        <details className="header-collections">
-          <summary>Collections</summary>
-          <div className="header-collections-menu">
-            {roots.map(category => (
-              <Link key={category.id} href={`/shop?category=${encodeURIComponent(category.slug)}`}>{category.name}</Link>
-            ))}
-          </div>
-        </details>
-        <Link href="/our-story">Our story</Link>
-        <Link href="/journal">Journal</Link>
-      </nav>
-
-      <details className="mobile-navigation">
-        <summary aria-label="Open navigation menu">Menu</summary>
-        <nav aria-label="Mobile navigation">
-          <Link href="/shop">Shop all</Link>
-          <p>Collections</p>
-          {roots.map(category => (
-            <Link key={category.id} href={`/shop?category=${encodeURIComponent(category.slug)}`}>{category.name}</Link>
-          ))}
-          <Link href="/our-story">Our story</Link>
-          <Link href="/journal">Journal</Link>
-          <Link href="/search">Search</Link>
-          <Link href="/account">Account</Link>
-        </nav>
-      </details>
-
-      <div className="header-actions">
-        <Link href="/search">Search</Link>
-        <Link href="/account">Account</Link>
-        <Link className="bag-link" href="/cart">Bag <CartCount /></Link>
-      </div>
-    </header>
-  );
+  return <SiteHeaderClient categories={roots} />;
 }
