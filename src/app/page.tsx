@@ -30,10 +30,6 @@ export default async function HomePage() {
     : categoryRecords.filter(item => item.parentId === null).map(item => ({ id: item.id, name: translated.get(`category:${item.id}:name`) ?? item.name, note: translated.get(`category:${item.id}:description`) ?? item.description ?? "", image: item.imageUrl ?? "", href: `/shop?category=${encodeURIComponent(item.slug)}` }));
 
   return <main className="home-redesign">
-    <section className="home-search-section" aria-label={locale.labels["search.label"] ?? "Search YOI KIJI collections"}>
-      <div><p className="editorial-eyebrow editorial-eyebrow--dark">YOI KIJI / DISCOVERY</p><h2>{locale.labels["home.searchTitle"] ?? "Search the collection."}</h2></div>
-      <AdvancedSearch labels={locale.labels} />
-    </section>
     {sections.map(section => {
       const eyebrow = value(section, "eyebrow");
       const title = value(section, "title");
@@ -42,6 +38,10 @@ export default async function HomePage() {
       const imageAlt = value(section, "imageAlt");
       const ctaLabel = value(section, "ctaLabel");
       const ctaHref = value(section, "ctaHref");
+      if (section.key === "search") return <section className="home-search-section" aria-label={locale.labels["search.label"] ?? "Search YOI KIJI collections"} key={section.id}>
+        <div>{eyebrow && <p className="editorial-eyebrow editorial-eyebrow--dark">{eyebrow}</p>}{title && <h2>{title}</h2>}{body && <p>{body}</p>}</div>
+        <AdvancedSearch labels={locale.labels} />
+      </section>;
       if (section.key === "collections") {
         if (!categories.length) return null;
         return <section className="editorial-collections" key={section.id}>
