@@ -922,3 +922,17 @@ dialog::backdrop { background: rgba(5,20,8,.46); backdrop-filter: blur(5px); }
 .storefront-admin-shortcuts { display:flex; flex-wrap:wrap; gap:10px; margin:0 0 26px; }
 .storefront-admin-shortcuts a { display:inline-flex; align-items:center; min-height:42px; padding:9px 15px; border:1px solid #24452c; color:#17371d; text-decoration:none; background:#fff; font-size:13px; }
 .storefront-admin-shortcuts a:hover { background:#edf1e9; }
+
+
+/* Storefront editor media-library picker */
+.storefront-media-picker-trigger { display:inline-flex; align-items:center; justify-content:center; width:max-content; min-height:38px; margin-top:7px; padding:8px 12px; border:1px solid #24452c; background:#f5f6f1; color:#17371d; font-size:12px; cursor:pointer; }
+.storefront-media-picker-backdrop { position:fixed; inset:0; z-index:1000; display:grid; place-items:center; padding:20px; background:rgba(5,20,8,.62); backdrop-filter:blur(5px); }
+.storefront-media-picker { width:min(920px,100%); max-height:min(82vh,820px); overflow:auto; padding:clamp(18px,3vw,30px); background:#f8f8f3; color:#17371d; box-shadow:0 24px 80px rgba(0,0,0,.24); }
+.storefront-media-picker .admin-section-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.storefront-media-picker .admin-section-heading button { min-height:40px; padding:8px 14px; border:1px solid #24452c; background:#fff; color:#17371d; }
+.storefront-media-picker-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; margin-top:18px; }
+.storefront-media-picker-item { display:grid; gap:8px; min-width:0; padding:8px; border:1px solid #d7ded2; background:#fff; color:#17371d; text-align:left; cursor:pointer; }
+.storefront-media-picker-item:hover,.storefront-media-picker-item:focus-visible { outline:2px solid #24452c; outline-offset:2px; }
+.storefront-media-picker-item img { width:100%; aspect-ratio:4/3; object-fit:cover; background:#e5e6dc; }
+.storefront-media-picker-item span { overflow:hidden; font-size:12px; text-overflow:ellipsis; white-space:nowrap; }
+@media(max-width:520px) { .storefront-media-picker-backdrop { padding:10px; } .storefront-media-picker-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
