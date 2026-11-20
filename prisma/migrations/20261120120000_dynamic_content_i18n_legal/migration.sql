@@ -161,3 +161,13 @@ VALUES
 ('tr_ja_ui_footer_contact','ja','ui','storefront','footer.contact','お問い合わせ',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
 ('tr_ja_ui_footer_backtop','ja','ui','storefront','footer.backTop','ページ上部へ',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
 ON CONFLICT ("localeCode","entityType","entityId","fieldKey") DO NOTHING;
+
+INSERT INTO "HomepageSection" ("id","key","eyebrow","title","body","position","isActive","createdAt","updatedAt")
+VALUES ('home_announcement','announcement',NULL,'TEXTILES FOR THE WAY YOU LIVE','COMFORT, CONSIDERED.',-10,true,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+ON CONFLICT ("key") DO NOTHING;
+INSERT INTO "ContentTranslation" ("id","localeCode","entityType","entityId","fieldKey","value","createdAt","updatedAt")
+SELECT 'tr_ja_announcement_' || "id" || '_' || field.field_key,'ja','homepageSection',"id",field.field_key,field.translated_value,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP
+FROM "HomepageSection"
+JOIN (VALUES ('announcement','title','暮らしに寄り添うテキスタイル'),('announcement','body','心地よさを、丁寧に。')) AS field(section_key,field_key,translated_value)
+ON field.section_key = "HomepageSection"."key"
+ON CONFLICT ("localeCode","entityType","entityId","fieldKey") DO NOTHING;
