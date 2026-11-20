@@ -40,6 +40,7 @@ export default async function JournalPage({ searchParams }: { searchParams: Sear
     prisma.blogTag.findMany({ where: { posts: { some: { post: { status: "PUBLISHED", publishedAt: { lte: now }, noIndex: false } } } }, orderBy: { name: "asc" } }).catch(() => []),
   ]);
   const locale = await getLocaleData();
+  const t = (key: string, fallback: string) => locale.labels[key] ?? fallback;
   const translationTargets = [
     ...posts.map(post => ({ entityType: "blogPost", entityId: post.id })),
     ...categories.map(item => ({ entityType: "blogCategory", entityId: item.id })),
@@ -61,19 +62,19 @@ export default async function JournalPage({ searchParams }: { searchParams: Sear
   const selectedLabel = category ? localizedCategories.find(item => item.slug === category)?.name : tag ? localizedTags.find(item => item.slug === tag)?.name : null;
 
   return <main className="journal-page">
-    <div className="commerce-breadcrumb"><Link href="/">Home</Link><span>/</span> Journal</div>
+    <div className="commerce-breadcrumb"><Link href="/">Home</Link><span>/</span> {t("common.journal","Journal")}</div>
     <header className="journal-hero">
-      <p className="eyebrow">NOTES ON MAKING A HOME</p>
-      <h1>Live well.<br/><em>Feel at home.</em></h1>
-      <p>Care guides, textile stories and ideas for making everyday spaces feel more considered.</p>
+      <p className="eyebrow">{t("journal.eyebrow","NOTES ON MAKING A HOME")}</p>
+      <h1>{t("journal.title","Live well.")}<br/><em>{t("journal.titleAccent","Feel at home.")}</em></h1>
+      <p>{t("journal.description","Care guides, textile stories and ideas for making everyday spaces feel more considered.")}</p>
     </header>
-    <nav className="journal-filters" aria-label="Filter journal articles">
-      <Link className={!category && !tag ? "is-active" : ""} href="/journal">All stories</Link>
+    <nav className="journal-filters" aria-label={t("journal.filterAria","Filter journal articles")}>
+      <Link className={!category && !tag ? "is-active" : ""} href="/journal">{t("journal.allStories","All stories")}</Link>
       {localizedCategories.map(item => <Link className={category === item.slug ? "is-active" : ""} href={"/journal?category=" + encodeURIComponent(item.slug)} key={item.id}>{item.name}</Link>)}
       {localizedTags.map(item => <Link className={tag === item.slug ? "is-active" : ""} href={"/journal?tag=" + encodeURIComponent(item.slug)} key={"tag-" + item.id}># {item.name}</Link>)}
     </nav>
     <div className="journal-results-heading">
-      <h2>{selectedLabel ? "Stories: " + selectedLabel : "The journal"}</h2>
+      <h2>{selectedLabel ? t("journal.stories","Stories: ") + selectedLabel : t("journal.heading","The journal")}</h2>
       <span>{posts.length} {posts.length === 1 ? "story" : "stories"}</span>
     </div>
     {posts.length ? <section className="journal-grid" aria-label="Journal articles">
@@ -86,9 +87,9 @@ export default async function JournalPage({ searchParams }: { searchParams: Sear
           <h3><Link href={"/journal/" + post.slug}>{post.title}</Link></h3>
           {post.excerpt && <p>{post.excerpt}</p>}
           <div className="journal-card-meta"><span>{post.author?.name ?? "YOI KIJI Editorial"}</span><time dateTime={post.publishedAt?.toISOString()}>{post.publishedAt?.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}</time></div>
-          <Link className="journal-read-link" href={"/journal/" + post.slug}>Read story</Link>
+          <Link className="journal-read-link" href={"/journal/" + post.slug}>{t("journal.readStory","Read story")}</Link>
         </div>
       </article>)}
-    </section> : <section className="journal-empty"><span>✳</span><h2>No stories here just yet.</h2><p>Try another category or return to all journal stories.</p><Link href="/journal">View all stories</Link></section>}
+    </section> : <section className="journal-empty"><span>✳</span><h2>{t("journal.noStories","No stories here just yet.")}</h2><p>{t("journal.noStoriesHint","Try another category or return to all journal stories.")}</p><Link href="/journal">{t("journal.allStories","View all stories")}</Link></section>}
   </main>;
 }
