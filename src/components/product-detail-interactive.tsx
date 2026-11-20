@@ -23,8 +23,10 @@ export function ProductDetailInteractive({
   inventoryQty: number;
   basePricePaise: number;
   children: ReactNode;
+  labels?: Record<string,string>;
 }) {
-  const t = (key: string, fallback: string) => labels[key] ?? fallback;\n  const [activeVariantId, setActiveVariantId] = useState("");
+  const t = (key: string, fallback: string) => labels[key] ?? fallback;
+  const [activeVariantId, setActiveVariantId] = useState("");
   const activeVariant = variants.find(variant => variant.id === activeVariantId);
   const variantImages = activeVariant?.images ?? [];
   const gallery = variantImages.length
@@ -44,7 +46,7 @@ export function ProductDetailInteractive({
       {activeImage ? (
         <>
           <div className="product-gallery-main">
-            <img src={activeImage.url} alt={activeImage.alt || "YOI KIJI product image"} fetchPriority="high" />
+            <img src={activeImage.url} alt={activeImage.alt || t("product.imageAlt","YOI KIJI product image")} fetchPriority="high" />
           </div>
           {gallery.length > 1 && (
             <div className="product-gallery-thumbnails" role="group" aria-label={t("product.chooseImage","Choose product image")}>
