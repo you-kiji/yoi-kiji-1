@@ -35,6 +35,24 @@ export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
   const product = await getActiveProductBySlug(slug);
   if (!product) notFound();
+  const requestedLocale = (await cookies()).get("yk-locale")?.value ?? "en";
+  const locale = await prisma.locale.findFirst({ where: { code: requestedLocale, isEnabled: true }, select: { code: true } }).catch(() => null);
+  const translationTargets = [
+    { entityType: "product", entityId: product.id },
+    ...(product.categoryId ? [{ entityType: "category", entityId: product.categoryId }] : []),
+    ...product.attributeValues.map(entry => ({ entityType: "attribute", entityId: entry.attribute.id })),
+  ];
+  const productTranslations = locale?.code && locale.code !== "en" ? await prisma.contentTranslation.findMany({
+    where: { localeCode: locale.code, OR: translationTargets.map(target => ({ entityType: target.entityType, entityId: target.entityId })) },
+  }) : [];
+  const productText = new Map(productTranslations.filter(entry => entry.entityType === "product").map(entry => [entry.fieldKey, entry.value]));
+  const translated = new Map(productTranslations.map(entry => [`${entry.entityType}:${entry.entityId}:${entry.fieldKey}`, entry.value]));
+  const displayName = productText.get("name") ?? product.name;
+  const displayDescription = productText.get("description") ?? product.description;
+  const displayCategory = product.category ? translated.get(`category:${product.category.id}:name`) ?? product.category.name : "YOI KIJI COLLECTION";
+  const displayMaterial = productText.get("material") ?? product.material;
+  const displayColor = productText.get("color") ?? product.color;
+  const displayCare = productText.get("careInstructions") ?? product.careInstructions;
 
   const user=await getCurrentUser();
   const [reviews,reviewSummary,eligiblePurchase,relatedProducts]=await Promise.all([
@@ -45,8 +63,10 @@ export default async function ProductPage({ params }: Props) {
   ]);
   const dynamicSpecs = product.attributeValues.map(entry => {
     const value = entry.value;
-    const formatted = Array.isArray(value) ? value.join(", ") : typeof value === "boolean" ? (value ? "Yes" : "No") : typeof value === "object" && value !== null ? JSON.stringify(value) : String(value);
-    return { name: entry.attribute.name, value: entry.attribute.unit ? `${formatted} ${entry.attribute.unit}` : formatted };
+    const translatedValue = productText.get(`attribute_${entry.attribute.key}`);
+    const formatted = translatedValue ?? (Array.isArray(value) ? value.join(", ") : typeof value === "boolean" ? (value ? "Yes" : "No") : typeof value === "object" && value !== null ? JSON.stringify(value) : String(value));
+    const name = translated.get(`attribute:${entry.attribute.id}:name`) ?? entry.attribute.name;
+    return { name, value: entry.attribute.unit ? `${formatted} ${entry.attribute.unit}` : formatted };
   });
 
   return <main className="commerce-page">
@@ -63,16 +83,16 @@ export default async function ProductPage({ params }: Props) {
       inventoryQty={product.inventoryQty}
       basePricePaise={product.pricePaise}
     >
-      <p className="eyebrow">{product.category?.name ?? "YOI KIJI COLLECTION"}</p>
+      <p className="eyebrow">{displayCategory}</p>
       <h1>{displayName}</h1>
       <WishlistButton productId={product.id}/>
       {(product.hasVariants?product.variants.every(v=>v.inventoryQty<=0):product.inventoryQty<=0)&&<BackInStockForm productId={product.id}/>}
       <p className="product-description">{displayDescription}</p>
-      {(product.material || product.color || product.careInstructions || product.lengthMm || product.widthMm || product.heightMm || dynamicSpecs.length > 0) && <dl className="product-specs">
-        {product.material && <div><dt>Material</dt><dd>{product.material}</dd></div>}
-        {product.color && <div><dt>Colour</dt><dd>{product.color}</dd></div>}
+      {(displayMaterial || displayColor || displayCare || product.lengthMm || product.widthMm || product.heightMm || dynamicSpecs.length > 0) && <dl className="product-specs">
+        {displayMaterial && <div><dt>Material</dt><dd>{displayMaterial}</dd></div>}
+        {displayColor && <div><dt>Colour</dt><dd>{displayColor}</dd></div>}
         {(product.lengthMm || product.widthMm || product.heightMm) && <div><dt>Dimensions</dt><dd>{[product.lengthMm, product.widthMm, product.heightMm].filter(Boolean).join(" × ")} mm</dd></div>}
-        {product.careInstructions && <div><dt>Care</dt><dd>{product.careInstructions}</dd></div>}
+        {displayCare && <div><dt>Care</dt><dd>{displayCare}</dd></div>}
         {dynamicSpecs.map(spec => <div key={spec.name}><dt>{spec.name}</dt><dd>{spec.value}</dd></div>)}
       </dl>}
     </ProductDetailInteractive>
