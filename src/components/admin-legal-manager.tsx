@@ -17,7 +17,7 @@ export function AdminLegalManager({ initialPages }: { initialPages: Page[] }) {
       <form className="admin-content-form" onSubmit={save}>
         <label>Page title<input required value={form.title} onChange={e=>setForm({...form,title:e.target.value})}/></label>
         <label>URL slug<input required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" value={form.slug} onChange={e=>setForm({...form,slug:e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,"-")})} placeholder="privacy-policy"/></label>
-        <label className="wide">Page content (plain text / Markdown)<textarea required minLength={10} maxLength={50000} rows={18} value={form.content} onChange={e=>setForm({...form,content:e.target.value})}/></label>
+        <label className="wide">Page content (plain text)<textarea required minLength={10} maxLength={50000} rows={18} value={form.content} onChange={e=>setForm({...form,content:e.target.value})}/></label>
         <label>Publishing status<select value={form.status} onChange={e=>setForm({...form,status:e.target.value as Page["status"]})}><option value="DRAFT">Draft</option><option value="PUBLISHED">Published</option><option value="ARCHIVED">Archived</option></select></label>
         <label>SEO title<input value={form.seoTitle} onChange={e=>setForm({...form,seoTitle:e.target.value})}/></label>
         <label className="wide">SEO description<textarea rows={2} value={form.seoDescription} onChange={e=>setForm({...form,seoDescription:e.target.value})}/></label>
