@@ -777,3 +777,16 @@ model SocialAccount {
   updatedAt DateTime @updatedAt
   @@index([isActive, placement, sortOrder])
 }
+
+model StoreNavigationItem {
+  id          String   @id @default(cuid())
+  label       String
+  href        String
+  location    String   @default("HEADER")
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  openInNewTab Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@index([location, isActive, sortOrder])
+}
