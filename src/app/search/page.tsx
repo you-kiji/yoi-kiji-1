@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { getActiveProducts } from "@/lib/catalog";
-import { formatINR } from "@/lib/money";
+import { SearchResults } from "@/components/search-results";
 import { AdvancedSearch } from "@/components/advanced-search";
 import { getLocaleData } from "@/lib/i18n";
 
@@ -15,12 +14,6 @@ export default async function SearchPage({
   const { q = "" } = await searchParams;
   const locale = await getLocaleData();
   const term = q.trim().slice(0, 80);
-  const all = term ? await getActiveProducts() : [];
-  const products = all.filter((product) =>
-    (product.name + " " + product.description + " " + (product.category?.name ?? ""))
-      .toLowerCase()
-      .includes(term.toLowerCase()),
-  );
 
   return (
     <main className="commerce-page search-page">
@@ -37,22 +30,7 @@ export default async function SearchPage({
 
         <AdvancedSearch compact labels={locale.labels} />     </header>
 
-      {term && (
-        <>
-          <p className="search-count" role="status" aria-live="polite">
-            {products.length} {products.length === 1 ? "result" : "results"} for “{term}”
-          </p>
-
-          {products.length ? (
-            <section className="product-grid search-product-grid" aria-label="Search results">
-              {products.map((product) => (
-                <Link className="product-card" href={"/products/" + product.slug} key={product.id}>
-                  <div className="product-card-image">
-                    {product.images[0] ? (
-                      <img src={product.images[0].url} alt={product.images[0].alt || product.name} />
-                    ) : (
-                      <span>YOI KIJI</span>
-                    )}
+      {term && <SearchResults query={term} />}
                   </div>
                   <p className="product-card-category">{product.category?.name ?? "YOI KIJI"}</p>
                   <h2>{product.name}</h2>
