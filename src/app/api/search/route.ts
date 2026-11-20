@@ -7,7 +7,7 @@ export const revalidate = 0;
 type SearchableProduct = {
   id: string; name: string; slug: string; sku: string; description: string; translatedName?: string; translatedDescription?: string;
   material: string | null; color: string | null; seoKeywords: string[];
-  pricePaise: number; category: { name: string } | null;
+  pricePaise: number; category: { id: string; name: string } | null;
   images: { url: string; alt: string }[];
   attributeValues: { value: unknown; attribute: { name: string; key: string } }[];
 };
