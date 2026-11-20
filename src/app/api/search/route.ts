@@ -1,0 +1,106 @@
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+type SearchableProduct = {
+  id: string; name: string; slug: string; sku: string; description: string;
+  material: string | null; color: string | null; seoKeywords: string[];
+  pricePaise: number; category: { name: string } | null;
+  images: { url: string; alt: string }[];
+  attributeValues: { value: unknown; attribute: { name: string; key: string } }[];
+};
+
+function normalise(value: string) {
+  return value.normalize("NFKC").toLocaleLowerCase().replace(/[^\p{L}\p{N}\s-]/gu, " ").replace(/\s+/g, " ").trim();
+}
+
+function editDistance(a: string, b: string): number {
+  if (Math.abs(a.length - b.length) > 2) return 3;
+  const row = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    let diagonal = row[0];
+    row[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const above = row[j];
+      row[j] = Math.min(row[j] + 1, row[j - 1] + 1, diagonal + (a[i - 1] === b[j - 1] ? 0 : 1));
+      diagonal = above;
+    }
+  }
+  return row[b.length];
+}
+
+function scoreProduct(product: SearchableProduct, query: string) {
+  const fields = [
+    { value: product.name, weight: 12 },
+    { value: product.sku, weight: 11 },
+    { value: product.category?.name ?? "", weight: 8 },
+    { value: product.material ?? "", weight: 6 },
+    { value: product.color ?? "", weight: 5 },
+    { value: product.seoKeywords.join(" "), weight: 5 },
+    { value: product.description, weight: 2 },
+    { value: product.attributeValues.map(item => `${item.attribute.name} ${item.attribute.key} ${JSON.stringify(item.value)}`).join(" "), weight: 4 },
+  ];
+  const terms = query.split(" ").filter(Boolean);
+  let score = 0;
+  for (const term of terms) {
+    let best = 0;
+    for (const field of fields) {
+      const value = normalise(field.value);
+      if (!value) continue;
+      if (value === term) best = Math.max(best, field.weight + 8);
+      else if (value.startsWith(term)) best = Math.max(best, field.weight + 5);
+      else if (value.includes(term)) best = Math.max(best, field.weight + 2);
+      else if (term.length >= 4) {
+        const near = value.split(" ").some(word => word.length >= 4 && editDistance(word, term) <= (term.length > 7 ? 2 : 1));
+        if (near) best = Math.max(best, field.weight);
+      }
+    }
+    score += best;
+  }
+  return score;
+}
+
+export async function GET(request: NextRequest) {
+  const raw = request.nextUrl.searchParams.get("q") ?? "";
+  const query = normalise(raw).slice(0, 80);
+  if (query.length < 2) return NextResponse.json({ query, products: [], categories: [], suggestions: [] }, { headers: { "Cache-Control": "private, no-store" } });
+
+  const [products, categories] = await Promise.all([
+    prisma.product.findMany({
+      where: { isActive: true },
+      select: {
+        id: true, name: true, slug: true, sku: true, description: true, material: true, color: true,
+        seoKeywords: true, pricePaise: true, category: { select: { name: true } },
+        images: { where: { variantId: null }, orderBy: [{ isPrimary: "desc" }, { position: "asc" }], take: 1, select: { url: true, alt: true } },
+        attributeValues: { select: { value: true, attribute: { select: { name: true, key: true } } } },
+      },
+      take: 1500,
+    }) as Promise<SearchableProduct[]>,
+    prisma.category.findMany({ where: { isActive: true }, select: { id: true, name: true, slug: true }, orderBy: { sortOrder: "asc" }, take: 100 }),
+  ]);
+
+  const ranked = products
+    .map(product => ({ product, score: scoreProduct(product, query) }))
+    .filter(item => item.score > 0)
+    .sort((a, b) => b.score - a.score || a.product.name.localeCompare(b.product.name))
+    .slice(0, 8)
+    .map(({ product, score }) => ({ id: product.id, name: product.name, slug: product.slug, sku: product.sku, category: product.category?.name ?? "YOI KIJI", pricePaise: product.pricePaise, image: product.images[0] ?? null, score }));
+
+  const categoryMatches = categories
+    .map(category => ({ ...category, score: scoreProduct({ id: category.id, name: category.name, slug: category.slug, sku: "", description: "", material: null, color: null, seoKeywords: [], pricePaise: 0, category: null, images: [], attributeValues: [] }, query) }))
+    .filter(category => category.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4);
+
+  const suggestions = [...new Set([
+    ...ranked.slice(0, 4).map(item => item.name),
+    ...categoryMatches.map(item => item.name),
+  ])].slice(0, 6);
+
+  return NextResponse.json(
+    { query, products: ranked, categories: categoryMatches, suggestions, totalMatches: ranked.length },
+    { headers: { "Cache-Control": "private, no-store" } },
+  );
+}
