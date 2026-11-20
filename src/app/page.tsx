@@ -24,8 +24,8 @@ export default async function HomePage() {
     translated.get(`${section.id}:${field}`) ?? section[field] ?? "";
   const collectionSection = sections.find(item => item.key === "collections");
   const categories = collections.length
-    ? collections.map(item => ({ id: item.id, name: item.name, note: item.description ?? "", image: item.imageUrl ?? "", href: `/shop?collection=${encodeURIComponent(item.slug)}` }))
-    : categoryRecords.filter(item => item.parentId === null).map(item => ({ id: item.id, name: item.name, note: item.description ?? "", image: item.imageUrl ?? "", href: `/shop?category=${encodeURIComponent(item.slug)}` }));
+    ? collections.map(item => ({ id: item.id, name: translated.get(`collection:${item.id}:name`) ?? item.name, note: translated.get(`collection:${item.id}:description`) ?? item.description ?? "", image: item.imageUrl ?? "", href: `/shop?collection=${encodeURIComponent(item.slug)}` }))
+    : categoryRecords.filter(item => item.parentId === null).map(item => ({ id: item.id, name: translated.get(`category:${item.id}:name`) ?? item.name, note: translated.get(`category:${item.id}:description`) ?? item.description ?? "", image: item.imageUrl ?? "", href: `/shop?category=${encodeURIComponent(item.slug)}` }));
 
   return <main className="home-redesign">
     <section className="home-search-section" aria-label="Search YOI KIJI collections">
