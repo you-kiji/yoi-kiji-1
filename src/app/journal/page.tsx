@@ -4,11 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { getLocaleData } from "@/lib/i18n";
 
 export const revalidate = 300;
-export const metadata: Metadata = {
-  title: "Journal",
-  description: "Care guides, textile stories and considered ideas for making everyday spaces feel like home.",
-  alternates: { canonical: "/journal" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocaleData();
+  return { title: locale.labels["seo.journalTitle"] ?? "Journal", description: locale.labels["seo.journalDescription"] ?? "Care guides, textile stories and considered ideas for making everyday spaces feel like home.", alternates: { canonical: "/journal" } };
+}
 
 type SearchParams = Promise<{ category?: string; tag?: string }>;
 
