@@ -266,3 +266,20 @@ VALUES
 ('tr_ja_ui_common_shop','ja','ui','storefront','common.shop','ショップ',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
 ('tr_ja_ui_common_journal','ja','ui','storefront','common.journal','ジャーナル',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
 ON CONFLICT ("localeCode","entityType","entityId","fieldKey") DO NOTHING;
+
+INSERT INTO "ContentTranslation" ("id","localeCode","entityType","entityId","fieldKey","value","createdAt","updatedAt")
+VALUES
+('tr_ja_ui_product_gallery','ja','ui','storefront','product.gallery','商品画像',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_product_chooseimage','ja','ui','storefront','product.chooseImage','画像を選択',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_product_imagealt','ja','ui','storefront','product.imageAlt','YOI KIJI 商品画像',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_product_viewimage','ja','ui','storefront','product.viewImage','画像を見る',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_product_productview','ja','ui','storefront','product.productView','商品ビュー',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_product_pricenote','ja','ui','storefront','product.priceNote','価格は日本円で表示されています。配送可能地域と送料はチェックアウト時にご確認いただけます。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_product_unavailable','ja','ui','storefront','product.unavailable','現在在庫切れです',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_product_available','ja','ui','storefront','product.available','ご注文いただけます',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_product_selectvariant','ja','ui','storefront','product.selectVariant','サイズ・オプションを選択',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_product_outofstock','ja','ui','storefront','product.outOfStock','在庫切れ',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_product_added','ja','ui','storefront','product.addedToBag','バッグに追加しました',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_product_add','ja','ui','storefront','product.addToBag','バッグに追加',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_home_discover','ja','ui','storefront','home.discover','詳しく見る',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+ON CONFLICT ("localeCode","entityType","entityId","fieldKey") DO NOTHING;
