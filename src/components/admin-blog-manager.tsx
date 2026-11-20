@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 import { useMemo, useState } from "react";
 
@@ -57,7 +58,7 @@ export function AdminBlogManager({ initialPosts, categories, tags, products }: {
     <div className="admin-section-heading"><h2>Editorial library</h2><span>{posts.length} recent articles</span></div>
     <button type="button" className="commerce-button" onClick={() => start()}>Create article</button>
     {message && <p role="status">{message}</p>}
-    <div className="orders-list">{posts.map(post => <article className="order-card" key={post.id}><div><strong>{post.title}</strong><p>/{post.slug}</p><small>Updated {new Date(post.updatedAt).toLocaleDateString("en-IN")}</small></div><span className="order-status">{post.status.toLowerCase()}</span><div><button type="button" onClick={() => start(post)}>Edit</button> <button type="button" onClick={() => archive(post.id)}>Archive</button></div></article>)}</div>
+    <div className="orders-list">{posts.map(post => <article className="order-card" key={post.id}><div><strong><Link href={`/admin/blog/${post.id}`}>{post.title}</Link></strong><p><Link className="admin-product-open-link" href={`/admin/blog/${post.id}`}>Open article details</Link></p><p>/{post.slug}</p><small>Updated {new Date(post.updatedAt).toLocaleDateString("en-IN")}</small></div><span className="order-status">{post.status.toLowerCase()}</span><div><button type="button" onClick={() => start(post)}>Edit</button> <button type="button" onClick={() => archive(post.id)}>Archive</button></div></article>)}</div>
     <form onSubmit={save} className="admin-blog-form">
       <h2>{editing ? "Edit article" : "New article"}</h2>
       <label>Title<input required minLength={3} maxLength={180} value={form.title} onChange={e => update("title", e.target.value)}/></label>
