@@ -19,7 +19,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         <p>{locale.labels["search.hint"] ?? "Find the textures, colours and considered details you have in mind."}</p>
         <AdvancedSearch compact labels={locale.labels}/>
       </header>
-      {term && <SearchResults query={term}/>}
+      {term && <SearchResults query={term} labels={locale.labels}/>}
     </main>
   );
 }
