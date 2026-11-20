@@ -77,6 +77,7 @@ export function ProductDetailInteractive({
         hasVariants={hasVariants}
         inventoryQty={inventoryQty}
         basePricePaise={basePricePaise}
+        labels={labels}
         onVariantChange={handleVariantChange}
       />
       <p className="product-detail-note">{t("product.priceNote","Prices are shown in INR. Delivery availability and charges are confirmed during checkout.")}</p>
