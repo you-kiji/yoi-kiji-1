@@ -62,8 +62,6 @@ export async function getActiveProducts(categorySlug?: string) {
         category: true,
         categoryLinks: { include: { category: true } },
         variants: { where: { isActive: true }, orderBy: { label: "asc" } },
-        attributeValues: { include: { attribute: true } },
-        productType: { include: { attributes: { include: { attribute: true }, orderBy: { sortOrder: "asc" } } } },
       },
       orderBy: [{ createdAt: "desc" }],
     });
