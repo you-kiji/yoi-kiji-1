@@ -172,3 +172,11 @@ body:has(.admin-shopify-shell) .admin-shopify-shell{min-height:100vh;display:gri
 .admin-shopify-content .admin-section-heading{margin-bottom:12px}
 @media(max-width:900px){.admin-shopify-content .admin-product-list>article{grid-template-columns:minmax(0,1fr) minmax(100px,.6fr)}.admin-shopify-content .admin-product-list>article>div:last-child{grid-column:1/-1}}
 @media(max-width:560px){.admin-shopify-content .admin-product-list>article{grid-template-columns:1fr;gap:9px}.admin-shopify-content .admin-product-list>article>div:last-child{grid-column:auto}.admin-shopify-content .orders-list>.order-card{grid-template-columns:1fr}}
+
+
+/* Shared control-height contract: inputs, selects and buttons align */
+.admin-shopify-content button:not(.admin-shopify-menu-button):not(.admin-shopify-backdrop),
+.admin-shopify-content :is(.primary-link,.commerce-button,.admin-secondary-link){min-height:38px}
+.admin-shopify-content :is(input:not([type=checkbox]):not([type=radio]),select){min-height:38px}
+.admin-shopify-content .admin-product-list .admin-row-controls input{min-height:38px}
+.admin-shopify-content .admin-product-list button{min-height:38px}
