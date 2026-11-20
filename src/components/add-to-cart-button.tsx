@@ -2,7 +2,9 @@
 import { useState } from "react";
 type CartLine={productId:string;variantId?:string;quantity:number};
 export function AddToCartButton({productId,variantId,disabled=false,labels={}}:{productId:string;variantId?:string;disabled?:boolean;labels?:Record<string,string>}){
- const [added,setAdded]=useState(false);\n const addedLabel=labels["product.addedToBag"]??"Added to bag";\n const addLabel=labels["product.addToBag"]??"Add to bag";
+ const [added,setAdded]=useState(false);
+ const addedLabel=labels["product.addedToBag"]??"Added to bag";
+ const addLabel=labels["product.addToBag"]??"Add to bag";
  function add(){
   const raw=localStorage.getItem("yoikiji_cart");
   let cart:CartLine[]=[];try{cart=raw?JSON.parse(raw):[]}catch{cart=[]}
