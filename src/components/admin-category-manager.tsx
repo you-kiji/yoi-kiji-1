@@ -82,7 +82,7 @@ export function AdminCategoryManager() {
         <div className="category-tree-node" key={item.id}>
           <div className="category-tree-row" style={{ paddingLeft: 14 + depth * 24 }}>
             <div className="category-tree-name">
-              <strong>{item.name}</strong>
+              <strong><a href={`/admin/categories/${item.id}`}>{item.name}</a></strong><a className="admin-product-open-link" href={`/admin/categories/${item.id}`}>Open category details</a>
               <span>/{item.slug}</span>
               <small>{item._count.products + item._count.productLinks} product assignment(s) · {item._count.children} child categories</small>
             </div>
