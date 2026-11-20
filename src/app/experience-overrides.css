@@ -936,3 +936,9 @@ dialog::backdrop { background: rgba(5,20,8,.46); backdrop-filter: blur(5px); }
 .storefront-media-picker-item img { width:100%; aspect-ratio:4/3; object-fit:cover; background:#e5e6dc; }
 .storefront-media-picker-item span { overflow:hidden; font-size:12px; text-overflow:ellipsis; white-space:nowrap; }
 @media(max-width:520px) { .storefront-media-picker-backdrop { padding:10px; } .storefront-media-picker-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+/* Admin-managed navigation controls */
+.admin-inline-actions { display:flex; flex-wrap:wrap; gap:7px; align-items:center; }
+.admin-inline-actions button { min-height:36px; padding:7px 11px; border:1px solid #24452c; background:#fff; color:#17371d; cursor:pointer; }
+.admin-content-form .admin-checkbox-label { display:flex; grid-template-columns:auto 1fr; align-items:center; gap:9px; min-height:44px; }
+.admin-content-form .admin-checkbox-label input { width:18px; min-height:18px; accent-color:#17371d; }
