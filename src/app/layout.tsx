@@ -11,7 +11,6 @@ import "./content-management.css";
 import "./quality-pass.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { JapaneseLoader } from "@/components/japanese-loader";
 import { Analytics } from "@/components/analytics";
 import { CookieConsent } from "@/components/cookie-consent";
 import { ScrollMotion } from "@/components/scroll-motion";
@@ -40,7 +39,6 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
       </head>
       <body>
-        <JapaneseLoader />
         <ScrollMotion />
         <AnnouncementBar />
         <SiteHeader />
