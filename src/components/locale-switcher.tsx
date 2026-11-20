@@ -12,7 +12,7 @@ export function LocaleSwitcher() {
     const match = document.cookie.match(/(?:^|; )yk-locale=([^;]+)/);
     if (match) setCurrent(decodeURIComponent(match[1]));
     let active = true;
-    fetch("/api/locales", { cache: "force-cache" })
+    fetch("/api/locales", { cache: "no-store" })
       .then(response => response.ok ? response.json() : null)
       .then(data => {
         if (!active || !Array.isArray(data?.locales)) return;
