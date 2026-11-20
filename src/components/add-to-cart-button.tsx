@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 type CartLine={productId:string;variantId?:string;quantity:number};
-export function AddToCartButton({productId,variantId,disabled=false}:{productId:string;variantId?:string;disabled?:boolean}){
- const [added,setAdded]=useState(false);
+export function AddToCartButton({productId,variantId,disabled=false,labels={}}:{productId:string;variantId?:string;disabled?:boolean;labels?:Record<string,string>}){
+ const [added,setAdded]=useState(false);\n const addedLabel=labels["product.addedToBag"]??"Added to bag";\n const addLabel=labels["product.addToBag"]??"Add to bag";
  function add(){
   const raw=localStorage.getItem("yoikiji_cart");
   let cart:CartLine[]=[];try{cart=raw?JSON.parse(raw):[]}catch{cart=[]}
@@ -11,5 +11,5 @@ export function AddToCartButton({productId,variantId,disabled=false}:{productId:
   localStorage.setItem("yoikiji_cart",JSON.stringify(cart));setAdded(true);
   window.dispatchEvent(new Event("yoikiji-cart-updated"));
  }
- return <button className="primary-link add-to-bag" type="button" disabled={disabled} onClick={add}>{added?"Added to bag":"Add to bag"}</button>;
+ return <button className="primary-link add-to-bag" type="button" disabled={disabled} onClick={add}>{added?addedLabel:addLabel}</button>;
 }
