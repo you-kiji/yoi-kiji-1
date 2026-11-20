@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
 type Coupon={id:string;code:string;description:string|null;discountType:"PERCENTAGE"|"FIXED_AMOUNT";discountValue:number;minimumSubtotalPaise:number;maximumDiscountPaise:number|null;usageLimit:number|null;usageCount:number;startsAt:string|null;endsAt:string|null;isActive:boolean;_count:{redemptions:number}};
 export function AdminPromotionManager({initialCoupons}:{initialCoupons:Coupon[]}) {
@@ -29,7 +30,7 @@ export function AdminPromotionManager({initialCoupons}:{initialCoupons:Coupon[]}
    <p className="admin-helper">Percentage values are stored as basis points. Discounts apply to merchandise subtotal, not delivery charges. Usage limits are enforced during order creation.</p>
   </section>
   <section className="admin-content-panel"><div className="admin-section-heading"><h2>Promotion register</h2><span>{coupons.length} codes</span></div>
-   <div className="admin-content-list">{coupons.map(c=> <article key={c.id}><div><strong>{c.code}</strong><p>{c.discountType==="PERCENTAGE"?((c.discountValue/100).toFixed(2)+"% off"):("₹"+(c.discountValue/100).toFixed(2)+" off")} · Min ₹{(c.minimumSubtotalPaise/100).toFixed(2)}</p><small>{c.usageCount} / {c.usageLimit??"∞"} uses · {c.isActive?"Active":"Disabled"}</small></div>{c.isActive&&<button type="button" onClick={()=>disable(c.id)}>Disable</button>}</article>)}</div>
+   <div className="admin-content-list">{coupons.map(c=> <article key={c.id}><div><strong><Link href={`/admin/promotions/${c.id}`}>{c.code}</Link></strong><p><Link className="admin-product-open-link" href={`/admin/promotions/${c.id}`}>Open promotion details</Link></p><p>{c.discountType==="PERCENTAGE"?((c.discountValue/100).toFixed(2)+"% off"):("₹"+(c.discountValue/100).toFixed(2)+" off")} · Min ₹{(c.minimumSubtotalPaise/100).toFixed(2)}</p><small>{c.usageCount} / {c.usageLimit??"∞"} uses · {c.isActive?"Active":"Disabled"}</small></div>{c.isActive&&<button type="button" onClick={()=>disable(c.id)}>Disable</button>}</article>)}</div>
   </section>
   {message&&<p role="status" className="admin-feedback">{message}</p>}
  </div>;
