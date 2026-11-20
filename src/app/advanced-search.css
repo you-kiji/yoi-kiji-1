@@ -38,3 +38,5 @@
  .advanced-search__result img,.advanced-search__placeholder { width:44px; height:44px; flex-basis:44px; }
  .advanced-search__result>b { font-size:10px; }
 }
+
+.advanced-search__recent>a{display:block;width:100%;padding:10px;border-radius:7px;color:#29442d;text-decoration:none;text-align:left;font-size:12px}.advanced-search__recent>a:hover{background:#f0f3ec}
