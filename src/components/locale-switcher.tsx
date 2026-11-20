@@ -1,4 +1,73 @@
 "use client";
-import { useEffect, useState } from "react";
-type Locale={code:string;name:string;nativeName:string;isDefault:boolean;direction:string};
-export function LocaleSwitcher(){const [locales,setLocales]=useState<Locale[]>([]),[current,setCurrent]=useState("en");useEffect(()=>{const match=document.cookie.match(/(?:^|; )yk-locale=([^;]+)/);if(match)setCurrent(decodeURIComponent(match[1]));fetch("/api/locales").then(r=>r.ok?r.json():null).then(data=>{if(data?.locales){setLocales(data.locales);if(!match)setCurrent(data.locales.find((locale:Locale)=>locale.isDefault)?.code??"en");}}).catch(()=>{});},[]);if(locales.length<2)return null;return <label className="locale-switcher"><span className="sr-only">Language</span><select aria-label="Select language" value={current} onChange={event=>{const next=event.target.value;setCurrent(next);document.cookie=`yk-locale=${encodeURIComponent(next)}; Path=/; Max-Age=31536000; SameSite=Lax`;window.location.reload();}}>{locales.map(locale=><option key={locale.code} value={locale.code}>{locale.nativeName}</option>)}</select></label>}
+import { useEffect, useRef, useState } from "react";
+
+type Locale = { code: string; name: string; nativeName: string; isDefault: boolean; direction: string };
+
+export function LocaleSwitcher() {
+  const [locales, setLocales] = useState<Locale[]>([]);
+  const [current, setCurrent] = useState("en");
+  const rootRef = useRef<HTMLDetailsElement>(null);
+
+  useEffect(() => {
+    const match = document.cookie.match(/(?:^|; )yk-locale=([^;]+)/);
+    if (match) setCurrent(decodeURIComponent(match[1]));
+    let active = true;
+    fetch("/api/locales", { cache: "force-cache" })
+      .then(response => response.ok ? response.json() : null)
+      .then(data => {
+        if (!active || !Array.isArray(data?.locales)) return;
+        const enabled = data.locales.filter((locale: Locale) => locale?.code && locale?.nativeName);
+        setLocales(enabled);
+        if (!match) setCurrent(enabled.find((locale: Locale) => locale.isDefault)?.code ?? "en");
+      })
+      .catch(() => {});
+    const close = (event: PointerEvent) => {
+      if (rootRef.current && !rootRef.current.contains(event.target as Node)) rootRef.current.open = false;
+    };
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && rootRef.current) rootRef.current.open = false;
+    };
+    document.addEventListener("pointerdown", close);
+    document.addEventListener("keydown", escape);
+    return () => {
+      active = false;
+      document.removeEventListener("pointerdown", close);
+      document.removeEventListener("keydown", escape);
+    };
+  }, []);
+
+  if (locales.length < 2) return null;
+  const selected = locales.find(locale => locale.code === current) ?? locales.find(locale => locale.isDefault) ?? locales[0];
+  function choose(code: string) {
+    if (code === current) {
+      if (rootRef.current) rootRef.current.open = false;
+      return;
+    }
+    setCurrent(code);
+    document.cookie = `yk-locale=${encodeURIComponent(code)}; Path=/; Max-Age=31536000; SameSite=Lax`;
+    window.location.reload();
+  }
+
+  return (
+    <details className="locale-switcher" ref={rootRef}>
+      <summary className="locale-switcher__trigger" aria-label="Choose language">
+        <span className="locale-switcher__code">{selected.code}</span>
+        <span>{selected.nativeName}</span>
+      </summary>
+      <div className="locale-switcher__menu" role="group" aria-label="Available languages">
+        {locales.map(locale => (
+          <button
+            type="button"
+            className="locale-switcher__option"
+            key={locale.code}
+            aria-current={locale.code === current ? "true" : undefined}
+            onClick={() => choose(locale.code)}
+          >
+            <span>{locale.nativeName}<span className="locale-switcher__native"> · {locale.name}</span></span>
+            {locale.code === current && <span aria-hidden="true">✓</span>}
+          </button>
+        ))}
+      </div>
+    </details>
+  );
+}
