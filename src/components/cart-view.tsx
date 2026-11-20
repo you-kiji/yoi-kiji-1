@@ -44,7 +44,7 @@ export function CartView({ labels = {} }: { labels?: Record<string,string> }) {
         signal: controller.signal,
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error ?? "Unable to load your bag.");
+      if (!response.ok) throw new Error(data.error ?? t("cart.loadError",t("cart.loadError","Unable to load your bag.")));
       if (requestId !== quoteRequestId.current) return;
       setLines(Array.isArray(data.items) ? data.items : []);
       setError("");
