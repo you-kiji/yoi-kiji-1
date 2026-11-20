@@ -34,7 +34,7 @@ export function StorefrontThemeBuilder(){
     event.preventDefault();setBusy(true);setMessage("");
     try{
       const key=kind+"-"+crypto.randomUUID().slice(0,12);
-      const response=await fetch("/api/admin/storefront",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({resource:"section",data:{key,sectionType:kind,title:title||null,slides:kind==="slideshow"?slides.filter(s=>s.imageUrl):[],position:sections.length*10,isActive:true}})});
+      const response=await fetch("/api/admin/storefront",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({resource:"section",data:{key,sectionType:kind,title:title||null,slides:kind==="slideshow"?slides.filter(s=>s.imageUrl):kind==="testimonial"?slides.filter(s=>s.body||s.title):[],position:sections.length*10,isActive:true}})});
       const data=await response.json();if(!response.ok)throw new Error(data.error||"Could not create section");
       await refresh();setTitle("");setSlides([{...emptySlide}]);setMessage("Section added to homepage draft.");
     }catch(error){setMessage(error instanceof Error?error.message:"Unable to save section");}finally{setBusy(false);}
@@ -58,11 +58,11 @@ export function StorefrontThemeBuilder(){
     <form className="admin-content-form" onSubmit={createSection}>
       <label>Section type<select value={kind} onChange={e=>setKind(e.target.value)}>{kinds.map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
       <label>Section heading<input value={title} onChange={e=>setTitle(e.target.value)} placeholder="Optional section heading"/></label>
-      {kind==="slideshow"&&<div className="wide storefront-slide-editor">
-        <div className="admin-section-heading"><h3>Slides</h3><button type="button" onClick={()=>setSlides(old=>[...old,{...emptySlide}])}>Add slide</button></div>
+      {(kind==="slideshow"||kind==="testimonial")&&<div className="wide storefront-slide-editor">
+        <div className="admin-section-heading"><h3>{kind==="testimonial"?"Testimonials":"Slides"}</h3><button type="button" onClick={()=>setSlides(old=>[...old,{...emptySlide}])}>Add slide</button></div>
         {slides.map((slide,index)=><fieldset key={index} className="storefront-slide-card">
           <legend>Slide {index+1}</legend>
-          <label>Image URL<input type="url" required value={slide.imageUrl} onChange={e=>updateSlide(index,{imageUrl:e.target.value})} placeholder="https://…"/></label>
+          <label>Image URL<input type="url" required={kind==="slideshow"} value={slide.imageUrl} onChange={e=>updateSlide(index,{imageUrl:e.target.value})} placeholder="https://…"/></label>
           <label>Image alt text<input value={slide.imageAlt} onChange={e=>updateSlide(index,{imageAlt:e.target.value})}/></label>
           <label>Eyebrow<input value={slide.eyebrow} onChange={e=>updateSlide(index,{eyebrow:e.target.value})}/></label>
           <label>Headline<input value={slide.title} onChange={e=>updateSlide(index,{title:e.target.value})}/></label>
@@ -77,7 +77,7 @@ export function StorefrontThemeBuilder(){
     <div className="storefront-section-stack" aria-label="Homepage section order">
       {sections.map((section,index)=><article key={section.id} draggable onDragStart={()=>setDragId(section.id)} onDragOver={e=>e.preventDefault()} onDrop={()=>{if(dragId)void reorder(dragId,section.id);setDragId(null);}} className="storefront-section-row">
         <span className="storefront-drag-handle" aria-hidden="true">⠿</span>
-        <div><strong>{index+1}. {kinds.find(k=>k[0]===section.sectionType)?.[1]||section.sectionType}</strong><p>{section.title||section.key}</p><small>{section.slides?.length||0} slides · {section.isActive?"Visible":"Hidden"}</small></div>
+        <div><strong>{index+1}. {kinds.find(k=>k[0]===section.sectionType)?.[1]||section.sectionType}</strong><p>{section.title||section.key}</p><small>{section.slides?.length||0} content items · {section.isActive?"Visible":"Hidden"}</small></div>
         <button type="button" disabled={busy} onClick={()=>void toggle(section)}>{section.isActive?"Hide":"Show"}</button>
         <button type="button" disabled={busy||index===0} onClick={()=>void reorder(section.id,sections[index-1].id)}>Move up</button>
         <button type="button" disabled={busy||index===sections.length-1} onClick={()=>void reorder(section.id,sections[index+1].id)}>Move down</button>
