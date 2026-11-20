@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
     prisma.category.findMany({ where: { isActive: true }, select: { id: true, name: true, slug: true }, orderBy: { sortOrder: "asc" }, take: 100 }),
   ]);
 
-  const localeCode = request.cookies.get("yk-locale")?.value ?? "en";
+  const localeCode = request.cookies.get("yk-locale")?.value ?? (await prisma.locale.findFirst({ where: { isDefault: true, isEnabled: true }, select: { code: true } }).catch(() => null))?.code ?? "en";
   const translationTargets = [
     ...products.map(product => ({ entityType: "product", entityId: product.id })),
     ...categories.map(category => ({ entityType: "category", entityId: category.id })),
