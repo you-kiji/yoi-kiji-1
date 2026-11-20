@@ -1,4 +1,5 @@
 import { getLocaleData } from "@/lib/i18n";
+import { AdvancedSearch } from "@/components/advanced-search";
 import { getActiveCategories } from "@/lib/catalog";
 import { prisma } from "@/lib/prisma";
 
@@ -116,6 +117,7 @@ export default async function HomePage() {
                 <h1>{title || <>Make room<br />for <em>feeling.</em></>}</h1>
                 <p className="editorial-hero__description">{body}</p>
                 <a className="editorial-cta" href={ctaHref}>{ctaLabel}</a>
+                <div className="editorial-hero__search"><AdvancedSearch compact labels={locale.labels} /></div>
               </div>
               <div className="editorial-hero__bottom"><span>COMFORT, CONSIDERED.</span><span>SCROLL TO DISCOVER</span></div>
             </section>
