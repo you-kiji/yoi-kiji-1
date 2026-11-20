@@ -98,8 +98,8 @@ export function SiteHeaderClient({ categories, labels = {} }: { categories: Cate
               {category.name}
             </Link>
           ))}
-          <Link href="/our-story" onClick={closeAll}>Our story</Link>
-          <Link href="/journal" onClick={closeAll}>Journal</Link>
+          <Link href="/our-story" onClick={closeAll}>{text("header.story","Our story")}</Link>
+          <Link href="/journal" onClick={closeAll}>{text("header.journal","Journal")}</Link>
           <Link href="/search" onClick={closeAll}>{text("header.search","Search")}</Link>
           <Link href="/account" onClick={closeAll}>{text("header.account","Account")}</Link>
           <Link href="/cart" onClick={closeAll}>{text("header.bag","Bag")} <CartCount /></Link>
@@ -110,7 +110,7 @@ export function SiteHeaderClient({ categories, labels = {} }: { categories: Cate
         <LocaleSwitcher />
         <Link href="/search" onClick={closeAll}>{text("header.search","Search")}</Link>
         <Link href="/account" onClick={closeAll}>{text("header.account","Account")}</Link>
-        <Link className="bag-link" href="/cart" onClick={closeAll}>Bag <CartCount /></Link>
+        <Link className="bag-link" href="/cart" onClick={closeAll}>{text("header.bag","Bag")} <CartCount /></Link>
       </div>
     </header>
   );
