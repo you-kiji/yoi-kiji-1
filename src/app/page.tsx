@@ -46,7 +46,7 @@ export default async function HomePage() {
         if (!categories.length) return null;
         return <section className="editorial-collections" key={section.id}>
           <div className="editorial-section-heading"><div>{eyebrow && <p className="editorial-eyebrow editorial-eyebrow--dark">{eyebrow}</p>}{title && <h2>{title}</h2>}</div>{ctaLabel && ctaHref && <a className="editorial-text-link" href={ctaHref}>{ctaLabel}</a>}</div>
-          <div className="editorial-collection-grid">{categories.map((item,index)=><a className={`editorial-collection editorial-collection--${index+1}`} href={item.href} key={item.id}><div className="editorial-collection__photo" style={item.image?{backgroundImage:`url("${item.image}")`}:undefined}/><div className="editorial-collection__shade"/><div className="editorial-collection__copy"><span>{item.note}</span><h3>{item.name}</h3><b>DISCOVER</b></div></a>)}</div>
+          <div className="editorial-collection-grid">{categories.map((item,index)=><a className={`editorial-collection editorial-collection--${index+1}`} href={item.href} key={item.id}><div className="editorial-collection__photo" style={item.image?{backgroundImage:`url("${item.image}")`}:undefined}/><div className="editorial-collection__shade"/><div className="editorial-collection__copy"><span>{item.note}</span><h3>{item.name}</h3><b>{locale.labels["home.discover"] ?? "DISCOVER"}</b></div></a>)}</div>
         </section>;
       }
       if (section.key === "hero") return <section className="editorial-hero" aria-label={imageAlt || title || "YOI KIJI"} key={section.id}>
