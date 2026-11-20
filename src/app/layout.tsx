@@ -6,13 +6,15 @@ import "./journal.css";
 import "./visual-stability.css";
 import "./premium-system.css";
 import "./experience-overrides.css";
-import "./advanced-search.css";\nimport "./content-management.css";
+import "./advanced-search.css";
+import "./content-management.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { JapaneseLoader } from "@/components/japanese-loader";
 import { Analytics } from "@/components/analytics";
 import { CookieConsent } from "@/components/cookie-consent";
 import { ScrollMotion } from "@/components/scroll-motion";
+import { getLocaleData } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: { default: "YOI KIJI — Textiles for the Way You Live", template: "%s | YOI KIJI" },
@@ -25,9 +27,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const locale = await getLocaleData();
   return (
-    <html lang="en">
+    <html lang={locale.code} dir={locale.direction}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
