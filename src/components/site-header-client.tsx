@@ -8,8 +8,9 @@ import { LocaleSwitcher } from "@/components/locale-switcher";
 type Category = { id: string; name: string; slug: string };
 type Labels = Record<string,string>;
 type Locale = { code:string; name:string; nativeName:string; isDefault:boolean; direction:string };
+type SocialAccount = {id:string;label:string;url:string;platform:string};
 
-export function SiteHeaderClient({ categories, labels = {}, availableLocales = [], currentLocale = "en" }: { categories: Category[]; labels?: Labels; availableLocales?: Locale[]; currentLocale?: string }) {
+export function SiteHeaderClient({ categories, labels = {}, availableLocales = [], currentLocale = "en", socialAccounts = [] }: { categories: Category[]; labels?: Labels; availableLocales?: Locale[]; currentLocale?: string; socialAccounts?: SocialAccount[] }) {
   const [desktopOpen, setDesktopOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const desktopRef = useRef<HTMLDetailsElement>(null);
@@ -133,6 +134,7 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
         <Link href="/search" onClick={closeAll}>{text("header.search","Search")}</Link>
         <Link href="/account" onClick={closeAll}>{text("header.account","Account")}</Link>
         <Link className="bag-link" href="/cart" onClick={closeAll}>{text("header.bag","Bag")} <CartCount /></Link>
+        {socialAccounts.map(account=><a key={account.id} href={account.url} target="_blank" rel="noopener noreferrer" aria-label={account.label}>{account.platform}</a>)}
       </div>
     </header>
   );
