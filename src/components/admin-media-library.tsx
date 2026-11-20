@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 type Asset = { id:string; secureUrl:string; resourceType:"IMAGE"|"VIDEO"|"RAW"; format:string; bytes:number; width:number|null; height:number|null; originalFilename:string|null; title:string|null; altText:string|null; createdAt:string; folder:{id:string;name:string}|null };
 type Folder = { id:string; name:string; _count:{assets:number} };
@@ -34,7 +35,7 @@ export function AdminMediaLibrary() {
     <div className="admin-media-preview">
      {a.resourceType==="IMAGE"?<img src={a.secureUrl} alt={a.altText||a.title||"Media asset"}/>:a.resourceType==="VIDEO"&&["mp3","wav","m4a","aac","ogg"].includes(a.format.toLowerCase())?<audio src={a.secureUrl} controls/>:a.resourceType==="VIDEO"?<video src={a.secureUrl} controls preload="metadata"/>:<a href={a.secureUrl} target="_blank" rel="noreferrer">Open {a.format.toUpperCase()}</a>}
     </div>
-    <strong className="admin-media-title">{a.title||a.originalFilename||"Media asset"}</strong>
+    <strong className="admin-media-title"><Link href={`/admin/media/${a.id}`}>{a.title||a.originalFilename||"Media asset"}</Link></strong><Link className="admin-product-open-link" href={`/admin/media/${a.id}`}>Open asset details</Link>
     <small>{a.format.toUpperCase()} · {size(a.bytes)}{a.width&&a.height?" · "+a.width+"×"+a.height:""}</small>
     <small className="admin-media-meta">{a.folder?.name||"Unfiled"} · {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium"}).format(new Date(a.createdAt))}</small>
     <div className="admin-media-actions"><button type="button" onClick={()=>editAsset(a)}>Edit metadata</button><button type="button" onClick={()=>navigator.clipboard.writeText(a.secureUrl).then(()=>setMessage("Asset URL copied."))}>Copy asset URL</button></div>
