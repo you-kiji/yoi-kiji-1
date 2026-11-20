@@ -66,16 +66,6 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
     );
   }
 
-  const query = params.q?.trim().toLowerCase();
-  if (query) {
-    products = products.filter(
-      (product) =>
-        product.name.toLowerCase().includes(query) ||
-        product.description.toLowerCase().includes(query) ||
-        product.sku.toLowerCase().includes(query),
-    );
-  }
-
   const min = params.minPrice ? Math.max(0, Math.round(Number(params.minPrice) * 100)) : null;
   const max = params.maxPrice ? Math.max(0, Math.round(Number(params.maxPrice) * 100)) : null;
   if (min !== null && Number.isFinite(min)) products = products.filter((product) => product.pricePaise >= min);
@@ -101,8 +91,12 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
     ...product,
     name: localized.get(`product:${product.id}:name`) ?? product.name,
     description: localized.get(`product:${product.id}:description`) ?? product.description,
+    material: localized.get(`product:${product.id}:material`) ?? product.material,
+    color: localized.get(`product:${product.id}:color`) ?? product.color,
     category: product.category ? { ...product.category, name: localized.get(`category:${product.category.id}:name`) ?? product.category.name } : null,
   }));
+  const query = params.q?.trim().toLowerCase();
+  if (query) products = products.filter(product => product.name.toLowerCase().includes(query) || product.description.toLowerCase().includes(query) || product.sku.toLowerCase().includes(query) || (product.material ?? "").toLowerCase().includes(query) || (product.color ?? "").toLowerCase().includes(query));
   const selectedName = selected ? localized.get(`collection:${selected.id}:name`) ?? selected.name : null;
   const selectedDescription = selected ? localized.get(`collection:${selected.id}:description`) ?? selected.description : null;
   const categoryOptions = categories.map(category => ({ ...category, name: localized.get(`category:${category.id}:name`) ?? category.name }));
