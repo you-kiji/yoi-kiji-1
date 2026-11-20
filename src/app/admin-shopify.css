@@ -124,3 +124,13 @@ body:has(.admin-shopify-shell) .admin-shopify-shell{min-height:100vh;display:gri
 .admin-review-product-link{display:grid;gap:5px;margin-top:18px;padding-top:14px;border-top:1px solid #eff0f1}
 .admin-review-product-link .eyebrow{margin:0;color:#7a8084;font-size:9px;letter-spacing:.12em}.admin-review-product-link>a{font-size:11px;color:#245b32;font-weight:650}
 @media(max-width:900px){.admin-review-detail-grid{grid-template-columns:1fr}}
+
+
+/* Media asset detail */
+.admin-media-detail-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(270px,.8fr);gap:16px;align-items:start}
+.admin-media-detail-preview{min-height:280px;display:grid;place-items:center;padding:14px;border-radius:8px;background:#f3f4f4}
+.admin-media-detail-preview img,.admin-media-detail-preview video{display:block;max-width:100%;max-height:640px;object-fit:contain;border-radius:6px}
+.admin-media-detail-preview audio{width:min(100%,520px)}
+.admin-media-url{overflow-wrap:anywhere;font-size:10px}
+.admin-media-title a{color:inherit}
+@media(max-width:900px){.admin-media-detail-grid{grid-template-columns:1fr}}
