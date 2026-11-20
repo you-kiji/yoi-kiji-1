@@ -14,10 +14,12 @@ function paragraphs(value: string) {
 export default async function HomePage() {
   const locale = await getLocaleData();
   const localeCode = locale.code;
-  const [allSections, collectionRecords, categoryRecords] = await Promise.all([
+  const [allSections, collectionRecords, categoryRecords, featuredProducts, recentArticles] = await Promise.all([
     prisma.homepageSection.findMany({ orderBy: [{ position: "asc" }, { key: "asc" }] }).catch(() => []),
     prisma.storeCollection.findMany({ where: { isActive: true }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] }).catch(() => []),
     getActiveCategories(),
+    prisma.product.findMany({where:{isActive:true},select:{id:true,name:true,slug:true,pricePaise:true,images:{where:{isPrimary:true},take:1,select:{url:true,alt:true}}},orderBy:{updatedAt:"desc"},take:8}).catch(()=>[]),
+    prisma.blogPost.findMany({where:{status:"PUBLISHED",noIndex:false},select:{id:true,title:true,slug:true,excerpt:true,coverImageUrl:true,coverImageAlt:true,publishedAt:true},orderBy:{publishedAt:"desc"},take:3}).catch(()=>[]),
   ]);
 
   const rootCategories = categoryRecords.filter((category) => category.parentId === null);
@@ -82,6 +84,37 @@ export default async function HomePage() {
   return (
     <main className="home-redesign">
       {homepageItems.map(({ key, section }) => {
+        if (section.sectionType === "product-grid") {
+          return (
+            <section className="storefront-dynamic-grid" key={section.id}>
+              <div className="editorial-section-heading"><div><p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow || "THE EDIT"}</p><h2>{section.title || "Considered essentials"}</h2></div>{section.ctaHref && <a className="editorial-text-link" href={section.ctaHref}>{section.ctaLabel || "Shop all"}</a>}</div>
+              <div className="storefront-product-grid">{featuredProducts.slice(0,8).map(product=><a className="storefront-product-card" href={"/shop?search="+encodeURIComponent(product.name)} key={product.id}>
+                {product.images[0]?.url ? <img src={product.images[0].url} alt={product.images[0].alt || product.name} loading="lazy"/> : <span className="storefront-product-card__placeholder"/>}
+                <span className="storefront-product-card__name">{product.name}</span><span className="storefront-product-card__price">{new Intl.NumberFormat(localeCode==="ja"?"ja-JP":"en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(product.pricePaise/100)}</span>
+              </a>)}</div>
+            </section>
+          );
+        }
+        if (section.sectionType === "featured-collections") {
+          return (
+            <section className="editorial-collections" key={section.id}>
+              <div className="editorial-section-heading"><div><p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow || "EXPLORE"}</p><h2>{section.title || "Shop by collection"}</h2></div>{section.ctaHref && <a className="editorial-text-link" href={section.ctaHref}>{section.ctaLabel || "View all"}</a>}</div>
+              <div className="editorial-collection-grid">{categories.map((item,index)=><a className={"editorial-collection editorial-collection--"+(index+1)} href={item.href} key={item.id}><div className="editorial-collection__photo" style={{backgroundImage:"url(\\""+item.image+"\\")"}}/><div className="editorial-collection__shade"/><div className="editorial-collection__copy"><span>{item.note}</span><h3>{item.name}</h3><b>DISCOVER</b></div></a>)}</div>
+            </section>
+          );
+        }
+        if (section.sectionType === "blog-grid") {
+          return (
+            <section className="storefront-dynamic-grid" key={section.id}>
+              <div className="editorial-section-heading"><div><p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow || "JOURNAL"}</p><h2>{section.title || "Notes for living well"}</h2></div>{section.ctaHref && <a className="editorial-text-link" href={section.ctaHref}>{section.ctaLabel || "Read all"}</a>}</div>
+              <div className="storefront-article-grid">{recentArticles.map(article=><a className="storefront-article-card" href={"/journal/"+article.slug} key={article.id}>{article.coverImageUrl&&<img src={article.coverImageUrl} alt={article.coverImageAlt||article.title} loading="lazy"/>}<h3>{article.title}</h3>{article.excerpt&&<p>{article.excerpt}</p>}</a>)}</div>
+            </section>
+          );
+        }
+        if (section.sectionType === "testimonial") {
+          const quotes = Array.isArray(section.slides) ? section.slides as Array<{title?:string;body?:string;eyebrow?:string}> : [];
+          return <section className="storefront-testimonials" key={section.id}><p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow||"KIND WORDS"}</p><h2>{section.title||"A little love for the everyday"}</h2><div>{quotes.map((quote,index)=><blockquote key={index}><p>“{quote.body||quote.title||""}”</p><cite>{quote.eyebrow||"YOI KIJI customer"}</cite></blockquote>)}</div></section>;
+        }
         if (section.sectionType === "slideshow") {
           const slides = Array.isArray(section.slides) ? section.slides as Array<{imageUrl:string;imageAlt?:string;eyebrow?:string;title?:string;body?:string;ctaLabel?:string;ctaHref?:string}> : [];
           if (!slides.length) return null;
