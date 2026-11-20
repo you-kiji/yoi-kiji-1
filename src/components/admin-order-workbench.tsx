@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useMemo,useState } from "react";
 import { formatINR } from "@/lib/money";
 import { AdminOrderActions } from "@/components/admin-order-actions";
@@ -18,7 +19,7 @@ export function AdminOrderWorkbench({initialOrders}:{initialOrders:OrderRow[]}){
   </div>
   <div className="admin-section-heading"><h2>Order queue</h2><span>{orders.length} of {initialOrders.length} recent orders</span></div>
   <section className="orders-list">{orders.map(o=><article className="order-card" key={o.id}>
-   <div><p className="order-number">{o.orderNumber}</p><p>{o.user?.name??o.user?.email??o.guestName??o.guestEmail??"Guest customer"}</p><p>{o.items.length} line item(s) · {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium"}).format(new Date(o.createdAt))}</p></div>
+   <div><p className="order-number"><Link href={`/admin/orders/${o.id}`}>{o.orderNumber}</Link></p><Link className="admin-product-open-link" href={`/admin/orders/${o.id}`}>Open order details</Link><p>{o.user?.name??o.user?.email??o.guestName??o.guestEmail??"Guest customer"}</p><p>{o.items.length} line item(s) · {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium"}).format(new Date(o.createdAt))}</p></div>
    <div><strong>{formatINR(o.totalPaise)}</strong><p>Payment: {o.payment?.provider==="COD"?"Cash on Delivery":o.payment?.status.toLowerCase()??"unavailable"}</p></div>
    <div><span className="order-status">{o.status.toLowerCase()}</span><AdminOrderActions id={o.id} status={o.status} paymentStatus={o.payment?.status.toLowerCase()??"none"} paymentProvider={o.payment?.provider??"none"}/><AdminFulfillmentForm id={o.id} initialProvider={o.fulfillmentProvider} initialTracking={o.trackingNumber}/></div>
   </article>)}{orders.length===0&&<p>No orders match these filters.</p>}</section>
