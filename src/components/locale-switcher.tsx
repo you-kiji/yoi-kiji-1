@@ -3,24 +3,13 @@ import { useEffect, useRef, useState } from "react";
 
 type Locale = { code: string; name: string; nativeName: string; isDefault: boolean; direction: string };
 
-export function LocaleSwitcher() {
-  const [locales, setLocales] = useState<Locale[]>([]);
-  const [current, setCurrent] = useState("en");
+export function LocaleSwitcher({ locales = [], currentCode = "en" }: { locales?: Locale[]; currentCode?: string }) {
+  const [current, setCurrent] = useState(currentCode);
   const rootRef = useRef<HTMLDetailsElement>(null);
 
   useEffect(() => {
     const match = document.cookie.match(/(?:^|; )yk-locale=([^;]+)/);
     if (match) setCurrent(decodeURIComponent(match[1]));
-    let active = true;
-    fetch("/api/locales", { cache: "no-store" })
-      .then(response => response.ok ? response.json() : null)
-      .then(data => {
-        if (!active || !Array.isArray(data?.locales)) return;
-        const enabled = data.locales.filter((locale: Locale) => locale?.code && locale?.nativeName);
-        setLocales(enabled);
-        if (!match) setCurrent(enabled.find((locale: Locale) => locale.isDefault)?.code ?? "en");
-      })
-      .catch(() => {});
     const close = (event: PointerEvent) => {
       if (rootRef.current && !rootRef.current.contains(event.target as Node)) rootRef.current.open = false;
     };
@@ -30,7 +19,6 @@ export function LocaleSwitcher() {
     document.addEventListener("pointerdown", close);
     document.addEventListener("keydown", escape);
     return () => {
-      active = false;
       document.removeEventListener("pointerdown", close);
       document.removeEventListener("keydown", escape);
     };
