@@ -13,7 +13,7 @@ export default async function AdminStockAlertDetailPage({ params }: { params: Pr
   const { id } = await params;
   const alert = await prisma.stockAlert.findUnique({
     where: { id },
-    include: { product: { select: { id: true, name: true, slug: true, sku: true, inventoryQty: true, hasVariants: true, variants: { where: { isActive: true, select: { inventoryQty: true } } } } } },
+    include: { product: { select: { id: true, name: true, slug: true, sku: true, inventoryQty: true, hasVariants: true, variants: { where: { isActive: true }, select: { inventoryQty: true } } } } },
   });
   if (!alert) notFound();
   const serialised = [{ ...alert, createdAt: alert.createdAt.toISOString(), sentAt: alert.sentAt?.toISOString() ?? null }];
