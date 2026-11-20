@@ -180,7 +180,7 @@ export function CartView({ labels = {} }: { labels?: Record<string,string> }) {
                     !(item.productId === line.productId && item.variantId === line.variantId),
                   ))}
                 >
-                  Remove
+                  {t("cart.remove","Remove")}
                 </button>
               </div>
 
