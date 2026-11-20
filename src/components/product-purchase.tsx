@@ -14,9 +14,11 @@ export function ProductPurchase({
   hasVariants: boolean;
   inventoryQty: number;
   basePricePaise: number;
-  onVariantChange?: (variantId: string) => void;\n  labels?: Record<string,string>;
+  onVariantChange?: (variantId: string) => void;
+  labels?: Record<string,string>;
 }) {
-  const t = (key: string, fallback: string) => labels[key] ?? fallback;\n  const [selected, setSelected] = useState("");
+  const t = (key: string, fallback: string) => labels[key] ?? fallback;
+  const [selected, setSelected] = useState("");
   const active = variants.find(variant => variant.id === selected);
   const unavailable = hasVariants ? (!active || active.inventoryQty < 1) : inventoryQty < 1;
   function selectVariant(id: string) {
