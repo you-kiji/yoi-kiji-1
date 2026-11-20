@@ -17,9 +17,13 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const product = await getActiveProductBySlug(slug);
-  return product ? {
-    title: product.seoTitle ?? product.name,
-    description: product.seoDescription ?? product.description.slice(0, 155),
+  if (!product) return {};
+  const locale = await getLocaleData();
+  const translations = locale.code === "en" ? [] : await prisma.contentTranslation.findMany({ where: { localeCode: locale.code, entityType: "product", entityId: product.id, fieldKey: { in: ["name", "description", "seoTitle", "seoDescription"] } } });
+  const text = new Map(translations.map(item => [item.fieldKey, item.value]));
+  return {
+    title: text.get("seoTitle") ?? text.get("name") ?? product.seoTitle ?? product.name,
+    description: text.get("seoDescription") ?? text.get("description") ?? product.seoDescription ?? product.description.slice(0, 155),
     keywords: product.seoKeywords,
     alternates: product.canonicalUrl ? { canonical: product.canonicalUrl } : undefined,
     robots: product.noIndex ? { index: false, follow: false } : { index: true, follow: true },
@@ -28,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: product.seoDescription ?? product.description.slice(0, 155),
       images: product.images[0] ? [{ url: product.images[0].url, alt: product.images[0].alt }] : undefined,
     },
-  } : {};
+  };
 }
 
 export default async function ProductPage({ params }: Props) {
