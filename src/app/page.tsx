@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { getLocaleData } from "@/lib/i18n";
 import { getActiveCategories } from "@/lib/catalog";
 import { prisma } from "@/lib/prisma";
 import { AdvancedSearch } from "@/components/advanced-search";
@@ -6,10 +6,8 @@ import { AdvancedSearch } from "@/components/advanced-search";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const cookieStore = await cookies();
-  const requestedLocale = cookieStore.get("yk-locale")?.value ?? "en";
-  const locale = await prisma.locale.findFirst({ where: { code: requestedLocale, isEnabled: true }, select: { code: true } }).catch(() => null);
-  const localeCode = locale?.code ?? "en";
+  const locale = await getLocaleData();
+  const localeCode = locale.code;
   const [sections, collections, categoryRecords] = await Promise.all([
     prisma.homepageSection.findMany({ where: { isActive: true }, orderBy: [{ position: "asc" }, { key: "asc" }] }),
     prisma.storeCollection.findMany({ where: { isActive: true }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] }),
@@ -32,9 +30,9 @@ export default async function HomePage() {
     : categoryRecords.filter(item => item.parentId === null).map(item => ({ id: item.id, name: translated.get(`category:${item.id}:name`) ?? item.name, note: translated.get(`category:${item.id}:description`) ?? item.description ?? "", image: item.imageUrl ?? "", href: `/shop?category=${encodeURIComponent(item.slug)}` }));
 
   return <main className="home-redesign">
-    <section className="home-search-section" aria-label="Search YOI KIJI collections">
-      <div><p className="editorial-eyebrow editorial-eyebrow--dark">YOI KIJI / DISCOVERY</p><h2>Search the <em>collection.</em></h2></div>
-      <AdvancedSearch />
+    <section className="home-search-section" aria-label={locale.labels["search.label"] ?? "Search YOI KIJI collections"}>
+      <div><p className="editorial-eyebrow editorial-eyebrow--dark">YOI KIJI / DISCOVERY</p><h2>{locale.labels["home.searchTitle"] ?? "Search the collection."}</h2></div>
+      <AdvancedSearch labels={locale.labels} />
     </section>
     {sections.map(section => {
       const eyebrow = value(section, "eyebrow");
