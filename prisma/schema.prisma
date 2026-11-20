@@ -69,7 +69,13 @@ enum CouponDiscountType {
   FIXED_AMOUNT
 }
 
-enum LegalPageStatus {\n  DRAFT\n  PUBLISHED\n  ARCHIVED\n}\n\nenum ProductAttributeType {
+enum LegalPageStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ProductAttributeType {
   TEXT
   NUMBER
   BOOLEAN
@@ -78,7 +84,64 @@ enum LegalPageStatus {\n  DRAFT\n  PUBLISHED\n  ARCHIVED\n}\n\nenum ProductAttri
   DATE
 }
 
-model Locale {\n  id          String   @id @default(cuid())\n  code        String   @unique\n  name        String\n  nativeName  String\n  isEnabled   Boolean  @default(true)\n  isDefault   Boolean  @default(false)\n  direction   String   @default("ltr")\n  sortOrder   Int      @default(0)\n  translations ContentTranslation[]\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  @@index([isEnabled, sortOrder])\n}\n\nmodel ContentTranslation {\n  id          String   @id @default(cuid())\n  localeCode  String\n  entityType  String\n  entityId    String\n  fieldKey    String\n  value       String   @db.Text\n  locale      Locale   @relation(fields: [localeCode], references: [code], onDelete: Cascade)\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  @@unique([localeCode, entityType, entityId, fieldKey])\n  @@index([entityType, entityId])\n  @@index([localeCode, entityType])\n}\n\nmodel LegalPage {\n  id             String            @id @default(cuid())\n  slug           String            @unique\n  title          String\n  content        String            @db.Text\n  status         LegalPageStatus   @default(DRAFT)\n  seoTitle       String?\n  seoDescription String?           @db.Text\n  publishedAt    DateTime?\n  revisions      LegalPageRevision[]\n  createdAt      DateTime          @default(now())\n  updatedAt      DateTime          @updatedAt\n  @@index([status, updatedAt])\n}\n\nmodel LegalPageRevision {\n  id          String   @id @default(cuid())\n  pageId      String\n  title       String\n  content     String   @db.Text\n  status      LegalPageStatus\n  editorId    String?\n  page        LegalPage @relation(fields: [pageId], references: [id], onDelete: Cascade)\n  createdAt   DateTime @default(now())\n  @@index([pageId, createdAt])\n}\n\nmodel User {
+model Locale {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  nativeName  String
+  isEnabled   Boolean  @default(true)
+  isDefault   Boolean  @default(false)
+  direction   String   @default("ltr")
+  sortOrder   Int      @default(0)
+  translations ContentTranslation[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@index([isEnabled, sortOrder])
+}
+
+model ContentTranslation {
+  id          String   @id @default(cuid())
+  localeCode  String
+  entityType  String
+  entityId    String
+  fieldKey    String
+  value       String   @db.Text
+  locale      Locale   @relation(fields: [localeCode], references: [code], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@unique([localeCode, entityType, entityId, fieldKey])
+  @@index([entityType, entityId])
+  @@index([localeCode, entityType])
+}
+
+model LegalPage {
+  id             String            @id @default(cuid())
+  slug           String            @unique
+  title          String
+  content        String            @db.Text
+  status         LegalPageStatus   @default(DRAFT)
+  seoTitle       String?
+  seoDescription String?           @db.Text
+  publishedAt    DateTime?
+  revisions      LegalPageRevision[]
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  @@index([status, updatedAt])
+}
+
+model LegalPageRevision {
+  id          String   @id @default(cuid())
+  pageId      String
+  title       String
+  content     String   @db.Text
+  status      LegalPageStatus
+  editorId    String?
+  page        LegalPage @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  @@index([pageId, createdAt])
+}
+
+model User {
   id           String   @id @default(cuid())
   email        String   @unique
   name         String?
