@@ -77,6 +77,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   else products = [...products].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
   const locale = await getLocaleData();
+  const t = (key: string, fallback: string) => locale.labels[key] ?? fallback;
   const translationTargets = [
     ...products.map(product => ({ entityType: "product", entityId: product.id })),
     ...categories.map(category => ({ entityType: "category", entityId: category.id })),
@@ -107,45 +108,45 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
       <div className="commerce-breadcrumb">
         <Link href="/">Home</Link>
         <span>/</span>
-        {selectedName ?? "Shop all"}
+        {selectedName ?? t("shop.all","Shop all")}
       </div>
 
       <header className="commerce-heading shop-heading">
         <p className="eyebrow">{selected ? "CURATED BY YOI KIJI" : "THE YOI KIJI COLLECTIONS"}</p>
         <h1>
-          {selected ? selectedName : <>Considered comfort,<br /><em>for every room.</em></>}
+          {selected ? selectedName : <>{t("shop.title","Considered comfort,")}<br /><em>{t("shop.titleSecond","for every room.")}</em></>}
         </h1>
-        <p>{selectedDescription ?? "Explore textiles chosen for the everyday moments that make a home."}</p>
+        <p>{selectedDescription ?? t("shop.description","Explore textiles chosen for the everyday moments that make a home.")}</p>
       </header>
 
       <section className="shop-discovery" aria-label="Find pieces in the collection">
         <div className="shop-filter-heading">
           <div>
-            <p className="eyebrow">A MORE CONSIDERED SEARCH</p>
-            <h2>Find your piece</h2>
+            <p className="eyebrow">{t("shop.filterEyebrow","A MORE CONSIDERED SEARCH")}</p>
+            <h2>{t("shop.findPiece","Find your piece")}</h2>
           </div>
-          <p>Refine by collection, detail or price.</p>
+          <p>{t("shop.refineHint","Refine by collection, detail or price.")}</p>
         </div>
 
         <form className="shop-filter-form" action="/shop" method="get" role="search">
           {selected && <input type="hidden" name="collection" value={selected.slug} />}
 
           <label htmlFor="shop-search">
-            <span>Search the collection</span>
+            <span>{t("shop.searchLabel","Search the collection")}</span>
             <input
               id="shop-search"
               type="search"
               name="q"
               defaultValue={params.q ?? ""}
-              placeholder="Product name, detail or SKU"
+              placeholder={t("shop.searchPlaceholder","Product name, detail or SKU")}
               maxLength={120}
             />
           </label>
 
           <label htmlFor="shop-category">
-            <span>Category</span>
+            <span>{t("shop.category","Category")}</span>
             <select id="shop-category" name="category" defaultValue={params.category ?? ""}>
-              <option value="">All categories</option>
+              <option value="">{t("shop.allCategories","All categories")}</option>
               {categoryOptions.map((category) => (
                 <option key={category.id} value={category.slug}>{category.parentId ? "— " : ""}{category.name}</option>
               ))}
@@ -153,7 +154,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
           </label>
 
           <label htmlFor="shop-min-price">
-            <span>Minimum price <em>(₹)</em></span>
+            <span>{t("shop.minimumPrice","Minimum price")} <em>(₹)</em></span>
             <input
               id="shop-min-price"
               type="number"
@@ -162,12 +163,12 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
               name="minPrice"
               inputMode="numeric"
               defaultValue={params.minPrice ?? ""}
-              placeholder="No minimum"
+              placeholder={t("shop.noMinimum","No minimum")}
             />
           </label>
 
           <label htmlFor="shop-max-price">
-            <span>Maximum price <em>(₹)</em></span>
+            <span>{t("shop.maximumPrice","Maximum price")} <em>(₹)</em></span>
             <input
               id="shop-max-price"
               type="number"
@@ -176,30 +177,30 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
               name="maxPrice"
               inputMode="numeric"
               defaultValue={params.maxPrice ?? ""}
-              placeholder="No maximum"
+              placeholder={t("shop.noMaximum","No maximum")}
             />
           </label>
 
           <label htmlFor="shop-sort">
-            <span>Sort by</span>
+            <span>{t("shop.sortBy","Sort by")}</span>
             <select id="shop-sort" name="sort" defaultValue={params.sort ?? "newest"}>
-              <option value="newest">Newest arrivals</option>
-              <option value="price-asc">Price: low to high</option>
-              <option value="price-desc">Price: high to low</option>
-              <option value="name">Name A–Z</option>
+              <option value="newest">{t("shop.newest","Newest arrivals")}</option>
+              <option value="price-asc">{t("shop.priceLow","Price: low to high")}</option>
+              <option value="price-desc">{t("shop.priceHigh","Price: high to low")}</option>
+              <option value="name">{t("shop.nameSort","Name A–Z")}</option>
             </select>
           </label>
 
           <div className="shop-filter-actions">
-            <button type="submit">Apply filters</button>
-            <Link href={clearHref}>Clear all</Link>
+            <button type="submit">{t("shop.applyFilters","Apply filters")}</button>
+            <Link href={clearHref}>{t("shop.clearAll","Clear all")}</Link>
           </div>
         </form>
       </section>
 
       <div className="shop-results-bar" role="status" aria-live="polite">
-        <p><strong>{products.length}</strong> {products.length === 1 ? "piece" : "pieces"} to discover</p>
-        {query && <p>Showing results for <strong>“{params.q?.trim()}”</strong></p>}
+        <p><strong>{products.length}</strong> {products.length === 1 ? t("shop.piece","piece") : t("shop.pieces","pieces")} {t("shop.toDiscover","to discover")}</p>
+        {query && <p>{t("shop.showingResults","Showing results for")} <strong>“{params.q?.trim()}”</strong></p>}
       </div>
 
       {products.length ? (
