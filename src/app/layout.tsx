@@ -15,6 +15,7 @@ import { Analytics } from "@/components/analytics";
 import { CookieConsent } from "@/components/cookie-consent";
 import { ScrollMotion } from "@/components/scroll-motion";
 import { getLocaleData } from "@/lib/i18n";
+import { AnnouncementBar } from "@/components/announcement-bar";
 
 export const metadata: Metadata = {
   title: { default: "YOI KIJI — Textiles for the Way You Live", template: "%s | YOI KIJI" },
@@ -39,7 +40,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <body>
         <JapaneseLoader />
         <ScrollMotion />
-        <div className="announcement"><span>TEXTILES FOR THE WAY YOU LIVE</span><i>✳</i><span>COMFORT, CONSIDERED</span></div>
+        <AnnouncementBar />
         <SiteHeader />
         {children}
         <SiteFooter />
