@@ -10,6 +10,7 @@ import { BackInStockForm } from "@/components/back-in-stock-form";
 import { formatINR } from "@/lib/money";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { cookies } from "next/headers";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -49,7 +50,7 @@ export default async function ProductPage({ params }: Props) {
   });
 
   return <main className="commerce-page">
-    <div className="commerce-breadcrumb"><Link href="/">Home</Link><span>/</span><Link href="/shop">Shop</Link><span>/</span>{product.name}</div>
+    <div className="commerce-breadcrumb"><Link href="/">Home</Link><span>/</span><Link href="/shop">Shop</Link><span>/</span>{displayName}</div>
     <ProductDetailInteractive
       productId={product.id}
       images={product.images.map(image => ({ id: image.id, url: image.url, alt: image.alt, isPrimary: image.isPrimary, position: image.position }))}
@@ -63,10 +64,10 @@ export default async function ProductPage({ params }: Props) {
       basePricePaise={product.pricePaise}
     >
       <p className="eyebrow">{product.category?.name ?? "YOI KIJI COLLECTION"}</p>
-      <h1>{product.name}</h1>
+      <h1>{displayName}</h1>
       <WishlistButton productId={product.id}/>
       {(product.hasVariants?product.variants.every(v=>v.inventoryQty<=0):product.inventoryQty<=0)&&<BackInStockForm productId={product.id}/>}
-      <p className="product-description">{product.description}</p>
+      <p className="product-description">{displayDescription}</p>
       {(product.material || product.color || product.careInstructions || product.lengthMm || product.widthMm || product.heightMm || dynamicSpecs.length > 0) && <dl className="product-specs">
         {product.material && <div><dt>Material</dt><dd>{product.material}</dd></div>}
         {product.color && <div><dt>Colour</dt><dd>{product.color}</dd></div>}
