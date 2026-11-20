@@ -81,7 +81,8 @@ export default async function ProductPage({ params }: Props) {
       }))}
       hasVariants={product.hasVariants}
       inventoryQty={product.inventoryQty}
-      basePricePaise={product.pricePaise}\n      labels={locale.labels}
+      basePricePaise={product.pricePaise}
+      labels={locale.labels}
     >
       <p className="eyebrow">{displayCategory}</p>
       <h1>{displayName}</h1>
