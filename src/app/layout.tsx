@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import "./globals.css";
 import "./ui-overhaul.css";
 import "./admin-operations.css";
+import "./admin-shopify.css";
 import "./journal.css";
 import "./visual-stability.css";
 import "./premium-system.css";
