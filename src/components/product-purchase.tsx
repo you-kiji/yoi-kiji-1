@@ -7,16 +7,16 @@ import { formatINR } from "@/lib/money";
 type Variant = { id: string; label: string; inventoryQty: number; pricePaise: number | null; swatchHex?: string | null };
 
 export function ProductPurchase({
-  productId, variants, hasVariants, inventoryQty, basePricePaise, onVariantChange,
+  productId, variants, hasVariants, inventoryQty, basePricePaise, onVariantChange, labels = {},
 }: {
   productId: string;
   variants: Variant[];
   hasVariants: boolean;
   inventoryQty: number;
   basePricePaise: number;
-  onVariantChange?: (variantId: string) => void;
+  onVariantChange?: (variantId: string) => void;\n  labels?: Record<string,string>;
 }) {
-  const [selected, setSelected] = useState("");
+  const t = (key: string, fallback: string) => labels[key] ?? fallback;\n  const [selected, setSelected] = useState("");
   const active = variants.find(variant => variant.id === selected);
   const unavailable = hasVariants ? (!active || active.inventoryQty < 1) : inventoryQty < 1;
   function selectVariant(id: string) {
@@ -25,9 +25,9 @@ export function ProductPurchase({
   }
   return <>
     <p className="product-detail-price">{formatINR(active?.pricePaise ?? basePricePaise)}</p>
-    <p className="stock-note">{unavailable ? "Currently unavailable" : "Available to order"}</p>
+    <p className="stock-note">{unavailable ? t("product.unavailable","Currently unavailable") : t("product.available","Available to order")}</p>
     {hasVariants && <fieldset className="purchase-variant">
-      <legend>Select size / option</legend>
+      <legend>{t("product.selectVariant","Select size / option")}</legend>
       <div className="purchase-variant-options">
         {variants.map(variant => <button
           key={variant.id}
@@ -39,10 +39,10 @@ export function ProductPurchase({
         >
           {variant.swatchHex && <span className="purchase-variant-swatch" style={{ backgroundColor: variant.swatchHex }} aria-hidden="true" />}
           <span>{variant.label}</span>
-          {variant.inventoryQty < 1 && <small>Out of stock</small>}
+          {variant.inventoryQty < 1 && <small>{t("product.outOfStock","Out of stock")}</small>}
         </button>)}
       </div>
     </fieldset>}
-    <AddToCartButton productId={productId} variantId={selected || undefined} disabled={unavailable} />
+    <AddToCartButton productId={productId} variantId={selected || undefined} disabled={unavailable} labels={labels} />
   </>;
 }
