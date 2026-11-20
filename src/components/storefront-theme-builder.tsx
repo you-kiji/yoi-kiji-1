@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 type Slide = { imageUrl:string; imageAlt:string; eyebrow:string; title:string; body:string; ctaLabel:string; ctaHref:string };
+type MediaAsset = { id:string; secureUrl:string; title:string|null; originalFilename:string|null; altText:string|null; width:number|null; height:number|null; format:string };
 type Section = { id:string; key:string; sectionType:string; eyebrow?:string|null; title:string|null; body?:string|null; imageUrl?:string|null; imageAlt?:string|null; ctaLabel?:string|null; ctaHref?:string|null; position:number; isActive:boolean; slides:Slide[]|null };
 const kinds = [
   ["slideshow","Slideshow"],["image-banner","Image banner"],["rich-text","Rich text"],
@@ -19,6 +20,10 @@ export function StorefrontThemeBuilder(){
   const [busy,setBusy]=useState(false);
   const [message,setMessage]=useState("Loading your homepage sections…");
   const [dragId,setDragId]=useState<string|null>(null);
+  const [mediaAssets,setMediaAssets]=useState<MediaAsset[]>([]);
+  const [mediaTargetIndex,setMediaTargetIndex]=useState<number|null>(null);
+  const [mediaLoading,setMediaLoading]=useState(false);
+  const [mediaError,setMediaError]=useState("");
   async function refresh(){
     const response=await fetch("/api/admin/storefront",{cache:"no-store"});
     const data=await response.json();
@@ -29,6 +34,17 @@ export function StorefrontThemeBuilder(){
   useEffect(()=>{void refresh().catch(e=>setMessage(e.message));},[]);
   function updateSlide(index:number,patch:Partial<Slide>){
     setSlides(current=>current.map((slide,i)=>i===index?{...slide,...patch}:slide));
+  }
+  async function openMediaPicker(index:number){
+    setMediaTargetIndex(index);setMediaLoading(true);setMediaError("");
+    try{const response=await fetch("/api/admin/media?type=IMAGE",{cache:"no-store"});const data=await response.json();if(!response.ok)throw new Error(data.error||"Could not load the media library.");setMediaAssets(data.assets||[]);}
+    catch(error){setMediaError(error instanceof Error?error.message:"Unable to load media library.");}
+    finally{setMediaLoading(false);}
+  }
+  function selectMedia(asset:MediaAsset){
+    if(mediaTargetIndex===null)return;
+    updateSlide(mediaTargetIndex,{imageUrl:asset.secureUrl,imageAlt:asset.altText||asset.title||asset.originalFilename||""});
+    setMediaTargetIndex(null);
   }
   async function createSection(event:React.FormEvent){
     event.preventDefault();setBusy(true);setMessage("");
@@ -71,7 +87,7 @@ export function StorefrontThemeBuilder(){
         <div className="admin-section-heading"><h3>{kind==="testimonial"?"Testimonials":"Slides"}</h3><button type="button" onClick={()=>setSlides(old=>[...old,{...emptySlide}])}>Add slide</button></div>
         {slides.map((slide,index)=><fieldset key={index} className="storefront-slide-card">
           <legend>Slide {index+1}</legend>
-          <label>Image URL<input type="url" required={kind==="slideshow"} value={slide.imageUrl} onChange={e=>updateSlide(index,{imageUrl:e.target.value})} placeholder="https://…"/></label>
+          <label>Image URL<input type="url" required={kind==="slideshow"} value={slide.imageUrl} onChange={e=>updateSlide(index,{imageUrl:e.target.value})} placeholder="https://…"/><button type="button" className="storefront-media-picker-trigger" onClick={()=>void openMediaPicker(index)}>Choose from media library</button></label>
           <label>Image alt text<input value={slide.imageAlt} onChange={e=>updateSlide(index,{imageAlt:e.target.value})}/></label>
           <label>Eyebrow<input value={slide.eyebrow} onChange={e=>updateSlide(index,{eyebrow:e.target.value})}/></label>
           <label>Headline<input value={slide.title} onChange={e=>updateSlide(index,{title:e.target.value})}/></label>
@@ -92,6 +108,6 @@ export function StorefrontThemeBuilder(){
         <button type="button" disabled={busy||index===sections.length-1} onClick={()=>void reorder(section.id,sections[index+1].id)}>Move down</button>
       </article>)}
     </div>
-    {message&&<p className="admin-feedback" role="status">{message}</p>}
+    {mediaTargetIndex!==null&&<div className="storefront-media-picker-backdrop" role="presentation" onMouseDown={event=>{if(event.target===event.currentTarget)setMediaTargetIndex(null);}}><section className="storefront-media-picker" role="dialog" aria-modal="true" aria-labelledby="storefront-media-picker-title"><div className="admin-section-heading"><h3 id="storefront-media-picker-title">Choose an image</h3><button type="button" onClick={()=>setMediaTargetIndex(null)}>Close</button></div><p>Select an image from the existing Media Library. Upload new assets from Admin → Media Library.</p>{mediaLoading?<p>Loading images…</p>:mediaError?<p role="alert">{mediaError}</p>:mediaAssets.length===0?<p>No image assets found in the library.</p>:<div className="storefront-media-picker-grid">{mediaAssets.map(asset=><button type="button" className="storefront-media-picker-item" key={asset.id} onClick={()=>selectMedia(asset)}><img src={asset.secureUrl} alt={asset.altText||asset.title||asset.originalFilename||""}/><span>{asset.title||asset.originalFilename||asset.format}</span></button>)}</div>}</section></div>}\n    {message&&<p className="admin-feedback" role="status">{message}</p>}
   </section>;
 }
