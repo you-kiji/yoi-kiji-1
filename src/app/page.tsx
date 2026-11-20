@@ -1,4 +1,5 @@
 import { getActiveCategories } from "@/lib/catalog";
+import { AdvancedSearch } from "@/components/advanced-search";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -40,6 +41,7 @@ export default async function HomePage() {
       </div>
       <div className="editorial-hero__bottom"><span>COMFORT, CONSIDERED.</span><span>SCROLL TO DISCOVER</span></div>
     </section>
+    <section className="home-search-section" aria-label="Search YOI KIJI collections"><div><p className="editorial-eyebrow editorial-eyebrow--dark">FIND SOMETHING CONSIDERED</p><h2>Search the <em>collection.</em></h2></div><AdvancedSearch /></section>
     <section className="editorial-intro">
       <div className="editorial-intro__label"><span>{intro?.eyebrow??"THE YOI KIJI PHILOSOPHY"}</span></div>
       <div className="editorial-intro__grid">
