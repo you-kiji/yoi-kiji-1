@@ -17,7 +17,7 @@ export default async function AdminReportsPage(){
  ]);
  const monthKeys=Array.from({length:12},(_,i)=>{const d=new Date(start);d.setMonth(start.getMonth()+i);return d.toISOString().slice(0,7);});
  const monthly=monthKeys.map(key=>{const rows=orders.filter(order=>order.createdAt.toISOString().slice(0,7)===key);return {key,label:new Intl.DateTimeFormat("en-IN",{month:"short"}).format(new Date(key+"-01T00:00:00Z")),revenue:rows.reduce((sum,o)=>sum+o.totalPaise,0),count:rows.length};});
- const topMap=new Map<string,{name:string;quantity:number;revenue:number}>();
+ const topMap=new Map<string,{id:string;name:string;quantity:number;revenue:number}>();
  for(const item of items){const current=topMap.get(item.productId)??{id:item.productId,name:item.productName,quantity:0,revenue:0};current.quantity+=item.quantity;current.revenue+=item.unitPricePaise*item.quantity;topMap.set(item.productId,current);}
  const topProducts=[...topMap.values()].sort((a,b)=>b.quantity-a.quantity).slice(0,8);
  const revenue=orders.reduce((sum,o)=>sum+o.totalPaise,0),discounts=orders.reduce((sum,o)=>sum+o.discountPaise,0),maxRevenue=Math.max(1,...monthly.map(m=>m.revenue));
