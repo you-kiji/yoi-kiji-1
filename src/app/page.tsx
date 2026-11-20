@@ -15,14 +15,18 @@ export default async function HomePage() {
     prisma.storeCollection.findMany({ where: { isActive: true }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] }),
     getActiveCategories(),
   ]);
-  const translations = await prisma.contentTranslation.findMany({
-    where: { localeCode, entityType: "homepageSection", entityId: { in: sections.map(item => item.id) } },
-    select: { entityId: true, fieldKey: true, value: true },
+  const translationTargets = [
+    ...sections.map(item => ({ entityType: "homepageSection", entityId: item.id })),
+    ...collections.map(item => ({ entityType: "collection", entityId: item.id })),
+    ...categoryRecords.map(item => ({ entityType: "category", entityId: item.id })),
+  ];
+  const translations = localeCode === "en" || !translationTargets.length ? [] : await prisma.contentTranslation.findMany({
+    where: { localeCode, OR: translationTargets.map(target => ({ entityType: target.entityType, entityId: target.entityId })) },
+    select: { entityType: true, entityId: true, fieldKey: true, value: true },
   }).catch(() => []);
-  const translated = new Map(translations.map(item => [`${item.entityId}:${item.fieldKey}`, item.value]));
+  const translated = new Map(translations.map(item => [`${item.entityType}:${item.entityId}:${item.fieldKey}`, item.value]));
   const value = (section: typeof sections[number], field: "eyebrow"|"title"|"body"|"imageAlt"|"ctaLabel"|"ctaHref") =>
-    translated.get(`${section.id}:${field}`) ?? section[field] ?? "";
-  const collectionSection = sections.find(item => item.key === "collections");
+    translated.get(`homepageSection:${section.id}:${field}`) ?? section[field] ?? "";
   const categories = collections.length
     ? collections.map(item => ({ id: item.id, name: translated.get(`collection:${item.id}:name`) ?? item.name, note: translated.get(`collection:${item.id}:description`) ?? item.description ?? "", image: item.imageUrl ?? "", href: `/shop?collection=${encodeURIComponent(item.slug)}` }))
     : categoryRecords.filter(item => item.parentId === null).map(item => ({ id: item.id, name: translated.get(`category:${item.id}:name`) ?? item.name, note: translated.get(`category:${item.id}:description`) ?? item.description ?? "", image: item.imageUrl ?? "", href: `/shop?category=${encodeURIComponent(item.slug)}` }));
