@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getActiveCategories, getActiveCategoryBySlug, getActiveProducts } from "@/lib/catalog";
 import { formatINR } from "@/lib/money";
 import { getLocaleData } from "@/lib/i18n";
+import { prisma } from "@/lib/prisma";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 type Props = { params: Promise<{ category: string }>; searchParams: Promise<SearchParams> };
@@ -36,6 +37,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const translationTargets = [
     ...categories.map(category => ({ entityType: "category", entityId: category.id })),
     ...catalogueProducts.map(product => ({ entityType: "product", entityId: product.id })),
+    ...catalogueProducts.flatMap(product => product.productType?.attributes.map(link => ({ entityType: "attribute", entityId: link.attribute.id })) ?? []),
   ];
   const translations = locale.code === "en" || !translationTargets.length ? [] : await prisma.contentTranslation.findMany({
     where: { localeCode: locale.code, OR: translationTargets.map(target => ({ entityType: target.entityType, entityId: target.entityId })) },
@@ -75,7 +77,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
       const options = existing?.options ?? [];
       const candidates = configured.length ? configured : observed;
       for (const option of candidates) if (!options.includes(option)) options.push(option);
-      facetsByKey.set(attribute.key, { key: attribute.key, name: attribute.name, unit: attribute.unit, options });
+      facetsByKey.set(attribute.key, { key: attribute.key, name: localized.get(`attribute:${attribute.id}:name`) ?? attribute.name, unit: attribute.unit, options });
     }
   }
   const facets = [...facetsByKey.values()].filter(facet => facet.options.length > 0).sort((a, b) => a.name.localeCompare(b.name));
@@ -115,9 +117,9 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   });
 
   return <main className="commerce-page">
-    <div className="commerce-breadcrumb"><Link href="/">Home</Link><span>/</span><Link href="/shop">Shop</Link>{ancestors.map(a=><span key={a.slug}>/ <Link href={`/shop/${a.slug}`}>{a.name}</Link></span>)}<span>/</span> {item.name}</div>
+    <div className="commerce-breadcrumb"><Link href="/">Home</Link><span>/</span><Link href="/shop">Shop</Link>{ancestors.map(a=><span key={a.slug}>/ <Link href={`/shop/${a.slug}`}>{a.name}</Link></span>)}<span>/</span> {displayCategoryName}</div>
     <header className="commerce-heading"><p className="eyebrow">YOI KIJI / THE COLLECTION</p><h1>{displayCategoryName}<br/><em>for living well.</em></h1>{displayCategoryDescription&&<p>{displayCategoryDescription}</p>}</header>
-    {children.length > 0 && <section className="category-subcollections"><p className="eyebrow">EXPLORE THIS COLLECTION</p><nav className="category-pills" aria-label={`Browse ${item.name} subcategories`}>{children.map(child=><Link key={child.id} href={`/shop/${child.slug}`}>{child.name}</Link>)}</nav></section>}
+    {children.length > 0 && <section className="category-subcollections"><p className="eyebrow">EXPLORE THIS COLLECTION</p><nav className="category-pills" aria-label={`Browse ${displayCategoryName} subcategories`}>{children.map(child=><Link key={child.id} href={`/shop/${child.slug}`}>{child.name}</Link>)}</nav></section>}
     {siblings.length > 0 && <nav className="category-pills" aria-label="Related categories">{siblings.map(c=><Link key={c.id} href={`/shop/${c.slug}`}>{c.name}</Link>)}</nav>}
     <div className="catalogue-toolbar">
       <p>{products.length} {products.length === 1 ? "piece" : "pieces"}</p>
