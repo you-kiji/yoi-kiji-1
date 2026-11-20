@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 type Slide = { imageUrl:string; imageAlt:string; eyebrow:string; title:string; body:string; ctaLabel:string; ctaHref:string };
-type Section = { id:string; key:string; sectionType:string; title:string|null; position:number; isActive:boolean; slides:Slide[]|null };
+type Section = { id:string; key:string; sectionType:string; eyebrow?:string|null; title:string|null; body?:string|null; imageUrl?:string|null; imageAlt?:string|null; ctaLabel?:string|null; ctaHref?:string|null; position:number; isActive:boolean; slides:Slide[]|null };
 const kinds = [
   ["slideshow","Slideshow"],["image-banner","Image banner"],["rich-text","Rich text"],
   ["image-with-text","Image with text"],["featured-collections","Featured collections"],
@@ -47,6 +47,15 @@ export function StorefrontThemeBuilder(){
     try{await Promise.all(next.map((section,index)=>fetch("/api/admin/storefront",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({resource:"section",id:section.id,data:{position:(index+1)*10}})}).then(async r=>{if(!r.ok)throw new Error("Could not save section order");})));setMessage("Homepage section order saved.");}
     catch(error){setMessage(error instanceof Error?error.message:"Order update failed");await refresh().catch(()=>{});}finally{setBusy(false);}
   }
+  async function duplicate(section:Section){
+    setBusy(true);setMessage("");
+    try{
+      const key=section.sectionType+"-"+crypto.randomUUID().slice(0,12);
+      const response=await fetch("/api/admin/storefront",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({resource:"section",data:{key,sectionType:section.sectionType,eyebrow:section.eyebrow,title:section.title,body:section.body,imageUrl:section.imageUrl,imageAlt:section.imageAlt,ctaLabel:section.ctaLabel,ctaHref:section.ctaHref,slides:section.slides||[],position:(sections.length+1)*10,isActive:false}})});
+      const data=await response.json();if(!response.ok)throw new Error(data.error||"Could not duplicate section");
+      await refresh();setMessage("Section duplicated as hidden draft. Review it and enable when ready.");
+    }catch(error){setMessage(error instanceof Error?error.message:"Unable to duplicate section");}finally{setBusy(false);}
+  }
   async function toggle(section:Section){
     setBusy(true);
     try{const response=await fetch("/api/admin/storefront",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({resource:"section",id:section.id,data:{isActive:!section.isActive}})});if(!response.ok)throw new Error("Could not update visibility");setSections(old=>old.map(s=>s.id===section.id?{...s,isActive:!s.isActive}:s));}
@@ -78,7 +87,7 @@ export function StorefrontThemeBuilder(){
       {sections.map((section,index)=><article key={section.id} draggable onDragStart={()=>setDragId(section.id)} onDragOver={e=>e.preventDefault()} onDrop={()=>{if(dragId)void reorder(dragId,section.id);setDragId(null);}} className="storefront-section-row">
         <span className="storefront-drag-handle" aria-hidden="true">⠿</span>
         <div><strong>{index+1}. {kinds.find(k=>k[0]===section.sectionType)?.[1]||section.sectionType}</strong><p>{section.title||section.key}</p><small>{section.slides?.length||0} content items · {section.isActive?"Visible":"Hidden"}</small></div>
-        <button type="button" disabled={busy} onClick={()=>void toggle(section)}>{section.isActive?"Hide":"Show"}</button>
+        <button type="button" disabled={busy} onClick={()=>void duplicate(section)}>Duplicate</button><button type="button" disabled={busy} onClick={()=>void toggle(section)}>{section.isActive?"Hide":"Show"}</button>
         <button type="button" disabled={busy||index===0} onClick={()=>void reorder(section.id,sections[index-1].id)}>Move up</button>
         <button type="button" disabled={busy||index===sections.length-1} onClick={()=>void reorder(section.id,sections[index+1].id)}>Move down</button>
       </article>)}
