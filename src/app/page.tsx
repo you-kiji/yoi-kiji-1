@@ -99,7 +99,7 @@ export default async function HomePage() {
           return (
             <section className="editorial-collections" key={section.id}>
               <div className="editorial-section-heading"><div><p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow || "EXPLORE"}</p><h2>{section.title || "Shop by collection"}</h2></div>{section.ctaHref && <a className="editorial-text-link" href={section.ctaHref}>{section.ctaLabel || "View all"}</a>}</div>
-              <div className="editorial-collection-grid">{categories.map((item,index)=><a className={"editorial-collection editorial-collection--"+(index+1)} href={item.href} key={item.id}><div className="editorial-collection__photo" style={{backgroundImage:`url(${JSON.stringify(item.image)})`}}/><div className="editorial-collection__shade"/><div className="editorial-collection__copy"><span>{item.note}</span><h3>{item.name}</h3><b>DISCOVER</b></div></a>)}</div>
+              <div className="editorial-collection-grid">{categories.map((item,index)=><a className={"editorial-collection editorial-collection--"+(index+1)} href={item.href} key={item.id}><div className="editorial-collection__photo" style={{backgroundImage: `url("${item.image}")`}}/><div className="editorial-collection__shade"/><div className="editorial-collection__copy"><span>{item.note}</span><h3>{item.name}</h3><b>DISCOVER</b></div></a>)}</div>
             </section>
           );
         }
