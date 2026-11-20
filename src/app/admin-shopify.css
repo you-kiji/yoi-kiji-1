@@ -72,3 +72,27 @@ body:has(.admin-shopify-shell) .admin-shopify-shell{min-height:100vh;display:gri
 .admin-product-detail .admin-detail-card .admin-product-images,.admin-product-detail .admin-detail-card .admin-variant-manager{margin-top:0}
 @media(max-width:900px){.admin-product-detail-grid{grid-template-columns:1fr}.admin-product-detail-aside{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-product-detail-aside .admin-detail-card:last-child{grid-column:1/-1}}
 @media(max-width:650px){.admin-detail-header{display:grid}.admin-detail-header-actions{justify-content:flex-start}.admin-detail-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-product-detail-aside{grid-template-columns:1fr}.admin-product-detail-aside .admin-detail-card:last-child{grid-column:auto}.admin-detail-card{padding:14px}.admin-detail-definition{grid-template-columns:1fr}}
+
+
+/* Order detail workspace */
+.admin-order-detail-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(270px,.85fr);gap:16px;align-items:start}
+.admin-order-items{display:grid}.admin-order-items>article{display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-top:1px solid #eff0f1}
+.admin-order-items>article>div:first-child{display:grid;gap:4px}.admin-order-items>article>div:last-child{display:grid;align-content:center;justify-items:end;gap:5px;white-space:nowrap}
+.admin-order-items strong{font-size:11px}.admin-order-items p,.admin-order-items small,.admin-order-items span{margin:0;color:#737a7e;font-size:9px}
+.admin-order-totals{max-width:420px;margin:14px 0 0 auto;padding-top:10px;border-top:1px solid #e8e9ea}
+.admin-order-totals>div{display:flex;justify-content:space-between;gap:12px;padding:6px 0;font-size:10px}
+.admin-order-totals dt{color:#72797d}.admin-order-totals dd{margin:0;color:#303538;font-weight:600}
+.admin-order-totals .is-total{margin-top:5px;padding-top:11px;border-top:1px solid #e1e2e4;font-size:13px}.admin-order-totals .is-total dt,.admin-order-totals .is-total dd{color:#202223;font-weight:700}
+.admin-order-address{display:grid;gap:5px;font-size:11px;font-style:normal;color:#41484c}
+.admin-order-json{max-width:100%;overflow:auto;white-space:pre-wrap;font-size:10px;color:#555}
+.admin-order-customer-email{margin:0 0 7px;color:#5f676b;font-size:11px;overflow-wrap:anywhere}
+.admin-order-metric-status{font-size:15px!important;letter-spacing:0!important;overflow-wrap:anywhere}
+.admin-order-detail .admin-order-actions,.admin-order-detail .fulfillment-editor{display:grid;gap:8px;margin-top:10px}
+.admin-order-detail .admin-order-actions select,.admin-order-detail .fulfillment-editor select,.admin-order-detail .fulfillment-editor input{width:100%;min-height:38px}
+.admin-order-detail .admin-order-actions button,.admin-order-detail .fulfillment-editor>button,.admin-order-detail .fulfillment-editor-fields>button{min-height:36px}
+.admin-order-detail .fulfillment-editor-fields{display:grid;gap:9px;margin-top:10px}
+.admin-order-detail .fulfillment-editor-fields label{display:grid;gap:5px;font-size:10px}
+.admin-order-detail .admin-order-actions small,.admin-order-detail .fulfillment-editor small{font-size:10px;color:#5b6468}
+.admin-order-detail .admin-detail-card .admin-order-status{display:inline-flex;width:max-content}
+@media(max-width:900px){.admin-order-detail-grid{grid-template-columns:1fr}.admin-order-detail-grid>aside{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-order-detail-grid>aside .admin-detail-card:last-child{grid-column:1/-1}}
+@media(max-width:650px){.admin-order-detail-grid>aside{grid-template-columns:1fr}.admin-order-detail-grid>aside .admin-detail-card:last-child{grid-column:auto}.admin-order-items>article{align-items:flex-start}.admin-order-items>article>div:last-child{white-space:normal;text-align:right}}
