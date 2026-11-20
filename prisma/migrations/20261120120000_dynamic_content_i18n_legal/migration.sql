@@ -350,7 +350,7 @@ VALUES
 ('tr_ja_ui_checkout_checking','ja','ui','storefront','checkout.checking','在庫と価格を確認しています…',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
 ('tr_ja_ui_checkout_emptyhint','ja','ui','storefront','checkout.emptyBagHint','バッグは空です。続ける前に商品を追加してください。',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
 ('tr_ja_ui_checkout_subtotal','ja','ui','storefront','checkout.itemsSubtotal','商品小計',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-('tr_ja_ui_checkout_delivery','ja','ui','storefront','checkout.delivery','配送',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+('tr_ja_ui_checkout_delivery_method','ja','ui','storefront','checkout.delivery','配送',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
 ('tr_ja_ui_checkout_complimentary','ja','ui','storefront','checkout.complimentary','無料',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
 ('tr_ja_ui_checkout_promotion','ja','ui','storefront','checkout.promotion','プロモーション',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
 ('tr_ja_ui_checkout_tax','ja','ui','storefront','checkout.taxEstimate','税額見込み',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
