@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { CartCount } from "@/components/cart-count";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 
 type Category = { id: string; name: string; slug: string };
 
@@ -87,7 +88,7 @@ export function SiteHeaderClient({ categories }: { categories: Category[] }) {
           }}
         >{mobileOpen ? "Close" : "Menu"}</summary>
         <nav aria-label="Mobile navigation">
-          <Link href="/shop" onClick={closeAll}>Shop all</Link>
+          <LocaleSwitcher />\n          <Link href="/shop" onClick={closeAll}>Shop all</Link>
           <p>Categories</p>
           {categories.map(category => (
             <Link key={category.id} href={`/shop?category=${encodeURIComponent(category.slug)}`} onClick={closeAll}>
@@ -102,7 +103,7 @@ export function SiteHeaderClient({ categories }: { categories: Category[] }) {
         </nav>
       </details>
 
-      <div className="header-actions">
+      <div className="header-actions">\n        <LocaleSwitcher />
         <Link href="/search" onClick={closeAll}>Search</Link>
         <Link href="/account" onClick={closeAll}>Account</Link>
         <Link className="bag-link" href="/cart" onClick={closeAll}>Bag <CartCount /></Link>
