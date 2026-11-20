@@ -1,4 +1,5 @@
-import type { Metadata, CSSProperties } from "next";
+import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import { prisma } from "@/lib/prisma";
 import "./globals.css";
 import "./ui-overhaul.css";
