@@ -171,3 +171,18 @@ FROM "HomepageSection"
 JOIN (VALUES ('announcement','title','暮らしに寄り添うテキスタイル'),('announcement','body','心地よさを、丁寧に。')) AS field(section_key,field_key,translated_value)
 ON field.section_key = "HomepageSection"."key"
 ON CONFLICT ("localeCode","entityType","entityId","fieldKey") DO NOTHING;
+
+INSERT INTO "ContentTranslation" ("id","localeCode","entityType","entityId","fieldKey","value","createdAt","updatedAt")
+VALUES ('tr_ja_ui_search_popular','ja','ui','storefront','search.popular','人気のコレクション',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+ON CONFLICT ("localeCode","entityType","entityId","fieldKey") DO NOTHING;
+INSERT INTO "ContentTranslation" ("id","localeCode","entityType","entityId","fieldKey","value","createdAt","updatedAt")
+SELECT 'tr_ja_collection_' || "slug" || '_' || field.field_key,'ja','collection',"id",field.field_key,field.translated_value,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP
+FROM "StoreCollection"
+JOIN (VALUES
+ ('bedsheets','name','ベッドシーツ'),('bedsheets','description','毎日の眠りを心地よく整えるリネン。'),
+ ('curtains','name','カーテン'),('curtains','description','光をやわらかく取り込み、空間を彩る。'),
+ ('upholstery','name','張り地・ファブリック'),('upholstery','description','自分らしい空間をつくる、豊かな手ざわり。'),
+ ('bath-linen','name','バスリネン'),('bath-linen','description','毎日のバスタイムを心地よいひとときに。'),
+ ('kitchen-linen','name','キッチンリネン'),('kitchen-linen','description','暮らしの中心に寄り添う、細やかな心づかい。')
+) AS field(collection_slug,field_key,translated_value) ON field.collection_slug = "StoreCollection"."slug"
+ON CONFLICT ("localeCode","entityType","entityId","fieldKey") DO NOTHING;
