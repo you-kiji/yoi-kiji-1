@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getActiveCategories, getActiveProducts, getCategoryBranchIds } from "@/lib/catalog";
 import { prisma } from "@/lib/prisma";
 import { formatINR } from "@/lib/money";
+import { getLocaleData } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -85,7 +86,26 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   else if (params.sort === "name") products = [...products].sort((a, b) => a.name.localeCompare(b.name));
   else products = [...products].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
-  const categoryOptions = categories;
+  const locale = await getLocaleData();
+  const translationTargets = [
+    ...products.map(product => ({ entityType: "product", entityId: product.id })),
+    ...categories.map(category => ({ entityType: "category", entityId: category.id })),
+    ...(selected ? [{ entityType: "collection", entityId: selected.id }] : []),
+  ];
+  const translations = locale.code === "en" || !translationTargets.length ? [] : await prisma.contentTranslation.findMany({
+    where: { localeCode: locale.code, OR: translationTargets.map(target => ({ entityType: target.entityType, entityId: target.entityId })) },
+    select: { entityType: true, entityId: true, fieldKey: true, value: true },
+  }).catch(() => []);
+  const localized = new Map(translations.map(entry => [`${entry.entityType}:${entry.entityId}:${entry.fieldKey}`, entry.value]));
+  products = products.map(product => ({
+    ...product,
+    name: localized.get(`product:${product.id}:name`) ?? product.name,
+    description: localized.get(`product:${product.id}:description`) ?? product.description,
+    category: product.category ? { ...product.category, name: localized.get(`category:${product.category.id}:name`) ?? product.category.name } : null,
+  }));
+  const selectedName = selected ? localized.get(`collection:${selected.id}:name`) ?? selected.name : null;
+  const selectedDescription = selected ? localized.get(`collection:${selected.id}:description`) ?? selected.description : null;
+  const categoryOptions = categories.map(category => ({ ...category, name: localized.get(`category:${category.id}:name`) ?? category.name }));
   const clearHref = selected ? `/shop?collection=${encodeURIComponent(selected.slug)}` : "/shop";
 
   return (
@@ -93,15 +113,15 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
       <div className="commerce-breadcrumb">
         <Link href="/">Home</Link>
         <span>/</span>
-        {selected?.name ?? "Shop all"}
+        {selectedName ?? "Shop all"}
       </div>
 
       <header className="commerce-heading shop-heading">
         <p className="eyebrow">{selected ? "CURATED BY YOI KIJI" : "THE YOI KIJI COLLECTIONS"}</p>
         <h1>
-          {selected ? selected.name : <>Considered comfort,<br /><em>for every room.</em></>}
+          {selected ? selectedName : <>Considered comfort,<br /><em>for every room.</em></>}
         </h1>
-        <p>{selected?.description ?? "Explore textiles chosen for the everyday moments that make a home."}</p>
+        <p>{selectedDescription ?? "Explore textiles chosen for the everyday moments that make a home."}</p>
       </header>
 
       <section className="shop-discovery" aria-label="Find pieces in the collection">
