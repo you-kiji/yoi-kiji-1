@@ -102,14 +102,14 @@ export async function GET(request: NextRequest) {
     .map(product => ({ product, score: scoreProduct(product, query) }))
     .filter(item => item.score > 0)
     .sort((a, b) => b.score - a.score || a.product.name.localeCompare(b.product.name))
-    .slice(0, 8)
+    .slice(0, request.nextUrl.searchParams.get("full") === "1" ? 60 : 8)
     .map(({ product, score }) => ({ id: product.id, name: product.translatedName ?? product.name, slug: product.slug, sku: product.sku, category: product.category?.name ?? "YOI KIJI", pricePaise: product.pricePaise, image: product.images[0] ?? null, score }));
 
   const categoryMatches = categories
     .map(category => ({ ...category, score: scoreProduct({ id: category.id, name: category.name, slug: category.slug, sku: "", description: "", material: null, color: null, seoKeywords: [], pricePaise: 0, category: null, images: [], attributeValues: [] }, query) }))
     .filter(category => category.score > 0)
     .sort((a, b) => b.score - a.score)
-    .slice(0, 4);
+    .slice(0, request.nextUrl.searchParams.get("full") === "1" ? 20 : 4);
 
   const suggestions = [...new Set([
     ...ranked.slice(0, 4).map(item => item.name),
