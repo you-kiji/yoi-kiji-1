@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 type Review={id:string;rating:number;title:string|null;body:string;status:string;verifiedPurchase:boolean;createdAt:string;user:{name:string|null;email:string};product:{name:string;slug:string;sku:string};adminNote:string|null};
 type Filter="PENDING"|"APPROVED"|"REJECTED"|"ALL";
@@ -31,7 +32,7 @@ export function AdminReviewManager({initialReviews}:{initialReviews:Review[]}){
    <span>{visible.length} review(s)</span>
   </div>
   <div className="admin-review-list">{visible.map(r=><article key={r.id}>
-   <div className="admin-review-top"><div><strong>{r.product.name}</strong><small>{r.product.sku} · {r.product.slug}</small></div><span className="order-status">{r.status.toLowerCase()}</span></div>
+   <div className="admin-review-top"><div><strong><Link href={`/admin/reviews/${r.id}`}>{r.product.name}</Link></strong><Link className="admin-product-open-link" href={`/admin/reviews/${r.id}`}>Open review details</Link><small>{r.product.sku} · {r.product.slug}</small></div><span className="order-status">{r.status.toLowerCase()}</span></div>
    <p className="admin-review-stars">{"★".repeat(r.rating)}{"☆".repeat(5-r.rating)} {r.verifiedPurchase?"· Verified purchase":"· Purchase not verified"}</p>
    {r.title&&<h3>{r.title}</h3>}<p>{r.body}</p>
    <small>{r.user.name??r.user.email} · {r.user.email} · {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium"}).format(new Date(r.createdAt))}</small>
