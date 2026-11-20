@@ -14,10 +14,12 @@
   font: inherit;
 }
 :where(button, input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]), select, .locale-switcher__trigger) {
-  min-height: var(--yk-control-height);
+  min-height: var(--yk-control-height) !important;
+  height: var(--yk-control-height) !important;
 }
-:where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]), select) {
-  height: var(--yk-control-height);
+:where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]), select:not([multiple])) {
+  height: var(--yk-control-height) !important;
+  min-height: var(--yk-control-height) !important;
   padding: 0 14px;
   border: 1px solid var(--yk-control-border);
   border-radius: var(--yk-control-radius);
@@ -169,6 +171,9 @@
 .wishlist-icon-button.is-saved svg { fill: currentColor; }
 .wishlist-icon-button:disabled { opacity: .58; cursor: wait; }
 .wishlist-feedback { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.home-redesign > section:not(.editorial-hero) { content-visibility: auto; contain-intrinsic-size: auto 620px; }
+.product-card-image img, .journal-card-image img { content-visibility: auto; }
+.locale-switcher__menu { overscroll-behavior: contain; }
 .home-redesign { --home-gutter: clamp(20px, 4vw, 58px); }
 .home-redesign .editorial-hero { min-height: clamp(560px, 68svh, 720px); padding-top: 92px; padding-bottom: 96px; }
 .home-redesign .editorial-intro { padding: var(--yk-section-space) var(--home-gutter); }
