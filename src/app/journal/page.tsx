@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { getLocaleData } from "@/lib/i18n";
 
 export const revalidate = 300;
 export const metadata: Metadata = {
@@ -38,7 +39,26 @@ export default async function JournalPage({ searchParams }: { searchParams: Sear
     prisma.blogCategory.findMany({ where: { posts: { some: { post: { status: "PUBLISHED", publishedAt: { lte: now }, noIndex: false } } } }, orderBy: { name: "asc" } }).catch(() => []),
     prisma.blogTag.findMany({ where: { posts: { some: { post: { status: "PUBLISHED", publishedAt: { lte: now }, noIndex: false } } } }, orderBy: { name: "asc" } }).catch(() => []),
   ]);
-  const selectedLabel = category ? categories.find(item => item.slug === category)?.name : tag ? tags.find(item => item.slug === tag)?.name : null;
+  const locale = await getLocaleData();
+  const translationTargets = [
+    ...posts.map(post => ({ entityType: "blogPost", entityId: post.id })),
+    ...categories.map(item => ({ entityType: "blogCategory", entityId: item.id })),
+    ...tags.map(item => ({ entityType: "blogTag", entityId: item.id })),
+  ];
+  const translations = locale.code === "en" || !translationTargets.length ? [] : await prisma.contentTranslation.findMany({
+    where: { localeCode: locale.code, OR: translationTargets.map(target => ({ entityType: target.entityType, entityId: target.entityId })) },
+    select: { entityType: true, entityId: true, fieldKey: true, value: true },
+  }).catch(() => []);
+  const localized = new Map(translations.map(entry => [`${entry.entityType}:${entry.entityId}:${entry.fieldKey}`, entry.value]));
+  const localizedPosts = posts.map(post => ({
+    ...post,
+    title: localized.get(`blogPost:${post.id}:title`) ?? post.title,
+    excerpt: localized.get(`blogPost:${post.id}:excerpt`) ?? post.excerpt,
+    categories: post.categories.map(link => ({ ...link, category: { ...link.category, name: localized.get(`blogCategory:${link.category.slug}:name`) ?? link.category.name } })),
+  }));
+  const localizedCategories = categories.map(item => ({ ...item, name: localized.get(`blogCategory:${item.id}:name`) ?? item.name }));
+  const localizedTags = tags.map(item => ({ ...item, name: localized.get(`blogTag:${item.id}:name`) ?? item.name }));
+  const selectedLabel = category ? localizedCategories.find(item => item.slug === category)?.name : tag ? localizedTags.find(item => item.slug === tag)?.name : null;
 
   return <main className="journal-page">
     <div className="commerce-breadcrumb"><Link href="/">Home</Link><span>/</span> Journal</div>
@@ -49,15 +69,15 @@ export default async function JournalPage({ searchParams }: { searchParams: Sear
     </header>
     <nav className="journal-filters" aria-label="Filter journal articles">
       <Link className={!category && !tag ? "is-active" : ""} href="/journal">All stories</Link>
-      {categories.map(item => <Link className={category === item.slug ? "is-active" : ""} href={"/journal?category=" + encodeURIComponent(item.slug)} key={item.id}>{item.name}</Link>)}
-      {tags.map(item => <Link className={tag === item.slug ? "is-active" : ""} href={"/journal?tag=" + encodeURIComponent(item.slug)} key={"tag-" + item.id}># {item.name}</Link>)}
+      {localizedCategories.map(item => <Link className={category === item.slug ? "is-active" : ""} href={"/journal?category=" + encodeURIComponent(item.slug)} key={item.id}>{item.name}</Link>)}
+      {localizedTags.map(item => <Link className={tag === item.slug ? "is-active" : ""} href={"/journal?tag=" + encodeURIComponent(item.slug)} key={"tag-" + item.id}># {item.name}</Link>)}
     </nav>
     <div className="journal-results-heading">
       <h2>{selectedLabel ? "Stories: " + selectedLabel : "The journal"}</h2>
       <span>{posts.length} {posts.length === 1 ? "story" : "stories"}</span>
     </div>
     {posts.length ? <section className="journal-grid" aria-label="Journal articles">
-      {posts.map((post, index) => <article className={"journal-card" + (index === 0 && !category && !tag ? " journal-card-featured" : "")} key={post.id}>
+      {localizedPosts.map((post, index) => <article className={"journal-card" + (index === 0 && !category && !tag ? " journal-card-featured" : "")} key={post.id}>
         <Link className="journal-card-image" href={"/journal/" + post.slug} aria-label={"Read " + post.title}>
           {post.coverImageUrl ? <img src={post.coverImageUrl} alt={post.coverImageAlt ?? ""} loading={index > 2 ? "lazy" : "eager"}/> : <span>YOI KIJI · JOURNAL</span>}
         </Link>
