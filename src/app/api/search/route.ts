@@ -9,7 +9,7 @@ type SearchableProduct = {
   material: string | null; color: string | null; seoKeywords: string[];
   pricePaise: number; category: { id: string; name: string } | null;
   images: { url: string; alt: string }[];
-  attributeValues: { value: unknown; attribute: { name: string; key: string } }[];
+  attributeValues: { value: unknown; attribute: { id: string; name: string; key: string } }[];
 };
 
 function normalise(value: string) {
@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
         id: true, name: true, slug: true, sku: true, description: true, material: true, color: true,
         seoKeywords: true, pricePaise: true, category: { select: { id: true, name: true } },
         images: { where: { variantId: null }, orderBy: [{ isPrimary: "desc" }, { position: "asc" }], take: 1, select: { url: true, alt: true } },
-        attributeValues: { select: { value: true, attribute: { select: { name: true, key: true } } } },
+        attributeValues: { select: { value: true, attribute: { select: { id: true, name: true, key: true } } } },
       },
       take: 1500,
     }) as Promise<SearchableProduct[]>,
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
   const localeCode = request.cookies.get("yk-locale")?.value ?? "en";
   const translationTargets = [
     ...products.map(product => ({ entityType: "product", entityId: product.id })),
-    ...categories.map(category => ({ entityType: "category", entityId: category.id })),
+    ...categories.map(category => ({ entityType: "category", entityId: category.id })),\n    ...products.flatMap(product => product.attributeValues.map(item => ({ entityType: "attribute", entityId: item.attribute.id }))),
   ];
   const translations = localeCode === "en" || !translationTargets.length ? [] : await prisma.contentTranslation.findMany({
     where: { localeCode, OR: translationTargets.map(target => ({ entityType: target.entityType, entityId: target.entityId })) },
