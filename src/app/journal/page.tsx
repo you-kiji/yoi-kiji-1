@@ -31,7 +31,7 @@ export default async function JournalPage({ searchParams }: { searchParams: Sear
         id: true, title: true, slug: true, excerpt: true, coverImageUrl: true,
         coverImageAlt: true, publishedAt: true,
         author: { select: { name: true } },
-        categories: { include: { category: { select: { name: true, slug: true } } } },
+        categories: { include: { category: { select: { id: true, name: true, slug: true } } } },
       },
       orderBy: [{ publishedAt: "desc" }, { id: "desc" }],
       take: 48,
@@ -54,7 +54,7 @@ export default async function JournalPage({ searchParams }: { searchParams: Sear
     ...post,
     title: localized.get(`blogPost:${post.id}:title`) ?? post.title,
     excerpt: localized.get(`blogPost:${post.id}:excerpt`) ?? post.excerpt,
-    categories: post.categories.map(link => ({ ...link, category: { ...link.category, name: localized.get(`blogCategory:${link.category.slug}:name`) ?? link.category.name } })),
+    categories: post.categories.map(link => ({ ...link, category: { ...link.category, name: localized.get(`blogCategory:${link.category.id}:name`) ?? link.category.name } })),
   }));
   const localizedCategories = categories.map(item => ({ ...item, name: localized.get(`blogCategory:${item.id}:name`) ?? item.name }));
   const localizedTags = tags.map(item => ({ ...item, name: localized.get(`blogTag:${item.id}:name`) ?? item.name }));
