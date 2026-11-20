@@ -10,7 +10,8 @@ type ShippingForm={fullName:string;phone:string;line1:string;line2:string;city:s
 const emptyForm:ShippingForm={fullName:"",phone:"",line1:"",line2:"",city:"",state:"",postalCode:"",countryCode:"IN"};
 function formatPrice(paise:number){return "₹"+(paise/100).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});}
 export function CheckoutForm({isAuthenticated,labels={}}:{isAuthenticated:boolean;labels?:Record<string,string>}){
- const router=useRouter();\n const t=(key:string,fallback:string)=>labels[key]??fallback;
+ const router=useRouter();
+ const t=(key:string,fallback:string)=>labels[key]??fallback;
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[couponCode,setCouponCode]=useState("");
  const [guestEmail,setGuestEmail]=useState(""),[paymentMethod,setPaymentMethod]=useState<"COD"|"RAZORPAY">("COD");
  const [summaryLines,setSummaryLines]=useState<QuoteLine[]>([]),[summarySubtotal,setSummarySubtotal]=useState(0),[summaryShipping,setSummaryShipping]=useState(0),[summaryDiscount,setSummaryDiscount]=useState(0),[summaryTax,setSummaryTax]=useState(0),[summaryTotal,setSummaryTotal]=useState(0),[appliedCoupon,setAppliedCoupon]=useState<string|null>(null),[summaryLoading,setSummaryLoading]=useState(true),[summaryError,setSummaryError]=useState("");
