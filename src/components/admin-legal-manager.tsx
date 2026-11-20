@@ -26,7 +26,7 @@ export function AdminLegalManager({ initialPages }: { initialPages: Page[] }) {
     </section>
     <section className="admin-content-panel">
       <div className="admin-section-heading"><h2>Legal page library</h2><span>{pages.length} pages · version history enabled</span></div>
-      <div className="admin-content-list">{pages.map(page=><article key={page.id}><div><strong>{page.title}</strong><p>/legal/{page.slug}</p><small>{page.status} · {page._count?.revisions??0} saved revisions · Updated {new Date(page.updatedAt).toLocaleDateString()}</small></div><a className="admin-text-action" href={`/legal/${page.slug}`} target="_blank" rel="noreferrer">Preview</a><button type="button" onClick={()=>edit(page)}>Edit</button></article>)}</div>
+      <div className="admin-content-list">{pages.map(page=><article key={page.id}><div><strong>{page.title}</strong><p>/legal/{page.slug}</p><small>ID: {page.id} · {page.status} · {page._count?.revisions??0} saved revisions · Updated {new Date(page.updatedAt).toLocaleDateString()}</small></div><a className="admin-text-action" href={`/legal/${page.slug}`} target="_blank" rel="noreferrer">Preview</a><button type="button" onClick={()=>edit(page)}>Edit</button></article>)}</div>
     </section>
   </div>;
 }
