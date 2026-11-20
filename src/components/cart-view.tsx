@@ -44,7 +44,7 @@ export function CartView({ labels = {} }: { labels?: Record<string,string> }) {
         signal: controller.signal,
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error ?? t("cart.loadError",t("cart.loadError","Unable to load your bag.")));
+      if (!response.ok) throw new Error(data.error ?? t("cart.loadError","Unable to load your bag."));
       if (requestId !== quoteRequestId.current) return;
       setLines(Array.isArray(data.items) ? data.items : []);
       setError("");
@@ -52,11 +52,11 @@ export function CartView({ labels = {} }: { labels?: Record<string,string> }) {
       if (reason instanceof DOMException && reason.name === "AbortError") return;
       if (requestId !== quoteRequestId.current) return;
       setLines([]);
-      setError(reason instanceof Error ? reason.message : "Unable to load your bag.");
+      setError(reason instanceof Error ? reason.message : t("cart.loadError","Unable to load your bag."));
     } finally {
       if (requestId === quoteRequestId.current) setLoading(false);
     }
-  }, []);
+  }, [labels]);
 
   useEffect(() => {
     try {
@@ -73,7 +73,7 @@ export function CartView({ labels = {} }: { labels?: Record<string,string> }) {
       setCart(initial);
       void refresh(initial);
     } catch {
-      setError("Your saved bag could not be read. Clear it and add your pieces again.");
+      setError(t("cart.savedError","Your saved bag could not be read. Clear it and add your pieces again."));
       setLoading(false);
     }
     return () => {
@@ -89,7 +89,7 @@ export function CartView({ labels = {} }: { labels?: Record<string,string> }) {
       window.dispatchEvent(new Event("yoikiji-cart-updated"));
       void refresh(next);
     } catch {
-      setError("Your browser could not save this bag. Check your browser storage settings and try again.");
+      setError(t("cart.storageError","Your browser could not save this bag. Check your browser storage settings and try again."));
     }
   }
 
@@ -186,7 +186,7 @@ export function CartView({ labels = {} }: { labels?: Record<string,string> }) {
 
               {line.availableQty < line.quantity && (
                 <p className="cart-stock-warning" role="alert">
-                  {t("cart.stockWarning","Only " + line.availableQty + " currently available. Update the quantity to continue.")}
+                  {t("cart.stockWarning","Only {availableQty} currently available. Update the quantity to continue.").replace("{availableQty}",String(line.availableQty))}
                 </p>
               )}
             </div>
