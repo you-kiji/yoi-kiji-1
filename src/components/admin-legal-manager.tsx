@@ -2,8 +2,8 @@
 
 import { FormEvent, useEffect, useState } from "react";
 
-type Page = { id: string; slug: string; title: string; content: string; status: "DRAFT"|"PUBLISHED"|"ARCHIVED"; seoTitle: string|null; seoDescription: string|null; updatedAt: string | Date; _count?: { revisions: number } };
-const blank = { slug:"", title:"", content:"", status:"DRAFT" as const, seoTitle:"", seoDescription:"" };
+type LegalForm = { slug: string; title: string; content: string; status: "DRAFT"|"PUBLISHED"|"ARCHIVED"; seoTitle: string; seoDescription: string };\ntype Page = { id: string; slug: string; title: string; content: string; status: "DRAFT"|"PUBLISHED"|"ARCHIVED"; seoTitle: string|null; seoDescription: string|null; updatedAt: string | Date; _count?: { revisions: number } };
+const blank: LegalForm = { slug:"", title:"", content:"", status:"DRAFT", seoTitle:"", seoDescription:"" };
 
 export function AdminLegalManager({ initialPages }: { initialPages: Page[] }) {
   const [pages,setPages]=useState(initialPages),[form,setForm]=useState(blank),[editing,setEditing]=useState<string|null>(null),[busy,setBusy]=useState(false),[message,setMessage]=useState("");
