@@ -3,8 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { SiteHeaderClient } from "@/components/site-header-client";
 import { getLocaleData } from "@/lib/i18n";
 
-
-
 export async function SiteHeader() {
   let categories: Awaited<ReturnType<typeof getActiveCategories>> = [];
   try {
@@ -17,8 +15,20 @@ export async function SiteHeader() {
     .map(({ id, name, slug }) => ({ id, name, slug }));
 
   const locale = await getLocaleData();
-  const categoryTranslations = locale.code === "en" ? [] : await prisma.contentTranslation.findMany({ where: { localeCode: locale.code, entityType: "category", entityId: { in: roots.map(item => item.id) }, fieldKey: "name" }, select: { entityId: true, value: true } }).catch(() => []);
+  const [categoryTranslations, availableLocales] = await Promise.all([
+    locale.code === "en"
+      ? Promise.resolve([])
+      : prisma.contentTranslation.findMany({
+          where: { localeCode: locale.code, entityType: "category", entityId: { in: roots.map(item => item.id) }, fieldKey: "name" },
+          select: { entityId: true, value: true },
+        }).catch(() => []),
+    prisma.locale.findMany({
+      where: { isEnabled: true },
+      select: { code: true, name: true, nativeName: true, isDefault: true, direction: true },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+    }).catch(() => []),
+  ]);
   const names = new Map(categoryTranslations.map(item => [item.entityId, item.value]));
   const localizedRoots = roots.map(item => ({ ...item, name: names.get(item.id) ?? item.name }));
-  return <SiteHeaderClient categories={localizedRoots} labels={locale.labels} />;
+  return <SiteHeaderClient categories={localizedRoots} labels={locale.labels} availableLocales={availableLocales} currentLocale={locale.code} />;
 }
