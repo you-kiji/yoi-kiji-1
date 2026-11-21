@@ -12,13 +12,8 @@ import "./experience-overrides.css";
 import "./advanced-search.css";
 import "./content-management.css";
 import "./quality-pass.css";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
-import { Analytics } from "@/components/analytics";
-import { CookieConsent } from "@/components/cookie-consent";
-import { ScrollMotion } from "@/components/scroll-motion";
 import { getLocaleData } from "@/lib/i18n";
-import { AnnouncementBar } from "@/components/announcement-bar";
+import { SiteChrome } from "@/components/site-chrome";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocaleData();
@@ -55,13 +50,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
       </head>
       <body>
-        <ScrollMotion />
-        <AnnouncementBar />
-        <SiteHeader />
-        {children}
-        <SiteFooter />
-        <Analytics />
-        <CookieConsent />
+        <SiteChrome>{children}</SiteChrome>
       </body>
     </html>
   );
