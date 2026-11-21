@@ -337,3 +337,15 @@ body:has(.admin-shopify-shell) .admin-shopify-shell{min-height:100vh;display:gri
 .admin-blog-bulkbar button:disabled{opacity:.45;cursor:not-allowed}
 .admin-blog-select{margin:0 0 6px}
 @media(max-width:560px){.admin-blog-bulkbar{align-items:stretch}.admin-blog-bulkbar label,.admin-blog-bulkbar span{width:100%}.admin-blog-bulkbar button{flex:1}}
+
+
+/* Promotion register search and pagination */
+.admin-promotion-filters{display:grid;grid-template-columns:minmax(200px,2fr) minmax(150px,1fr) auto;gap:10px;align-items:end;margin:12px 0}
+.admin-promotion-filters label{display:grid;gap:5px;font-size:10px;color:#60686b}
+.admin-promotion-filters input,.admin-promotion-filters select{width:100%;min-height:36px;padding:0 10px;border:1px solid #dfe1e3;background:#fff;font-size:11px}
+.admin-promotion-filters>span{font-size:10px;color:#737a7e;padding-bottom:10px}
+.admin-promotion-pagination{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;color:#737a7e;font-size:10px}
+.admin-promotion-pagination>div{display:flex;align-items:center;gap:10px}
+.admin-promotion-pagination button{min-height:32px;padding:0 12px;border:1px solid #d8dadd;background:#fff;color:#333;border-radius:7px;font-size:10px}
+.admin-promotion-pagination button:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:620px){.admin-promotion-filters{grid-template-columns:1fr}.admin-promotion-pagination{align-items:flex-start;flex-direction:column}.admin-promotion-pagination>div{width:100%;justify-content:space-between}}
