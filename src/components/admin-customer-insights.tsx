@@ -8,7 +8,14 @@ export function AdminCustomerInsights({customers}:{customers:Customer[]}){
  const [selected,setSelected]=useState<string[]>([]),[tagName,setTagName]=useState(""),[busy,setBusy]=useState(false),[feedback,setFeedback]=useState("");
  const now=Date.now();
  const classify=(c:Customer)=>{if(c.ltvPaise>=5000000)return "VIP";if(c.orderCount>=2)return "REPEAT";if(c.orderCount>0&&c.lastPurchaseAt&&now-new Date(c.lastPurchaseAt).getTime()>90*86400000)return "AT_RISK";if(now-new Date(c.createdAt).getTime()<=30*86400000)return "NEW";return "REGULAR";};
- const rows=useMemo(()=>customers.map(c=>({...c,segment:classify(c)})).filter(c=>(segment==="ALL"||c.segment===segment)&&(!query||[c.name,c.email].some(v=>v?.toLowerCase().includes(query.toLowerCase()))),[customers,query,segment]);
+ const rows=useMemo(()=>{
+  const normalized=query.toLowerCase();
+  return customers.map(c=>({...c,segment:classify(c)})).filter(c=>{
+   const matchesSegment=segment==="ALL"||c.segment===segment;
+   const matchesQuery=!normalized||[c.name,c.email].some(value=>value?.toLowerCase().includes(normalized));
+   return matchesSegment&&matchesQuery;
+  });
+ },[customers,query,segment]);
  const pageSize=25,totalPages=Math.max(1,Math.ceil(rows.length/pageSize)),pageRows=rows.slice((page-1)*pageSize,page*pageSize);
  const totalLtv=customers.reduce((sum,c)=>sum+c.ltvPaise,0),repeat=customers.filter(c=>c.orderCount>=2).length,vip=customers.filter(c=>c.ltvPaise>=5000000).length,subscribed=customers.filter(c=>c.whatsappOptIn).length;
  const visibleIds=pageRows.map(c=>c.id),allVisibleSelected=visibleIds.length>0&&visibleIds.every(id=>selected.includes(id));
