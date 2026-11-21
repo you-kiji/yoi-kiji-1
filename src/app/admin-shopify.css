@@ -315,3 +315,14 @@ body:has(.admin-shopify-shell) .admin-shopify-shell{min-height:100vh;display:gri
 .admin-product-bulkbar button:disabled{opacity:.5;cursor:wait}
 .admin-product-bulkbar button.secondary{color:#535b55}
 @media(max-width:540px){.admin-product-bulkbar{align-items:stretch}.admin-product-bulkbar strong{width:100%}.admin-product-bulkbar button{flex:1}}
+
+
+/* Review moderation bulk actions */
+.admin-review-bulkbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:10px 12px;margin:10px 0;background:#f3f5f3;border:1px solid #e0e5e0;border-radius:8px}
+.admin-review-bulkbar label,.admin-review-select{display:flex;align-items:center;gap:7px;font-size:10px;color:#59615b}
+.admin-review-bulkbar span{margin-right:auto;font-size:10px;color:#59615b}
+.admin-review-bulkbar input,.admin-review-select input{width:14px;height:14px;min-height:14px;accent-color:#173d25}
+.admin-review-bulkbar button{min-height:31px;padding:0 10px;border:1px solid #cbd7cc;background:#fff;color:#173d25;border-radius:6px;font-size:10px;font-weight:650}
+.admin-review-bulkbar button:disabled{opacity:.45;cursor:not-allowed}
+.admin-review-select{margin:0 0 7px}
+@media(max-width:560px){.admin-review-bulkbar{align-items:stretch}.admin-review-bulkbar label,.admin-review-bulkbar span{width:100%}.admin-review-bulkbar button{flex:1}}
