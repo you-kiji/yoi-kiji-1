@@ -97,6 +97,18 @@ describe("customer order cancellation", () => {
     expect(mocks.tx.inventoryMovement.create).not.toHaveBeenCalled();
   });
 
+
+  it("refuses cancellation after a fulfillment order or tracking reference exists", async () => {
+    mocks.tx.order.findFirst.mockResolvedValue({
+      ...confirmedOrder,
+      fulfillmentOrderId: "fulfillment-1",
+    });
+    const response = await POST(request(), { params: Promise.resolve({ id: "order-1" }) });
+    expect(response.status).toBe(409);
+    expect(mocks.tx.order.updateMany).not.toHaveBeenCalled();
+    expect(mocks.tx.product.update).not.toHaveBeenCalled();
+  });
+
   it("requires the signed-in owner of the order", async () => {
     mocks.getCurrentUser.mockResolvedValue(null);
     const response = await POST(request(), { params: Promise.resolve({ id: "order-1" }) });
