@@ -21,7 +21,7 @@ export async function GET(request:NextRequest){
  }
  if(type==="customers"){
   const [customers,spend]=await Promise.all([
-   prisma.user.findMany({where:{role:"CUSTOMER"},select:{name:true,email:true,whatsappOptIn:true,createdAt:true,customerTagAssignments:{select:{tag:{select:{name:true}}}}},orderBy:{createdAt:"desc"},take:10000}),
+   prisma.user.findMany({where:{role:"CUSTOMER"},select:{id:true,name:true,email:true,whatsappOptIn:true,createdAt:true,customerTagAssignments:{select:{tag:{select:{name:true}}}}},orderBy:{createdAt:"desc"},take:10000}),
    prisma.order.groupBy({by:["userId"],where:{status:{in:["CONFIRMED","PROCESSING","SHIPPED","DELIVERED"]}},_sum:{totalPaise:true},_count:{_all:true},_max:{createdAt:true}})
   ]);
   const byUser=new Map(spend.filter(row=>row.userId).map(row=>[row.userId!,{ltv:row._sum.totalPaise??0,orders:row._count._all,last:row._max.createdAt?.toISOString()??""}]));
