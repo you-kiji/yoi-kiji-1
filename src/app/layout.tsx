@@ -14,6 +14,9 @@ import "./content-management.css";
 import "./quality-pass.css";
 import { getLocaleData } from "@/lib/i18n";
 import { SiteChrome } from "@/components/site-chrome";
+import { AnnouncementBar } from "@/components/announcement-bar";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocaleData();
@@ -50,7 +53,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
       </head>
       <body>
-        <SiteChrome>{children}</SiteChrome>
+        <SiteChrome announcement={<AnnouncementBar />} header={<SiteHeader />} footer={<SiteFooter />}>{children}</SiteChrome>
       </body>
     </html>
   );
