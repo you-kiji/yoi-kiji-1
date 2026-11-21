@@ -41,6 +41,7 @@ export function AdminMediaLibrary() {
     <div className="admin-media-actions"><button type="button" onClick={()=>editAsset(a)}>Edit metadata</button><button type="button" onClick={()=>navigator.clipboard.writeText(a.secureUrl).then(()=>setMessage("Asset URL copied."))}>Copy asset URL</button></div>
    </article>)}
   </div>
-  {assets.length===0&&<p>No media assets found. Upload your first asset to begin the library.</p>}\n  <div className="admin-media-pagination"><span>Page {page} of {totalPages} · {total} assets</span><div><button type="button" disabled={page<=1} onClick={()=>setPage(p=>p-1)}>Previous</button><button type="button" disabled={page>=totalPages} onClick={()=>setPage(p=>p+1)}>Next</button></div></div>
+  {assets.length===0&&<p>No media assets found. Upload your first asset to begin the library.</p>}
+  <div className="admin-media-pagination"><span>Page {page} of {totalPages} · {total} assets</span><div><button type="button" disabled={page<=1} onClick={()=>setPage(p=>p-1)}>Previous</button><button type="button" disabled={page>=totalPages} onClick={()=>setPage(p=>p+1)}>Next</button></div></div>
  </section>;
 }
