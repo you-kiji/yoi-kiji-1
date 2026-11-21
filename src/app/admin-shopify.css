@@ -288,3 +288,11 @@ body:has(.admin-shopify-shell) .admin-shopify-shell{min-height:100vh;display:gri
 .admin-blog-pagination button{min-height:32px;padding:0 12px;border:1px solid #d8dadd;background:#fff;color:#333;border-radius:7px;font-size:10px}
 .admin-blog-pagination button:disabled{opacity:.4;cursor:not-allowed}
 @media(max-width:620px){.admin-blog-filters{grid-template-columns:1fr}.admin-blog-pagination{align-items:flex-start;flex-direction:column}.admin-blog-pagination>div{width:100%;justify-content:space-between}}
+
+
+/* Customer intelligence pagination */
+.admin-customer-pagination{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;color:#737a7e;font-size:10px}
+.admin-customer-pagination>div{display:flex;align-items:center;gap:10px}
+.admin-customer-pagination button{min-height:32px;padding:0 12px;border:1px solid #d8dadd;background:#fff;color:#333;border-radius:7px;font-size:10px}
+.admin-customer-pagination button:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:560px){.admin-customer-pagination{align-items:flex-start;flex-direction:column}.admin-customer-pagination>div{width:100%;justify-content:space-between}}
