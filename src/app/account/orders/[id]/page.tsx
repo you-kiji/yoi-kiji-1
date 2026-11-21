@@ -3,6 +3,7 @@ import { notFound,redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { formatINR } from "@/lib/money";
+import { CancelOrderButton } from "@/components/cancel-order-button";
 
 export const dynamic="force-dynamic";
 export const metadata={title:"Track your order"};
@@ -30,6 +31,7 @@ export default async function OrderTrackingPage({params}:{params:Promise<{id:str
   <section className="order-tracking-layout">
    <article className="order-tracking-main">
     <div className="order-tracking-summary"><div><span className="eyebrow">CURRENT STATUS</span><h2>{order.status.replaceAll("_"," ").toLowerCase()}</h2></div><strong>{formatINR(order.totalPaise)}</strong></div>
+    {["PENDING","CONFIRMED","PROCESSING"].includes(order.status) && order.payment?.status !== "CAPTURED" && order.payment?.status !== "REFUNDED" && <CancelOrderButton orderId={order.id} />}
     {terminal?<div className="order-tracking-terminal"><h3>{order.status==="CANCELLED"?"This order was cancelled":"This order was refunded"}</h3><p>For any questions about this order, please contact the store team.</p></div>:order.status==="PENDING"?<div className="order-tracking-terminal"><h3>Payment confirmation pending</h3><p>We’ll begin preparing your order once payment is confirmed.</p></div>:<ol className="order-tracking-timeline">{milestones.map((step,index)=>{const complete=index<=currentRank;const active=index===currentRank;return <li key={step.status} className={[complete?"is-complete":"",active?"is-current":""].filter(Boolean).join(" ")}><span className="order-tracking-marker">{complete?"✓":String(index+1).padStart(2,"0")}</span><div><h3>{step.title}</h3><p>{step.description}</p>{active&&<small>Current stage</small>}</div></li>})}</ol>}
     {order.status==="SHIPPED"&&<div className="order-tracking-carrier"><h3>Shipment details</h3><p><span>Carrier</span><strong>{order.fulfillmentProvider??"Shipping partner"}</strong></p>{order.trackingNumber&&<p><span>Tracking / AWB number</span><strong>{order.trackingNumber}</strong></p>}{order.trackingUrl&&<a className="primary-link" href={order.trackingUrl} target="_blank" rel="noreferrer">Track with carrier ↗</a>}</div>}
    </article>
