@@ -34,7 +34,8 @@
     "prisma": "^6.19.0",
     "typescript": "^5.9.3",
     "vitest": "^4.1.12",
-    "@types/pdfkit": "^0.17.3"
+    "@types/pdfkit": "^0.17.3",
+    "vite": "^8.0.11"
   },
   "overrides": {
     "csstype": "3.2.3",
