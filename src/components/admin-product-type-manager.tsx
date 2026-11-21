@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 import { FormEvent, useEffect, useState } from "react";
 
@@ -33,6 +34,6 @@ export function AdminProductTypeManager() {
       <div className="admin-form-wide" style={{display:"flex",gap:12,flexWrap:"wrap"}}><button type="button" className="text-link" onClick={()=>setAttributes(old=>[...old,{...blankAttribute}])}>Add another attribute +</button><button className="primary-link" disabled={busy}>{busy?"Saving…":"Create product type"} <span>↗</span></button></div>
       {message&&<p className="admin-form-wide" role="status">{message}</p>}
     </form>
-    <div className="product-type-list">{types.map(type=><article key={type.id}><div><h3>{type.name}</h3><p>/{type.slug} · {type._count.products} product(s)</p></div><div className="product-type-attributes">{type.attributes.map(link=><span key={link.id}>{link.attribute.name}{link.isRequired?" · required":""}{link.isFilterable?" · filter":""}{link.attribute.isVariantAxis?" · variant":""}</span>)}</div></article>)}</div>
+    <div className="product-type-list">{types.map(type=><article key={type.id}><div><h3><Link href={`/admin/product-types/${type.id}`}>{type.name}</Link></h3><Link className="admin-product-open-link" href={`/admin/product-types/${type.id}`}>Open type details</Link><p>/{type.slug} · {type._count.products} product(s)</p></div><div className="product-type-attributes">{type.attributes.map(link=><span key={link.id}>{link.attribute.name}{link.isRequired?" · required":""}{link.isFilterable?" · filter":""}{link.attribute.isVariantAxis?" · variant":""}</span>)}</div></article>)}</div>
   </section>;
 }

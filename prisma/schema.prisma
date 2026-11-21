@@ -455,6 +455,9 @@ model ProductCategory {
 model HomepageSection {
   id        String   @id @default(cuid())
   key       String   @unique
+  sectionType String @default("rich-text")
+  settings  Json?
+  slides    Json?
   eyebrow   String?
   title     String?
   body      String?  @db.Text
@@ -759,4 +762,44 @@ model CustomerActivity {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   @@index([userId, createdAt])
+}
+
+
+model SocialAccount {
+  id        String   @id @default(cuid())
+  platform  String
+  label     String
+  url       String
+  placement String   @default("footer")
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([isActive, placement, sortOrder])
+}
+
+model StoreNavigationItem {
+  id          String   @id @default(cuid())
+  label       String
+  href        String
+  location    String   @default("HEADER")
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  openInNewTab Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@index([location, isActive, sortOrder])
+}
+
+model StorefrontBrandSettings {
+  id              String   @id @default("global")
+  background      String   @default("#0e300e")
+  surface         String   @default("#19451b")
+  text            String   @default("#e9e9e9")
+  muted           String   @default("#c8d0c5")
+  accent          String   @default("#c9a878")
+  contentMaxWidth Int      @default(1440)
+  sectionSpacing  Int      @default(96)
+  buttonRadius    Int      @default(8)
+  updatedAt       DateTime @updatedAt
 }

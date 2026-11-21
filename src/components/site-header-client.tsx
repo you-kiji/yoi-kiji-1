@@ -8,12 +8,35 @@ import { LocaleSwitcher } from "@/components/locale-switcher";
 type Category = { id: string; name: string; slug: string };
 type Labels = Record<string,string>;
 type Locale = { code:string; name:string; nativeName:string; isDefault:boolean; direction:string };
+type SocialAccount = {id:string;label:string;url:string;platform:string};
+type NavigationItem = {id:string;label:string;href:string;openInNewTab:boolean};
 
-export function SiteHeaderClient({ categories, labels = {}, availableLocales = [], currentLocale = "en" }: { categories: Category[]; labels?: Labels; availableLocales?: Locale[]; currentLocale?: string }) {
+export function SiteHeaderClient({ categories, labels = {}, availableLocales = [], currentLocale = "en", socialAccounts = [], navigationItems = [] }: { categories: Category[]; labels?: Labels; availableLocales?: Locale[]; currentLocale?: string; socialAccounts?: SocialAccount[]; navigationItems?: NavigationItem[] }) {
   const [desktopOpen, setDesktopOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const desktopRef = useRef<HTMLDetailsElement>(null);
   const mobileRef = useRef<HTMLDetailsElement>(null);
+  const [headerHidden, setHeaderHidden] = useState(false);
+
+  useEffect(() => {
+    let previousY = window.scrollY;
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(() => {
+        const currentY = window.scrollY;
+        const delta = currentY - previousY;
+        if (currentY < 72) setHeaderHidden(false);
+        else if (delta > 5) setHeaderHidden(true);
+        else if (delta < -5) setHeaderHidden(false);
+        previousY = currentY;
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     const closeMenus = (event: PointerEvent) => {
@@ -42,7 +65,7 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
   };
 
   return (
-    <header className="site-header">
+    <header className={"site-header" + (headerHidden ? " site-header--hidden" : "")}>
       <Link className="wordmark" href="/" aria-label="YOI KIJI home" onClick={closeAll}>
         <span className="wordmark-main">YOI KIJI</span>
         <span className="wordmark-sub">THE ART OF TEXTILE LIVING</span>
@@ -74,6 +97,7 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
         </details>
         <Link href="/our-story" onClick={closeAll}>{text("header.story","Our story")}</Link>
         <Link href="/journal" onClick={closeAll}>{text("header.journal","Journal")}</Link>
+        {navigationItems.map(item=><Link key={item.id} href={item.href} target={item.openInNewTab?"_blank":undefined} rel={item.openInNewTab?"noopener noreferrer":undefined} onClick={closeAll}>{item.label}</Link>)}
       </nav>
 
       <details
@@ -101,6 +125,7 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
           ))}
           <Link href="/our-story" onClick={closeAll}>{text("header.story","Our story")}</Link>
           <Link href="/journal" onClick={closeAll}>{text("header.journal","Journal")}</Link>
+          {navigationItems.map(item=><Link key={item.id} href={item.href} target={item.openInNewTab?"_blank":undefined} rel={item.openInNewTab?"noopener noreferrer":undefined} onClick={closeAll}>{item.label}</Link>)}
           <Link href="/search" onClick={closeAll}>{text("header.search","Search")}</Link>
           <Link href="/account" onClick={closeAll}>{text("header.account","Account")}</Link>
           <Link href="/cart" onClick={closeAll}>{text("header.bag","Bag")} <CartCount /></Link>
@@ -112,6 +137,7 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
         <Link href="/search" onClick={closeAll}>{text("header.search","Search")}</Link>
         <Link href="/account" onClick={closeAll}>{text("header.account","Account")}</Link>
         <Link className="bag-link" href="/cart" onClick={closeAll}>{text("header.bag","Bag")} <CartCount /></Link>
+        {socialAccounts.map(account=><a key={account.id} href={account.url} target="_blank" rel="noopener noreferrer" aria-label={account.label}>{account.platform}</a>)}
       </div>
     </header>
   );

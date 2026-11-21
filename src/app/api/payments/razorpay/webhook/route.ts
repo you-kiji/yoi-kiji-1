@@ -11,13 +11,23 @@ export async function POST(request:NextRequest){
  const eventId=request.headers.get("x-razorpay-event-id");let event:any;try{event=JSON.parse(raw)}catch{return NextResponse.json({error:"Invalid payload."},{status:400})}
  if(event.event==="refund.processed"||event.event==="refund.failed"){
   const refund=event?.payload?.refund?.entity;const paymentRef=refund?.payment_id;
-  if(paymentRef){
-   const matched=await prisma.payment.findUnique({where:{providerPaymentId:paymentRef}});
-   if(matched){
-    const processed=event.event==="refund.processed";
-    await prisma.$transaction([prisma.payment.update({where:{id:matched.id},data:{refundId:refund.id??matched.refundId,refundStatus:processed?"processed":"failed",status:processed?"REFUNDED":matched.status,webhookEventId:eventId??undefined}}),...(processed?[prisma.order.update({where:{id:matched.orderId},data:{status:"REFUNDED"}})]:[])]);
-   }
+  if(!refund?.id||!paymentRef||!Number.isSafeInteger(refund.amount)||!refund.currency){
+   return NextResponse.json({error:"Refund reference, amount or currency is missing."},{status:400});
   }
+  const matched=await prisma.payment.findUnique({where:{providerPaymentId:paymentRef}});
+  if(!matched)return NextResponse.json({received:true});
+  if(refund.amount!==matched.amountPaise||refund.currency!==matched.currency){
+   return NextResponse.json({error:"Refund amount or currency does not match the captured payment."},{status:400});
+  }
+  if(matched.refundId&&matched.refundId!==refund.id){
+   return NextResponse.json({error:"Refund reference does not match the payment's active refund."},{status:409});
+  }
+  if(eventId&&matched.webhookEventId===eventId)return NextResponse.json({received:true,duplicate:true});
+  const processed=event.event==="refund.processed";
+  await prisma.$transaction([
+   prisma.payment.update({where:{id:matched.id},data:{refundId:refund.id,refundStatus:processed?"processed":"failed",status:processed?"REFUNDED":matched.status,webhookEventId:eventId??undefined}}),
+   ...(processed?[prisma.order.update({where:{id:matched.orderId},data:{status:"REFUNDED"}})]:[])
+  ]);
   return NextResponse.json({received:true});
  }
  const providerPayment=event?.payload?.payment?.entity;
