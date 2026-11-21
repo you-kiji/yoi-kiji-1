@@ -18,6 +18,11 @@ jobs:
       - run: npm install
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
+      - name: Summarize remaining dependency advisories
+        continue-on-error: true
+        run: |
+          npm audit --json > npm-audit-all.json || true
+          node -e 'const r=require("./npm-audit-all.json"); for (const [name,v] of Object.entries(r.vulnerabilities||{})) console.log(`${name}: ${v.severity}; direct=${v.isDirect}; via=${(v.via||[]).map(x=>typeof x==="string"?x:x.title).join(" | ")}; fix=${JSON.stringify(v.fixAvailable)}`)'
       - run: npx prisma generate
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/yoikiji?schema=public
