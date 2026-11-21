@@ -9,7 +9,8 @@ const statuses=["PENDING","CONFIRMED","PROCESSING","SHIPPED","DELIVERED","CANCEL
 export function AdminOrderWorkbench({initialOrders}:{initialOrders:OrderRow[]}){
  const [query,setQuery]=useState(""),[status,setStatus]=useState("ALL"),[payment,setPayment]=useState("ALL"),[page,setPage]=useState(1);
  const orders=useMemo(()=>initialOrders.filter(o=>(status==="ALL"||o.status===status)&&(payment==="ALL"||(o.payment?.status??"NONE")===payment)&&(!query||[o.orderNumber,o.user?.name,o.user?.email,o.guestName,o.guestEmail].some(v=>v?.toLowerCase().includes(query.toLowerCase())))),[initialOrders,query,status,payment]);
- const pageSize=20,totalPages=Math.max(1,Math.ceil(orders.length/pageSize)),pageOrders=orders.slice((page-1)*pageSize,page*pageSize);\n const exportHref="/api/admin/orders/export?"+new URLSearchParams({...(status!=="ALL"?{status}:{}),...(payment!=="ALL"?{payment}:{})}).toString();
+ const pageSize=20,totalPages=Math.max(1,Math.ceil(orders.length/pageSize)),pageOrders=orders.slice((page-1)*pageSize,page*pageSize);
+ const exportHref="/api/admin/orders/export?"+new URLSearchParams({...(status!=="ALL"?{status}:{}),...(payment!=="ALL"?{payment}:{})}).toString();
  return <section className="admin-order-workbench">
   <div className="admin-order-filters">
    <label>Search order / customer<input value={query} onChange={e=>{setQuery(e.target.value);setPage(1);}} placeholder="Order number, name or email"/></label>
@@ -22,6 +23,7 @@ export function AdminOrderWorkbench({initialOrders}:{initialOrders:OrderRow[]}){
    <div><p className="order-number"><Link href={`/admin/orders/${o.id}`}>{o.orderNumber}</Link></p><Link className="admin-product-open-link" href={`/admin/orders/${o.id}`}>Open order details</Link><p>{o.user?.name??o.user?.email??o.guestName??o.guestEmail??"Guest customer"}</p><p>{o.items.length} line item(s) · {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium"}).format(new Date(o.createdAt))}</p></div>
    <div><strong>{formatINR(o.totalPaise)}</strong><p>Payment: {o.payment?.provider==="COD"?"Cash on Delivery":o.payment?.status.toLowerCase()??"unavailable"}</p></div>
    <div><span className="order-status">{o.status.toLowerCase()}</span><AdminOrderActions id={o.id} status={o.status} paymentStatus={o.payment?.status.toLowerCase()??"none"} paymentProvider={o.payment?.provider??"none"}/><AdminFulfillmentForm id={o.id} initialProvider={o.fulfillmentProvider} initialTracking={o.trackingNumber}/></div>
-  </article>)}{orders.length===0&&<p>No orders match these filters.</p>}</section>\n  <div className="admin-order-pagination"><span>Showing {orders.length?((page-1)*pageSize+1):0}–{Math.min(page*pageSize,orders.length)} of {orders.length} matching orders</span><div><button type="button" disabled={page<=1} onClick={()=>setPage(v=>v-1)}>Previous</button><span>Page {page} of {totalPages}</span><button type="button" disabled={page>=totalPages} onClick={()=>setPage(v=>v+1)}>Next</button></div></div>
+  </article>)}{orders.length===0&&<p>No orders match these filters.</p>}</section>
+  <div className="admin-order-pagination"><span>Showing {orders.length?((page-1)*pageSize+1):0}–{Math.min(page*pageSize,orders.length)} of {orders.length} matching orders</span><div><button type="button" disabled={page<=1} onClick={()=>setPage(v=>v-1)}>Previous</button><span>Page {page} of {totalPages}</span><button type="button" disabled={page>=totalPages} onClick={()=>setPage(v=>v+1)}>Next</button></div></div>
  </section>;
 }
