@@ -16,6 +16,8 @@ jobs:
         with:
           node-version: 22
       - run: npm install
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
       - run: npx prisma generate
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/yoikiji?schema=public
