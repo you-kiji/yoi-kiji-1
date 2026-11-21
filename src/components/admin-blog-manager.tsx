@@ -8,7 +8,10 @@ type Post = { id: string; title: string; slug: string; excerpt: string | null; c
 type Product = Item & { sku: string };
 
 export function AdminBlogManager({ initialPosts, categories, tags, products }: { initialPosts: Post[]; categories: Item[]; tags: Item[]; products: Product[] }) {
-  const [posts, setPosts] = useState(initialPosts);\n  const [query,setQuery]=useState("");\n  const [statusFilter,setStatusFilter]=useState("ALL");\n  const [page,setPage]=useState(1);
+  const [posts, setPosts] = useState(initialPosts);
+  const [query,setQuery]=useState("");
+  const [statusFilter,setStatusFilter]=useState("ALL");
+  const [page,setPage]=useState(1);
   const [editing, setEditing] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
@@ -17,7 +20,9 @@ export function AdminBlogManager({ initialPosts, categories, tags, products }: {
   const [taxType, setTaxType] = useState<"category" | "tag">("category");
   const [taxName, setTaxName] = useState("");
   const [taxSlug, setTaxSlug] = useState("");
-  const available = useMemo(() => ({ categories, tags, products }), [categories, tags, products]);\n  const filteredPosts=useMemo(()=>posts.filter(post=>(statusFilter==="ALL"||post.status===statusFilter)&&(!query||[post.title,post.slug,post.excerpt??""].some(value=>value.toLowerCase().includes(query.toLowerCase())))),[posts,statusFilter,query]);\n  const pageSize=20,totalPages=Math.max(1,Math.ceil(filteredPosts.length/pageSize)),pagePosts=filteredPosts.slice((page-1)*pageSize,page*pageSize);
+  const available = useMemo(() => ({ categories, tags, products }), [categories, tags, products]);
+  const filteredPosts=useMemo(()=>posts.filter(post=>(statusFilter==="ALL"||post.status===statusFilter)&&(!query||[post.title,post.slug,post.excerpt??""].some(value=>value.toLowerCase().includes(query.toLowerCase())))),[posts,statusFilter,query]);
+  const pageSize=20,totalPages=Math.max(1,Math.ceil(filteredPosts.length/pageSize)),pagePosts=filteredPosts.slice((page-1)*pageSize,page*pageSize);
   function update<K extends keyof typeof blank>(key: K, value: typeof blank[K]) { setForm(current => ({ ...current, [key]: value })); }
   function toggle(key: "categoryIds" | "tagIds" | "relatedProductIds", id: string) { update(key, form[key].includes(id) ? form[key].filter(value => value !== id) : [...form[key], id]); }
   function start(post?: Post) {
