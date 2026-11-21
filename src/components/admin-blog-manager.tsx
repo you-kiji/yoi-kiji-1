@@ -8,7 +8,7 @@ type Post = { id: string; title: string; slug: string; excerpt: string | null; c
 type Product = Item & { sku: string };
 
 export function AdminBlogManager({ initialPosts, categories, tags, products }: { initialPosts: Post[]; categories: Item[]; tags: Item[]; products: Product[] }) {
-  const [posts, setPosts] = useState(initialPosts);
+  const [posts, setPosts] = useState(initialPosts);\n  const [selectedPosts,setSelectedPosts]=useState<string[]>([]);\n  const [bulkBusy,setBulkBusy]=useState(false);
   const [query,setQuery]=useState("");
   const [statusFilter,setStatusFilter]=useState("ALL");
   const [page,setPage]=useState(1);
@@ -53,6 +53,13 @@ export function AdminBlogManager({ initialPosts, categories, tags, products }: {
     } catch (error) { setMessage(error instanceof Error ? error.message : "Could not create item."); }
     finally { setBusy(false); }
   }
+  async function bulkSetStatus(status:"PUBLISHED"|"ARCHIVED") {
+    if(!selectedPosts.length)return;setBulkBusy(true);setMessage("");const targets=[...selectedPosts];
+    const results=await Promise.allSettled(targets.map(async id=>{const response=await fetch("/api/admin/blog",{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({id,data:{status}})});const data=await response.json();if(!response.ok)throw new Error(data.error??"Article update failed.");return id;}));
+    const done=new Set<string>();results.forEach((result,index)=>{if(result.status==="fulfilled")done.add(targets[index]);});
+    if(done.size)setPosts(current=>current.map(post=>done.has(post.id)?{...post,status}:post));setSelectedPosts(old=>old.filter(id=>!done.has(id)));
+    setMessage(done.size+" article(s) updated; "+(results.length-done.size)+" failed.");setBulkBusy(false);
+  }
   async function archive(id: string) {
     if (!window.confirm("Archive this article? It will no longer appear publicly.")) return;
     const response = await fetch("/api/admin/blog?id=" + encodeURIComponent(id), { method: "DELETE" });
@@ -63,7 +70,7 @@ export function AdminBlogManager({ initialPosts, categories, tags, products }: {
     <div className="admin-section-heading"><h2>Editorial library</h2><span>{filteredPosts.length} matching · {posts.length} loaded</span></div>
     <div className="admin-blog-filters"><label>Search articles<input value={query} onChange={e=>{setQuery(e.target.value);setPage(1);}} placeholder="Title, URL or excerpt"/></label><label>Publishing status<select value={statusFilter} onChange={e=>{setStatusFilter(e.target.value);setPage(1);}}><option value="ALL">All statuses</option><option value="DRAFT">Draft</option><option value="SCHEDULED">Scheduled</option><option value="PUBLISHED">Published</option><option value="ARCHIVED">Archived</option></select></label><button type="button" className="commerce-button" onClick={() => start()}>Create article</button></div>
     {message && <p role="status">{message}</p>}
-    <div className="orders-list">{pagePosts.map(post => <article className="order-card" key={post.id}><div><strong><Link href={`/admin/blog/${post.id}`}>{post.title}</Link></strong><p><Link className="admin-product-open-link" href={`/admin/blog/${post.id}`}>Open article details</Link></p><p>/{post.slug}</p><small>Updated {new Date(post.updatedAt).toLocaleDateString("en-IN")}</small></div><span className="order-status">{post.status.toLowerCase()}</span><div><button type="button" onClick={() => start(post)}>Edit</button> <button type="button" onClick={() => archive(post.id)}>Archive</button></div></article>)}</div>
+    <div className="admin-blog-bulkbar"><label><input type="checkbox" checked={pagePosts.length>0&&pagePosts.every(post=>selectedPosts.includes(post.id))} onChange={e=>setSelectedPosts(old=>e.target.checked?[...new Set([...old,...pagePosts.map(post=>post.id)])]:old.filter(id=>!pagePosts.some(post=>post.id===id)))}/> Select this page</label><span>{selectedPosts.length} selected</span><button type="button" disabled={!selectedPosts.length||bulkBusy} onClick={()=>bulkSetStatus("PUBLISHED")}>Publish selected</button><button type="button" disabled={!selectedPosts.length||bulkBusy} onClick={()=>bulkSetStatus("ARCHIVED")}>Archive selected</button><button type="button" disabled={!selectedPosts.length||bulkBusy} onClick={()=>setSelectedPosts([])}>Clear</button></div>\n    <div className="orders-list">{pagePosts.map(post => <article className="order-card" key={post.id}><div><label className="admin-blog-select"><input type="checkbox" checked={selectedPosts.includes(post.id)} onChange={e=>setSelectedPosts(old=>e.target.checked?[...old,post.id]:old.filter(id=>id!==post.id))}/> Select article</label><strong><Link href={`/admin/blog/${post.id}`}>{post.title}</Link></strong><p><Link className="admin-product-open-link" href={`/admin/blog/${post.id}`}>Open article details</Link></p><p>/{post.slug}</p><small>Updated {new Date(post.updatedAt).toLocaleDateString("en-IN")}</small></div><span className="order-status">{post.status.toLowerCase()}</span><div><button type="button" onClick={() => start(post)}>Edit</button> <button type="button" onClick={() => archive(post.id)}>Archive</button></div></article>)}</div>
     {filteredPosts.length===0&&<p>No articles match these filters.</p>}
     <div className="admin-blog-pagination"><span>Showing {filteredPosts.length?((page-1)*pageSize+1):0}–{Math.min(page*pageSize,filteredPosts.length)} of {filteredPosts.length}</span><div><button type="button" disabled={page<=1} onClick={()=>setPage(v=>v-1)}>Previous</button><span>Page {page} of {totalPages}</span><button type="button" disabled={page>=totalPages} onClick={()=>setPage(v=>v+1)}>Next</button></div></div>
     <form onSubmit={save} className="admin-blog-form">
