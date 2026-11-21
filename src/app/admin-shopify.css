@@ -277,3 +277,14 @@ body:has(.admin-shopify-shell) .admin-shopify-shell{min-height:100vh;display:gri
 .admin-order-pagination button{min-height:32px;padding:0 12px;border:1px solid #d8dadd;background:#fff;color:#333;border-radius:7px;font-size:10px}
 .admin-order-pagination button:disabled{opacity:.4;cursor:not-allowed}
 @media(max-width:560px){.admin-order-pagination{align-items:flex-start;flex-direction:column}.admin-order-pagination>div{width:100%;justify-content:space-between}}
+
+
+/* Editorial library filters and pagination */
+.admin-blog-filters{display:grid;grid-template-columns:minmax(200px,2fr) minmax(160px,1fr) auto;gap:10px;align-items:end;margin:12px 0}
+.admin-blog-filters label{display:grid;gap:5px;font-size:10px;color:#60686b}
+.admin-blog-filters input,.admin-blog-filters select{width:100%;min-height:36px;padding:0 10px;border:1px solid #dfe1e3;background:#fff;font-size:11px}
+.admin-blog-pagination{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;color:#737a7e;font-size:10px}
+.admin-blog-pagination>div{display:flex;align-items:center;gap:10px}
+.admin-blog-pagination button{min-height:32px;padding:0 12px;border:1px solid #d8dadd;background:#fff;color:#333;border-radius:7px;font-size:10px}
+.admin-blog-pagination button:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:620px){.admin-blog-filters{grid-template-columns:1fr}.admin-blog-pagination{align-items:flex-start;flex-direction:column}.admin-blog-pagination>div{width:100%;justify-content:space-between}}
