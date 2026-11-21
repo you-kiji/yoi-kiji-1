@@ -269,3 +269,11 @@ body:has(.admin-shopify-shell) .admin-shopify-shell{min-height:100vh;display:gri
 .admin-review-pagination button{min-height:32px;padding:0 12px;border:1px solid #d8dadd;background:#fff;color:#333;border-radius:7px;font-size:10px}
 .admin-review-pagination button:disabled{opacity:.4;cursor:not-allowed}
 @media(max-width:560px){.admin-review-pagination{align-items:flex-start;flex-direction:column}.admin-review-pagination>div{width:100%;justify-content:space-between}}
+
+
+/* Order queue pagination */
+.admin-order-pagination{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;color:#737a7e;font-size:10px}
+.admin-order-pagination>div{display:flex;align-items:center;gap:10px}
+.admin-order-pagination button{min-height:32px;padding:0 12px;border:1px solid #d8dadd;background:#fff;color:#333;border-radius:7px;font-size:10px}
+.admin-order-pagination button:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:560px){.admin-order-pagination{align-items:flex-start;flex-direction:column}.admin-order-pagination>div{width:100%;justify-content:space-between}}
