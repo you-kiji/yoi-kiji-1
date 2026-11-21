@@ -253,3 +253,11 @@ body:has(.admin-shopify-shell) .admin-shopify-shell{min-height:100vh;display:gri
 .admin-stock-alert-detail .admin-detail-register>article>strong{font-size:11px}
 .admin-media-detail .admin-detail-card-heading>a{font-size:10px;color:#245b32}
 @media(max-width:760px){.admin-media-detail-grid{grid-template-columns:1fr}}
+
+
+/* Media library server pagination */
+.admin-media-pagination{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;color:#737a7e;font-size:10px}
+.admin-media-pagination>div{display:flex;gap:7px}
+.admin-media-pagination button{min-height:32px;padding:0 12px;border:1px solid #d8dadd;background:#fff;color:#333;border-radius:7px;font-size:10px}
+.admin-media-pagination button:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:520px){.admin-media-pagination{align-items:flex-start;flex-direction:column}.admin-media-pagination>div{width:100%}.admin-media-pagination button{flex:1}}
