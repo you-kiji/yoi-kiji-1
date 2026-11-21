@@ -349,3 +349,11 @@ body:has(.admin-shopify-shell) .admin-shopify-shell{min-height:100vh;display:gri
 .admin-promotion-pagination button{min-height:32px;padding:0 12px;border:1px solid #d8dadd;background:#fff;color:#333;border-radius:7px;font-size:10px}
 .admin-promotion-pagination button:disabled{opacity:.4;cursor:not-allowed}
 @media(max-width:620px){.admin-promotion-filters{grid-template-columns:1fr}.admin-promotion-pagination{align-items:flex-start;flex-direction:column}.admin-promotion-pagination>div{width:100%;justify-content:space-between}}
+
+/* Customer CRM selection and tags */
+.admin-customer-select{display:flex;align-items:flex-start;gap:10px;min-width:0}
+.admin-customer-select>input{width:14px;height:14px;min-height:14px;margin:4px 0 0;accent-color:#173d25;flex:0 0 auto}
+.customer-tag-list{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.customer-tag-list span{display:inline-flex;align-items:center;border:1px solid;border-radius:999px;padding:2px 7px;font-size:9px;background:#fff}
+.admin-blog-bulkbar input:not([type="checkbox"]){width:min(240px,100%);height:32px;min-height:32px;padding:0 9px;border:1px solid #d8dfd8;border-radius:6px;background:#fff;font-size:10px}
+@media(max-width:560px){.admin-customer-select{width:100%}.admin-blog-bulkbar input:not([type="checkbox"]){width:100%}}
