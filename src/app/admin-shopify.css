@@ -357,3 +357,15 @@ body:has(.admin-shopify-shell) .admin-shopify-shell{min-height:100vh;display:gri
 .customer-tag-list span{display:inline-flex;align-items:center;border:1px solid;border-radius:999px;padding:2px 7px;font-size:9px;background:#fff}
 .admin-blog-bulkbar input:not([type="checkbox"]){width:min(240px,100%);height:32px;min-height:32px;padding:0 9px;border:1px solid #d8dfd8;border-radius:6px;background:#fff;font-size:10px}
 @media(max-width:560px){.admin-customer-select{width:100%}.admin-blog-bulkbar input:not([type="checkbox"]){width:100%}}
+
+/* Order queue bulk cancellation */
+.admin-order-bulkbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;margin:10px 0;background:#f3f5f3;border:1px solid #e0e5e0;border-radius:8px}
+.admin-order-bulkbar label,.admin-order-select{display:flex;align-items:center;gap:8px;font-size:10px;color:#59615b}
+.admin-order-bulkbar span{margin-right:auto;font-size:10px;color:#59615b}
+.admin-order-bulkbar input,.admin-order-select>input{width:14px;height:14px;min-height:14px;accent-color:#173d25}
+.admin-order-bulkbar button{min-height:32px;padding:0 12px;border:1px solid #cbd7cc;background:#fff;color:#173d25;border-radius:6px;font-size:10px;font-weight:650}
+.admin-order-bulkbar button:disabled{opacity:.45;cursor:not-allowed}
+.admin-order-select{align-items:flex-start;min-width:0}
+.admin-order-select>input{margin-top:4px;flex:0 0 auto}
+.admin-order-select>div{min-width:0}
+@media(max-width:560px){.admin-order-bulkbar{align-items:stretch}.admin-order-bulkbar label,.admin-order-bulkbar span{width:100%}.admin-order-bulkbar button{flex:1}.admin-order-select{width:100%}}
