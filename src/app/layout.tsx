@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import type { CSSProperties } from "react";
 import { prisma } from "@/lib/prisma";
 import "./globals.css";
@@ -32,9 +31,6 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const requestHeaders = await headers();
-  const pathname = requestHeaders.get("x-pathname") ?? "/";
-  const isAdmin = pathname === "/admin" || pathname.startsWith("/admin/");
   const [locale, brand] = await Promise.all([
     getLocaleData(),
     prisma.storefrontBrandSettings.findUnique({ where: { id: "global" } }).catch(() => null),
@@ -57,7 +53,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
       </head>
       <body>
-        <SiteChrome isAdmin={isAdmin} announcement={<AnnouncementBar />} header={<SiteHeader />} footer={<SiteFooter />}>{children}</SiteChrome>
+        <SiteChrome announcement={<AnnouncementBar />} header={<SiteHeader />} footer={<SiteFooter />}>{children}</SiteChrome>
       </body>
     </html>
   );
