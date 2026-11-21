@@ -296,3 +296,11 @@ body:has(.admin-shopify-shell) .admin-shopify-shell{min-height:100vh;display:gri
 .admin-customer-pagination button{min-height:32px;padding:0 12px;border:1px solid #d8dadd;background:#fff;color:#333;border-radius:7px;font-size:10px}
 .admin-customer-pagination button:disabled{opacity:.4;cursor:not-allowed}
 @media(max-width:560px){.admin-customer-pagination{align-items:flex-start;flex-direction:column}.admin-customer-pagination>div{width:100%;justify-content:space-between}}
+
+
+/* Analytics reporting period selector */
+.admin-report-period{display:flex;align-items:center;justify-content:flex-end;gap:9px;margin:0 0 14px;padding:10px 12px;background:#fff;border:1px solid #e1e2e4;border-radius:9px}
+.admin-report-period label{font-size:10px;color:#62696d;font-weight:600}
+.admin-report-period select{min-width:145px;min-height:34px;padding:0 9px;border:1px solid #dfe1e3;background:#fff;font-size:10px}
+.admin-report-period button{min-height:34px;padding:0 12px;border:1px solid #173d25;background:#173d25;color:#fff;border-radius:7px;font-size:10px;font-weight:650}
+@media(max-width:520px){.admin-report-period{justify-content:stretch;flex-wrap:wrap}.admin-report-period label{width:100%}.admin-report-period select,.admin-report-period button{flex:1}}
