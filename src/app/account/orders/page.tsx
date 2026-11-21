@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { formatINR } from "@/lib/money";
 import { RetryPaymentButton } from "@/components/retry-payment-button";
+import { CancelOrderButton } from "@/components/cancel-order-button";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Your orders" };
@@ -66,6 +67,7 @@ export default async function OrdersPage() {
                   (order.payment?.status === "FAILED" || order.payment?.status === "CREATED") && (
                     <RetryPaymentButton orderId={order.id} />
                   )}
+                {["PENDING","CONFIRMED","PROCESSING"].includes(order.status) && order.payment?.status !== "CAPTURED" && order.payment?.status !== "REFUNDED" && <CancelOrderButton orderId={order.id} compact />}
               </div>
             </article>
           ))}
