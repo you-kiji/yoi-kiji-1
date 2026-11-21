@@ -6,7 +6,8 @@ type Filter="PENDING"|"APPROVED"|"REJECTED"|"ALL";
 export function AdminReviewManager({initialReviews}:{initialReviews:Review[]}){
  const [reviews,setReviews]=useState(initialReviews),[filter,setFilter]=useState<Filter>("PENDING"),[query,setQuery]=useState(""),[minimumRating,setMinimumRating]=useState("ALL"),[page,setPage]=useState(1),[busy,setBusy]=useState<string|null>(null),[message,setMessage]=useState(""),[notes,setNotes]=useState<Record<string,string>>({});
  const counts=useMemo(()=>({all:reviews.length,pending:reviews.filter(r=>r.status==="PENDING").length,approved:reviews.filter(r=>r.status==="APPROVED").length,rejected:reviews.filter(r=>r.status==="REJECTED").length,verified:reviews.filter(r=>r.verifiedPurchase).length}),[reviews]);
- const visible=reviews.filter(r=>(filter==="ALL"||r.status===filter)&&r.rating>=(minimumRating==="ALL"?1:Number(minimumRating))&&(!query||[r.product.name,r.product.sku,r.user.name??"",r.user.email,r.title??"",r.body].some(v=>v.toLowerCase().includes(query.toLowerCase()))));\n const pageSize=20,totalPages=Math.max(1,Math.ceil(visible.length/pageSize)),pageRows=visible.slice((page-1)*pageSize,page*pageSize);
+ const visible=reviews.filter(r=>(filter==="ALL"||r.status===filter)&&r.rating>=(minimumRating==="ALL"?1:Number(minimumRating))&&(!query||[r.product.name,r.product.sku,r.user.name??"",r.user.email,r.title??"",r.body].some(v=>v.toLowerCase().includes(query.toLowerCase()))));
+ const pageSize=20,totalPages=Math.max(1,Math.ceil(visible.length/pageSize)),pageRows=visible.slice((page-1)*pageSize,page*pageSize);
  async function save(id:string,status?:"APPROVED"|"REJECTED"){
   setBusy(id);setMessage("");
   try{
@@ -42,7 +43,8 @@ export function AdminReviewManager({initialReviews}:{initialReviews:Review[]}){
     {r.status!=="APPROVED"&&<button type="button" disabled={busy===r.id} onClick={()=>save(r.id,"APPROVED")}>Approve & publish</button>}
     {r.status!=="REJECTED"&&<button type="button" className="secondary" disabled={busy===r.id} onClick={()=>save(r.id,"REJECTED")}>Reject</button>}
    </div>
-  </article>)}{visible.length===0&&<p>No reviews match these filters.</p>}</div>\n  <div className="admin-review-pagination"><span>Showing {visible.length?((page-1)*pageSize+1):0}–{Math.min(page*pageSize,visible.length)} of {visible.length} reviews</span><div><button type="button" disabled={page<=1} onClick={()=>setPage(v=>v-1)}>Previous</button><span>Page {page} of {totalPages}</span><button type="button" disabled={page>=totalPages} onClick={()=>setPage(v=>v+1)}>Next</button></div></div>
+  </article>)}{visible.length===0&&<p>No reviews match these filters.</p>}</div>
+  <div className="admin-review-pagination"><span>Showing {visible.length?((page-1)*pageSize+1):0}–{Math.min(page*pageSize,visible.length)} of {visible.length} reviews</span><div><button type="button" disabled={page<=1} onClick={()=>setPage(v=>v-1)}>Previous</button><span>Page {page} of {totalPages}</span><button type="button" disabled={page>=totalPages} onClick={()=>setPage(v=>v+1)}>Next</button></div></div>
   {message&&<p role="status" className="admin-feedback">{message}</p>}
  </section>;
 }
