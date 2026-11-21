@@ -6,8 +6,8 @@ import { AdminOrderActions } from "@/components/admin-order-actions";
 import { AdminFulfillmentForm } from "@/components/admin-fulfillment-form";
 type OrderRow={id:string;orderNumber:string;status:string;totalPaise:number;createdAt:string;trackingNumber:string|null;fulfillmentProvider:string|null;user:{name:string|null;email:string}|null;guestName:string|null;guestEmail:string|null;guestPhone:string|null;items:{id:string;productName:string;quantity:number}[];payment:{status:string;provider:string}|null};
 const statuses=["PENDING","CONFIRMED","PROCESSING","SHIPPED","DELIVERED","CANCELLED","REFUNDED"];
-export function AdminOrderWorkbench({initialOrders}:{initialOrders:OrderRow[]}){
- const [orders,setOrders]=useState(initialOrders),[total,setTotal]=useState(initialOrders.length);
+export function AdminOrderWorkbench({initialOrders,initialTotal}:{initialOrders:OrderRow[];initialTotal:number}){
+ const [orders,setOrders]=useState(initialOrders),[total,setTotal]=useState(initialTotal);
  const [query,setQuery]=useState(""),[status,setStatus]=useState("ALL"),[payment,setPayment]=useState("ALL"),[page,setPage]=useState(1);
  const [loading,setLoading]=useState(false),[error,setError]=useState("");
  const pageSize=20,totalPages=Math.max(1,Math.ceil(total/pageSize));
