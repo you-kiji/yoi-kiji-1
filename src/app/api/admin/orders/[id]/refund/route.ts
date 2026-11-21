@@ -53,6 +53,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ id
     });
   };
 
+  let providerAccepted = false;
   try {
     const auth = Buffer.from(keyId + ":" + secret).toString("base64");
     const response = await fetch("https://api.razorpay.com/v1/payments/" + payment.providerPaymentId + "/refund", {
@@ -65,10 +66,16 @@ export async function POST(_request: Request, { params }: { params: Promise<{ id
       }),
       cache: "no-store",
     });
+    providerAccepted = response.ok;
     const data = await response.json().catch(() => ({}));
-    if (!response.ok || !data.id || !["created", "pending", "processed"].includes(data.status) || data.amount !== payment.amountPaise) {
+    if (!response.ok) {
       await releaseClaim();
-      return NextResponse.json({ error: "Razorpay refund could not be confirmed. Check the payment dashboard before retrying." }, { status: 502 });
+      return NextResponse.json({ error: "Razorpay refund request failed. Check the payment dashboard before retrying." }, { status: 502 });
+    }
+    if (!data.id || !["created", "pending", "processed"].includes(data.status) || data.amount !== payment.amountPaise) {
+      // A successful provider response with incomplete details is ambiguous. Keep
+      // the claim locked until the signed webhook or manual reconciliation resolves it.
+      return NextResponse.json({ error: "Razorpay accepted the request but returned incomplete refund details. Reconciliation is required." }, { status: 502 });
     }
 
     const processed = data.status === "processed";
@@ -90,7 +97,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ id
     // Mark the claim failed so an administrator can retry after checking the
     // Razorpay dashboard. If the provider accepted the request but the response
     // was lost, the webhook remains the source of truth for reconciliation.
-    await releaseClaim().catch(() => undefined);
-    return NextResponse.json({ error: "Refund status could not be confirmed. Check Razorpay before retrying." }, { status: 502 });
+    if (!providerAccepted) await releaseClaim().catch(() => undefined);
+    return NextResponse.json({ error: providerAccepted ? "Razorpay may have accepted the refund. The request is locked pending webhook reconciliation." : "Refund status could not be confirmed. Check Razorpay before retrying." }, { status: 502 });
   }
 }
