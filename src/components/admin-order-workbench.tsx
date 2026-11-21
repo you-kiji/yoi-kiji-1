@@ -27,7 +27,7 @@ export function AdminOrderWorkbench({initialOrders,initialTotal}:{initialOrders:
   void load();
   return ()=>controller.abort();
  },[page,status,payment,query]);
- const exportHref="/api/admin/orders/export?"+new URLSearchParams({...(status!=="ALL"?{status}:{}),...(payment!=="ALL"?{payment}:{})}).toString();
+ const exportHref="/api/admin/orders/export?"+new URLSearchParams({...(status!=="ALL"?{status}:{}),...(payment!=="ALL"?{payment}:{}),...(query.trim()?{q:query.trim()}:{})}).toString();
  return <section className="admin-order-workbench">
   <div className="admin-order-filters">
    <label>Search order / customer<input value={query} onChange={e=>{setQuery(e.target.value);setPage(1);}} placeholder="Order number, name or email"/></label>
