@@ -12,6 +12,7 @@ const mocks = vi.hoisted(() => {
   return {
     tx,
     getCurrentUser: vi.fn(),
+  sendOrderStatusUpdate: vi.fn(),
     prisma: {
       $transaction: vi.fn(),
     },
@@ -20,6 +21,7 @@ const mocks = vi.hoisted(() => {
 
 vi.mock("@/lib/auth", () => ({ getCurrentUser: mocks.getCurrentUser }));
 vi.mock("@/lib/prisma", () => ({ prisma: mocks.prisma }));
+vi.mock("@/lib/notifications", () => ({ sendOrderStatusUpdate: mocks.sendOrderStatusUpdate }));
 
 import { POST } from "./route";
 
@@ -43,6 +45,7 @@ describe("customer order cancellation", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.getCurrentUser.mockResolvedValue({ id: "user-1" });
+    mocks.sendOrderStatusUpdate.mockResolvedValue({ sent: true });
     mocks.tx.order.findFirst.mockResolvedValue(confirmedOrder);
     mocks.tx.order.updateMany.mockResolvedValue({ count: 1 });
     mocks.tx.couponRedemption.findFirst.mockResolvedValue({ couponId: "coupon-1" });
@@ -57,7 +60,8 @@ describe("customer order cancellation", () => {
   it("cancels an eligible COD order and restores stock and coupon usage once", async () => {
     const response = await POST(request(), { params: Promise.resolve({ id: "order-1" }) });
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ status: 200, cancelled: true, orderNumber: "YK-1001" });
+    expect(await response.json()).toEqual({ status: 200, cancelled: true, orderId: "order-1", orderNumber: "YK-1001" });
+    expect(mocks.sendOrderStatusUpdate).toHaveBeenCalledWith("order-1", "CANCELLED");
     expect(mocks.tx.order.updateMany).toHaveBeenCalledWith({
       where: { id: "order-1", userId: "user-1", status: "CONFIRMED" },
       data: { status: "CANCELLED", checkoutKey: null, reservationExpiresAt: null },
