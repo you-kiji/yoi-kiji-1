@@ -19,6 +19,9 @@ export async function POST(_request: Request, { params }: { params: Promise<{ id
       if (!["PENDING", "CONFIRMED", "PROCESSING"].includes(order.status)) {
         return { status: 409 as const, error: "This order can no longer be cancelled online. Please contact the store team." };
       }
+      if (order.fulfillmentOrderId || order.trackingNumber) {
+        return { status: 409 as const, error: "A shipping label or tracking reference already exists. Please contact the store team to stop the shipment." };
+      }
       if (order.payment?.status === "CAPTURED" || order.payment?.status === "REFUNDED") {
         return { status: 409 as const, error: "This order has a captured payment. Contact the store team to arrange cancellation and refund." };
       }
