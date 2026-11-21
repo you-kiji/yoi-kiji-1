@@ -12,12 +12,14 @@ export async function GET(request: NextRequest) {
   if (!admin || admin.role !== "ADMIN") return NextResponse.json({ error: "Administrator permission required." }, { status: 403 });
   const status = request.nextUrl.searchParams.get("status");
   const paymentStatus = request.nextUrl.searchParams.get("payment");
+  const query = (request.nextUrl.searchParams.get("q") ?? "").trim().slice(0, 100);
   const allowedStatuses = ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED", "REFUNDED"];
   const allowedPayments = ["CREATED", "AUTHORIZED", "CAPTURED", "FAILED", "REFUNDED"];
   const orders = await prisma.order.findMany({
     where: {
       ...(status && allowedStatuses.includes(status) ? { status: status as never } : {}),
       ...(paymentStatus === "NONE" ? { payment: { is: null } } : paymentStatus && allowedPayments.includes(paymentStatus) ? { payment: { is: { status: paymentStatus as never } } } : {}),
+      ...(query ? { OR: [{ orderNumber: { contains: query, mode: "insensitive" as const } }, { guestName: { contains: query, mode: "insensitive" as const } }, { guestEmail: { contains: query, mode: "insensitive" as const } }, { user: { is: { OR: [{ name: { contains: query, mode: "insensitive" as const } }, { email: { contains: query, mode: "insensitive" as const } }] } } }] } : {}),
     },
     include: { user: { select: { name: true, email: true } }, items: true, payment: true },
     orderBy: { createdAt: "desc" },
