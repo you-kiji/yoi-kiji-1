@@ -304,3 +304,14 @@ body:has(.admin-shopify-shell) .admin-shopify-shell{min-height:100vh;display:gri
 .admin-report-period select{min-width:145px;min-height:34px;padding:0 9px;border:1px solid #dfe1e3;background:#fff;font-size:10px}
 .admin-report-period button{min-height:34px;padding:0 12px;border:1px solid #173d25;background:#173d25;color:#fff;border-radius:7px;font-size:10px;font-weight:650}
 @media(max-width:520px){.admin-report-period{justify-content:stretch;flex-wrap:wrap}.admin-report-period label{width:100%}.admin-report-period select,.admin-report-period button{flex:1}}
+
+
+/* Product bulk selection and actions */
+.admin-product-table th:first-child,.admin-product-table td:first-child{width:36px;text-align:center}
+.admin-product-table input[type=checkbox]{width:14px;height:14px;min-height:14px;accent-color:#173d25;cursor:pointer}
+.admin-product-bulkbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px;background:#edf3ed;border:1px solid #d9e5d9;border-radius:8px}
+.admin-product-bulkbar strong{margin-right:auto;color:#173d25;font-size:11px}
+.admin-product-bulkbar button{min-height:31px;padding:0 10px;border:1px solid #cbd7cc;background:#fff;color:#173d25;border-radius:6px;font-size:10px;font-weight:650}
+.admin-product-bulkbar button:disabled{opacity:.5;cursor:wait}
+.admin-product-bulkbar button.secondary{color:#535b55}
+@media(max-width:540px){.admin-product-bulkbar{align-items:stretch}.admin-product-bulkbar strong{width:100%}.admin-product-bulkbar button{flex:1}}
