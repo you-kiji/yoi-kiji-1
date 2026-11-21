@@ -8,7 +8,7 @@ type Post = { id: string; title: string; slug: string; excerpt: string | null; c
 type Product = Item & { sku: string };
 
 export function AdminBlogManager({ initialPosts, categories, tags, products }: { initialPosts: Post[]; categories: Item[]; tags: Item[]; products: Product[] }) {
-  const [posts, setPosts] = useState(initialPosts);
+  const [posts, setPosts] = useState(initialPosts);\n  const [query,setQuery]=useState("");\n  const [statusFilter,setStatusFilter]=useState("ALL");\n  const [page,setPage]=useState(1);
   const [editing, setEditing] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
@@ -17,7 +17,7 @@ export function AdminBlogManager({ initialPosts, categories, tags, products }: {
   const [taxType, setTaxType] = useState<"category" | "tag">("category");
   const [taxName, setTaxName] = useState("");
   const [taxSlug, setTaxSlug] = useState("");
-  const available = useMemo(() => ({ categories, tags, products }), [categories, tags, products]);
+  const available = useMemo(() => ({ categories, tags, products }), [categories, tags, products]);\n  const filteredPosts=useMemo(()=>posts.filter(post=>(statusFilter==="ALL"||post.status===statusFilter)&&(!query||[post.title,post.slug,post.excerpt??""].some(value=>value.toLowerCase().includes(query.toLowerCase())))),[posts,statusFilter,query]);\n  const pageSize=20,totalPages=Math.max(1,Math.ceil(filteredPosts.length/pageSize)),pagePosts=filteredPosts.slice((page-1)*pageSize,page*pageSize);
   function update<K extends keyof typeof blank>(key: K, value: typeof blank[K]) { setForm(current => ({ ...current, [key]: value })); }
   function toggle(key: "categoryIds" | "tagIds" | "relatedProductIds", id: string) { update(key, form[key].includes(id) ? form[key].filter(value => value !== id) : [...form[key], id]); }
   function start(post?: Post) {
@@ -58,7 +58,7 @@ export function AdminBlogManager({ initialPosts, categories, tags, products }: {
     <div className="admin-section-heading"><h2>Editorial library</h2><span>{posts.length} recent articles</span></div>
     <button type="button" className="commerce-button" onClick={() => start()}>Create article</button>
     {message && <p role="status">{message}</p>}
-    <div className="orders-list">{posts.map(post => <article className="order-card" key={post.id}><div><strong><Link href={`/admin/blog/${post.id}`}>{post.title}</Link></strong><p><Link className="admin-product-open-link" href={`/admin/blog/${post.id}`}>Open article details</Link></p><p>/{post.slug}</p><small>Updated {new Date(post.updatedAt).toLocaleDateString("en-IN")}</small></div><span className="order-status">{post.status.toLowerCase()}</span><div><button type="button" onClick={() => start(post)}>Edit</button> <button type="button" onClick={() => archive(post.id)}>Archive</button></div></article>)}</div>
+    <div className="orders-list">{pagePosts.map(post => <article className="order-card" key={post.id}><div><strong><Link href={`/admin/blog/${post.id}`}>{post.title}</Link></strong><p><Link className="admin-product-open-link" href={`/admin/blog/${post.id}`}>Open article details</Link></p><p>/{post.slug}</p><small>Updated {new Date(post.updatedAt).toLocaleDateString("en-IN")}</small></div><span className="order-status">{post.status.toLowerCase()}</span><div><button type="button" onClick={() => start(post)}>Edit</button> <button type="button" onClick={() => archive(post.id)}>Archive</button></div></article>)}</div>
     <form onSubmit={save} className="admin-blog-form">
       <h2>{editing ? "Edit article" : "New article"}</h2>
       <label>Title<input required minLength={3} maxLength={180} value={form.title} onChange={e => update("title", e.target.value)}/></label>
