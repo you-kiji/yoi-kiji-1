@@ -67,7 +67,7 @@ export default async function OrdersPage() {
                   (order.payment?.status === "FAILED" || order.payment?.status === "CREATED") && (
                     <RetryPaymentButton orderId={order.id} />
                   )}
-                {["PENDING","CONFIRMED","PROCESSING"].includes(order.status) && order.payment?.status !== "CAPTURED" && order.payment?.status !== "REFUNDED" && <CancelOrderButton orderId={order.id} compact />}
+                {["PENDING","CONFIRMED","PROCESSING"].includes(order.status) && order.payment?.status !== "CAPTURED" && order.payment?.status !== "REFUNDED" && !order.fulfillmentOrderId && !order.trackingNumber && <CancelOrderButton orderId={order.id} compact />}
               </div>
             </article>
           ))}
