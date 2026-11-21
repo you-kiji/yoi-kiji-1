@@ -180,3 +180,33 @@ body:has(.admin-shopify-shell) .admin-shopify-shell{min-height:100vh;display:gri
 .admin-shopify-content :is(input:not([type=checkbox]):not([type=radio]),select){min-height:38px}
 .admin-shopify-content .admin-product-list .admin-row-controls input{min-height:38px}
 .admin-shopify-content .admin-product-list button{min-height:38px}
+
+
+/* Review, category and promotion record-detail workspaces */
+.admin-review-detail-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,.9fr);gap:16px;align-items:start}
+.admin-review-detail-stars{font-size:18px;letter-spacing:.08em;color:#9a7a3d}
+.admin-review-detail-title{font-size:18px;font-weight:650;margin:12px 0}
+.admin-review-detail-body{font-size:13px;line-height:1.8;white-space:pre-wrap;color:#3e4549;margin:0}
+.admin-review-detail-customer{display:grid;gap:4px;margin-top:20px;padding-top:15px;border-top:1px solid #eff0f1;font-size:11px}
+.admin-review-detail-customer span{color:#747b7f}
+.admin-review-detail-actions{display:grid;gap:10px}
+.admin-review-detail-actions>label{display:grid;gap:6px;font-size:10px;color:#646b70}
+.admin-review-detail-actions textarea{width:100%;min-height:100px;padding:10px;border:1px solid #dfe1e3;background:#fff;color:#202223;font:inherit;font-size:11px;resize:vertical}
+.admin-review-detail-actions button{min-height:36px;padding:0 12px;border:1px solid #d4d7d9;background:#f7f8f8;color:#28302b;font-size:10px;font-weight:650}
+.admin-review-detail-actions button:disabled{opacity:.55;cursor:wait}
+.admin-review-detail-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.admin-review-detail-buttons button:first-child{background:#173d25;color:#fff;border-color:#173d25}
+.admin-review-detail-actions>small{font-size:10px;color:#53605a}
+.admin-category-detail-image{display:block;width:100%;max-height:280px;object-fit:cover;border-radius:8px;margin-top:14px}
+.admin-detail-register{display:grid}
+.admin-detail-register>article{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 0;border-top:1px solid #eff0f1}
+.admin-detail-register>article>div:first-child{display:grid;gap:4px;min-width:0}
+.admin-detail-register>article>div:last-child{display:grid;gap:5px;justify-items:end}
+.admin-detail-register strong{font-size:11px}
+.admin-detail-register small{font-size:9px;color:#757d81;overflow-wrap:anywhere}
+.admin-detail-register a{color:#245b32}
+.admin-detail-register .active-state,.admin-detail-register .inactive-state{font-size:9px}
+.admin-category-detail .admin-detail-description{margin-top:12px}
+.admin-promotion-detail .admin-detail-metrics article>strong{font-size:19px}
+@media(max-width:760px){.admin-review-detail-grid{grid-template-columns:1fr}.admin-detail-register>article{align-items:flex-start}.admin-detail-register>article>div:last-child{text-align:right}}
+@media(max-width:460px){.admin-review-detail-buttons{grid-template-columns:1fr}.admin-detail-register>article{gap:8px}}
