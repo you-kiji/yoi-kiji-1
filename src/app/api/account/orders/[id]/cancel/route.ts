@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sendOrderStatusUpdate } from "@/lib/notifications";
 
 export async function POST(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const user = await getCurrentUser();
@@ -69,10 +70,13 @@ export async function POST(_request: Request, { params }: { params: Promise<{ id
           },
         });
       }
-      return { status: 200 as const, cancelled: true, orderNumber: order.orderNumber };
+      return { status: 200 as const, cancelled: true, orderId: order.id, orderNumber: order.orderNumber };
     }, { isolationLevel: "Serializable" });
 
     if (result.status !== 200) return NextResponse.json({ error: result.error }, { status: result.status });
+    if ("cancelled" in result && result.cancelled) {
+      await sendOrderStatusUpdate(result.orderId, "CANCELLED").catch(() => null);
+    }
     return NextResponse.json(result);
   } catch (error) {
     if ((error as { code?: string })?.code === "P2034") {
