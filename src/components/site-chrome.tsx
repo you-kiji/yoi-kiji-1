@@ -1,23 +1,21 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { AnnouncementBar } from "@/components/announcement-bar";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import type { ReactNode } from "react";
 import { Analytics } from "@/components/analytics";
 import { CookieConsent } from "@/components/cookie-consent";
 import { ScrollMotion } from "@/components/scroll-motion";
 
-export function SiteChrome({ children }: { children: React.ReactNode }) {
+export function SiteChrome({ children, announcement, header, footer }: { children: ReactNode; announcement: ReactNode; header: ReactNode; footer: ReactNode }) {
   const pathname = usePathname();
   const isAdmin = pathname === "/admin" || pathname.startsWith("/admin/");
   if (isAdmin) return <>{children}</>;
   return <>
     <ScrollMotion />
-    <AnnouncementBar />
-    <SiteHeader />
+    {announcement}
+    {header}
     {children}
-    <SiteFooter />
+    {footer}
     <Analytics />
     <CookieConsent />
   </>;
