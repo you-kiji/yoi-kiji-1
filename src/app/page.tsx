@@ -90,6 +90,19 @@ export default async function HomePage() {
           : {};
         const slides = Array.isArray(section.slides) ? section.slides as Array<{imageUrl?:string;imageAlt?:string;title?:string;body?:string;eyebrow?:string;ctaHref?:string}> : [];
 
+        if (section.sectionType === "media-only") {
+          const mediaType = settings.mediaType === "video" ? "video" : "image";
+          const mediaUrl = section.imageUrl || (typeof settings.videoUrl === "string" ? settings.videoUrl : "");
+          if (!mediaUrl) return null;
+          return (
+            <section className="storefront-media-only" key={section.id} aria-label="Homepage media">
+              {mediaType === "video"
+                ? <video autoPlay muted loop playsInline preload="metadata"><source src={mediaUrl} /></video>
+                : <img src={mediaUrl} alt="" loading="lazy" />}
+            </section>
+          );
+        }
+
         if (section.sectionType === "hero-video" || key === "hero") {
           const videoUrl = typeof settings.videoUrl === "string" ? settings.videoUrl : "";
           const mediaUrl = videoUrl || section.imageUrl || "";
