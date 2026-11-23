@@ -697,3 +697,48 @@ footer{font-size:14px}
 @media(max-width:760px){.storefront-living-reviews{padding:34px 14px}.storefront-living-reviews__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.storefront-living-review__copy{gap:12px;padding:13px}.storefront-living-review__copy>p{font-size:12px}}
 @media(max-width:480px){.storefront-living-reviews__grid{grid-template-columns:1fr}.storefront-living-review{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1fr)}.storefront-living-review__photo{aspect-ratio:3/4}.storefront-living-review__copy{align-content:center}}
 
+
+
+/* Final homepage typography and spacing refinement. Keep headings restrained and content close to viewport edges. */
+.storefront-product-pair{padding:30px clamp(10px,1.25vw,18px) 38px!important}
+.storefront-product-pair .editorial-section-heading{margin:0 auto 16px!important;max-width:none!important;padding:0!important}
+.storefront-product-pair .editorial-section-heading h2{font-size:clamp(18px,1.65vw,23px)!important;line-height:1.25!important;font-weight:500!important;letter-spacing:-.02em!important}
+.storefront-product-pair .storefront-product-grid{max-width:none!important;gap:clamp(10px,1.2vw,16px)!important}
+.storefront-gallery-section{padding:28px clamp(10px,1.25vw,18px) 34px!important;background:transparent!important;color:var(--cream)!important}
+.storefront-gallery-heading{max-width:none!important;margin:0 0 16px!important;padding:0!important}
+.storefront-gallery-heading h2{font-size:clamp(18px,1.65vw,23px)!important;line-height:1.25!important;font-weight:500!important;letter-spacing:-.02em!important}
+.storefront-photo-collage{max-width:none!important;gap:clamp(7px,.8vw,11px)!important;background:transparent!important;padding:0!important}
+.storefront-photo-collage a{background:transparent!important}
+.storefront-text-strip{min-height:104px!important;padding:22px 14px!important;display:flex!important;align-items:center!important;justify-content:center!important}
+.storefront-text-strip h2{font-size:clamp(19px,2vw,27px)!important;line-height:1.25!important;font-weight:400!important;letter-spacing:-.02em!important}
+.storefront-living-reviews{padding:32px clamp(10px,1.25vw,18px) 40px!important;background:#e9e9e9!important;color:#0e300e!important}
+.storefront-living-reviews__heading{max-width:none!important;margin:0 0 18px!important;text-align:left!important}
+.storefront-living-reviews__heading h2{font-size:clamp(20px,2vw,27px)!important;line-height:1.2!important;font-weight:500!important;letter-spacing:-.025em!important}
+.storefront-living-reviews__grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:clamp(9px,1vw,14px)!important;max-width:none!important}
+.storefront-living-review{position:relative;display:block!important;min-height:0!important;background:#0e300e!important;overflow:hidden}
+.storefront-living-review__photo{aspect-ratio:4/3!important;background:#0e300e!important}
+.storefront-living-review__photo img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.storefront-living-review__photo>span{top:12px!important;bottom:auto!important;left:12px!important;background:#0e300e!important;color:#e9e9e9!important}
+.storefront-living-review__copy{position:absolute!important;inset:auto 0 0!important;gap:8px!important;padding:36px 16px 15px!important;background:linear-gradient(0deg,rgba(8,32,8,.94),rgba(8,32,8,.72) 68%,transparent)!important;color:#e9e9e9!important}
+.storefront-living-review__copy>p{font-size:clamp(11px,.95vw,13px)!important;line-height:1.6!important;color:#f1f1e9!important}
+.storefront-living-review__copy footer{gap:3px!important;padding-top:8px!important;border-top:1px solid rgba(233,233,233,.25)!important}
+.storefront-living-review__copy footer strong{font-size:11px!important;color:#fff!important}
+.storefront-living-review__copy footer small{font-size:9px!important;color:#d1dbce!important}
+@media(max-width:760px){
+ .storefront-product-pair{padding:26px 10px 30px!important}
+ .storefront-product-pair .editorial-section-heading h2{font-size:18px!important}
+ .storefront-gallery-section{padding:24px 10px 28px!important}
+ .storefront-gallery-heading h2{font-size:18px!important}
+ .storefront-text-strip{min-height:88px!important;padding:18px 12px!important}
+ .storefront-text-strip h2{font-size:19px!important}
+ .storefront-living-reviews{padding:26px 10px 32px!important}
+ .storefront-living-reviews__heading h2{font-size:20px!important}
+ .storefront-living-reviews__grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+ .storefront-living-review__copy{padding:30px 10px 10px!important}
+ .storefront-living-review__copy>p{font-size:10px!important}
+}
+@media(max-width:430px){
+ .storefront-living-reviews__grid{grid-template-columns:1fr!important}
+ .storefront-living-review{display:block!important}
+ .storefront-living-review__photo{aspect-ratio:16/10!important}
+}
