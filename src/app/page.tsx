@@ -297,7 +297,7 @@ export default async function HomePage() {
                 <p className="editorial-eyebrow"><span />{eyebrow}</p>
                 <h1>{title}</h1>
                 <p className="editorial-hero__description">{body}</p>
-                <a className="editorial-cta" href={ctaHref}>{ctaLabel}</a>
+                <div className="editorial-hero__actions"><a className="editorial-cta" href={ctaHref}>{ctaLabel || "Shop the Collection"} <span aria-hidden="true">→</span></a><a className="editorial-hero__secondary" href="/our-story">Our Story <span aria-hidden="true">→</span></a></div>
                 <div className="editorial-hero__search"><AdvancedSearch compact labels={locale.labels} /></div>
               </div>
               <div className="editorial-hero__bottom"><span>COMFORT, CONSIDERED.</span><span>SCROLL TO DISCOVER</span></div>
