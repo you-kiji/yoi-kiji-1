@@ -175,10 +175,32 @@ export default async function HomePage() {
           );
         }
         if (section.sectionType === "testimonial") {
-          const quotes = approvedReviews.length
-            ? approvedReviews.map(review=>({body:review.body,title:review.title||"",eyebrow:review.user.name || "YOI KIJI customer",rating:review.rating}))
-            : slides.map(slide=>({body:slide.body||"",title:slide.title||"",eyebrow:slide.eyebrow||"YOI KIJI customer",rating:0}));
-          return <section className="storefront-testimonials" key={section.id}><p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow||"LIVING WITH YOI KIJI"}</p><h2>{section.title||"Customer Reviews"}</h2><div>{quotes.length ? quotes.slice(0,6).map((quote,index)=><blockquote key={index}>{quote.rating>0&&<p aria-label={quote.rating+" out of 5 stars"}>{"★".repeat(quote.rating)}</p>}<p>“{quote.body||quote.title||""}”</p><cite>{quote.eyebrow||"YOI KIJI customer"}</cite></blockquote>) : <p>Customer stories will appear here as reviews are approved.</p>}</div></section>;
+          const quotes = approvedReviews.map(review=>({body:review.body,title:review.title||"",name:review.user.name || "YOI KIJI customer",rating:review.rating}));
+          const reviewPhotos = slides.slice(0,6);
+          return (
+            <section className="storefront-living-reviews" key={section.id} aria-label={section.title || "Customer reviews"}>
+              <header className="storefront-living-reviews__heading">
+                <p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow || "LIVING WITH YOIKIJI"}</p>
+                <h2>{section.title || "Customer Reviews"}</h2>
+              </header>
+              {quotes.length ? (
+                <div className="storefront-living-reviews__grid">
+                  {quotes.slice(0,6).map((quote,index)=>(
+                    <article className="storefront-living-review" key={index}>
+                      <div className="storefront-living-review__photo">
+                        {reviewPhotos[index]?.imageUrl ? <img src={reviewPhotos[index].imageUrl} alt={reviewPhotos[index].imageAlt || "YOI KIJI customer home"} loading="lazy"/> : <div aria-hidden="true"/>}
+                        <span aria-label={quote.rating + " out of 5 stars"}>{"★".repeat(quote.rating)}</span>
+                      </div>
+                      <div className="storefront-living-review__copy">
+                        <p>“{quote.body || quote.title}”</p>
+                        <footer><strong>{quote.name}</strong><small>{quote.title || "Customer story"} · Sample review</small></footer>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              ) : <p className="storefront-living-reviews__empty">Customer stories will appear here as reviews are approved.</p>}
+            </section>
+          );
         }
         if (section.sectionType === "slideshow") {
           const slides = Array.isArray(section.slides) ? section.slides as Array<{imageUrl:string;imageAlt?:string;eyebrow?:string;title?:string;body?:string;ctaLabel?:string;ctaHref?:string}> : [];
