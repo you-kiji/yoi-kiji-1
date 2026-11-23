@@ -180,8 +180,7 @@ export default async function HomePage() {
           return (
             <section className="storefront-living-reviews" key={section.id} aria-label={section.title || "Customer reviews"}>
               <header className="storefront-living-reviews__heading">
-                <p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow || "LIVING WITH YOIKIJI"}</p>
-                <h2>{section.title || "Customer Reviews"}</h2>
+                <h2>{section.title || "LIVING WITH YOIKIJI"}</h2>
               </header>
               {quotes.length ? (
                 <div className="storefront-living-reviews__grid">
