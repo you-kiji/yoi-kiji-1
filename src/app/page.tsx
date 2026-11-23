@@ -135,7 +135,9 @@ export default async function HomePage() {
         }
 
         if (section.sectionType === "product-grid") {
-          const productLimit = 2; // Homepage product-pair sections always render exactly two cards.
+          const productSections = allSections.filter((item) => item.isActive && item.sectionType === "product-grid").sort((a,b) => a.position - b.position);
+          if (productSections[0]?.id !== section.id) return null;
+          const productLimit = 4;
           const productOffset = typeof settings.offset === "number" ? Math.max(0, settings.offset) : 0;
           const visibleProducts = featuredProducts.slice(productOffset, productOffset + productLimit);
           return (
