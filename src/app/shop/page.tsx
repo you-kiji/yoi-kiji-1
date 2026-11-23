@@ -144,9 +144,9 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
           </label>
 
           <label htmlFor="shop-category">
-            <span>{t("shop.category","Product")}</span>
+            <span>{"Product"}</span>
             <select id="shop-category" name="category" defaultValue={params.category ?? ""}>
-              <option value="">{t("shop.allCategories","All products")}</option>
+              <option value="">{"All products"}</option>
               {categoryOptions.map((category) => (
                 <option key={category.id} value={category.slug}>{category.parentId ? "— " : ""}{category.name}</option>
               ))}
