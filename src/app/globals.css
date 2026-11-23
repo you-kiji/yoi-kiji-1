@@ -782,3 +782,12 @@ footer{font-size:14px}
 /* Give the Gallery a deliberate pause before the green warmth message. */
 .storefront-gallery-section{padding-bottom:clamp(42px,5vw,64px)!important}
 .storefront-text-strip{margin-top:clamp(22px,3vw,38px)!important}
+
+
+/* Admin controls for the four editable trust-bar tiles. */
+.admin-trust-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0;padding:16px;border:1px solid #d6ddd3;border-radius:8px}
+.admin-trust-fields legend{padding:0 7px;font-size:12px;font-weight:600}
+.admin-trust-field{display:grid;gap:8px;padding:12px;border:1px solid #e0e5de;border-radius:6px}
+.admin-trust-field>strong{font-size:11px;color:#0e300e}
+.admin-trust-field label{display:grid;gap:5px;font-size:10px}
+@media(max-width:640px){.admin-trust-fields{grid-template-columns:1fr}}
