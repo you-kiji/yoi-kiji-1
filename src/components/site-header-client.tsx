@@ -68,7 +68,7 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
     <header className={"site-header" + (headerHidden ? " site-header--hidden" : "")}>
       <Link className="wordmark" href="/" aria-label="YOI KIJI home" onClick={closeAll}>
         <span className="wordmark-main">YOI KIJI</span>
-        <span className="wordmark-sub">THE ART OF TEXTILE LIVING</span>
+        
       </Link>
 
       <nav className="desktop-navigation" aria-label="Main navigation">
@@ -84,7 +84,7 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
               event.preventDefault();
               setDesktopOpen(value => !value);
             }}
-          >{text("header.product","Product")}</summary>
+          >{text("header.product","Shop")}</summary>
           <div className="header-collections-menu">
             <Link href="/shop" onClick={closeAll}>{text("header.product","Product")}</Link>
             {categories.map(category => (
@@ -94,9 +94,9 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
             ))}
           </div>
         </details>
-        <Link href="/our-story" onClick={closeAll}>YOI KIJI Story</Link>
+        <Link href="/our-story" onClick={closeAll}>Story</Link>
         <Link href="/journal" onClick={closeAll}>{text("header.journal","Journal")}</Link>
-        {navigationItems.filter(item=>item.href!=="/shop" && item.label.trim().toLowerCase()!=="shop").map(item=><Link key={item.id} href={item.href} target={item.openInNewTab?"_blank":undefined} rel={item.openInNewTab?"noopener noreferrer":undefined} onClick={closeAll}>{item.label}</Link>)}
+        {navigationItems.filter(item=>item.href!=="/shop" && item.href!=="/our-story" && item.href!=="/journal" && item.label.trim().toLowerCase()!=="shop").map(item=><Link key={item.id} href={item.href} target={item.openInNewTab?"_blank":undefined} rel={item.openInNewTab?"noopener noreferrer":undefined} onClick={closeAll}>{item.label}</Link>)}
       </nav>
 
       <details
@@ -135,7 +135,7 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
         <Link href="/search" onClick={closeAll}>{text("header.search","Search")}</Link>
         <Link href="/account" onClick={closeAll}>{text("header.account","Account")}</Link>
         <Link className="bag-link" href="/cart" onClick={closeAll}>{text("header.bag","Bag")} <CartCount /></Link>
-        {socialAccounts.map(account=><a key={account.id} href={account.url} target="_blank" rel="noopener noreferrer" aria-label={account.label}>{account.platform}</a>)}
+        
       </div>
     </header>
   );
