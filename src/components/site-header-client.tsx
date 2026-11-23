@@ -123,7 +123,7 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
           ))}
           <Link href="/our-story" onClick={closeAll}>YOI KIJI Story</Link>
           <Link href="/journal" onClick={closeAll}>{text("header.journal","Journal")}</Link>
-          {navigationItems.map(item=><Link key={item.id} href={item.href} target={item.openInNewTab?"_blank":undefined} rel={item.openInNewTab?"noopener noreferrer":undefined} onClick={closeAll}>{item.label}</Link>)}
+          {navigationItems.filter(item=>item.href!=="/shop" && item.label.trim().toLowerCase()!=="shop").map(item=><Link key={item.id} href={item.href} target={item.openInNewTab?"_blank":undefined} rel={item.openInNewTab?"noopener noreferrer":undefined} onClick={closeAll}>{item.label}</Link>)}
           <Link href="/search" onClick={closeAll}>{text("header.search","Search")}</Link>
           <Link href="/account" onClick={closeAll}>{text("header.account","Account")}</Link>
           <Link href="/cart" onClick={closeAll}>{text("header.bag","Bag")} <CartCount /></Link>
