@@ -1179,3 +1179,38 @@ html, body, main, .site-header, .site-footer, .home-redesign {
     font-size: 13px !important;
   }
 }
+
+
+/* Consistent homepage section-title scale — shared across editorial and dynamic sections. */
+.home-redesign > .editorial-intro h2,
+.home-redesign > .editorial-collections .editorial-section-heading h2,
+.home-redesign > .editorial-feature h2,
+.home-redesign > .editorial-journal h2,
+.home-redesign > .storefront-dynamic-grid .editorial-section-heading h2,
+.home-redesign > .storefront-gallery-section .storefront-gallery-heading h2,
+.home-redesign > .storefront-text-strip h2,
+.home-redesign > .storefront-living-reviews .storefront-living-reviews__heading h2,
+.home-redesign > .storefront-image-banner .storefront-image-banner__content h2,
+.home-redesign > .storefront-image-with-text h2,
+.home-redesign > .storefront-slideshow .storefront-slideshow__content h2 {
+  font-size: clamp(30px, 3.2vw, 42px) !important;
+  font-weight: 400 !important;
+  line-height: 1.16 !important;
+  letter-spacing: -.03em !important;
+}
+@media (max-width: 760px) {
+  .home-redesign > .editorial-intro h2,
+  .home-redesign > .editorial-collections .editorial-section-heading h2,
+  .home-redesign > .editorial-feature h2,
+  .home-redesign > .editorial-journal h2,
+  .home-redesign > .storefront-dynamic-grid .editorial-section-heading h2,
+  .home-redesign > .storefront-gallery-section .storefront-gallery-heading h2,
+  .home-redesign > .storefront-text-strip h2,
+  .home-redesign > .storefront-living-reviews .storefront-living-reviews__heading h2,
+  .home-redesign > .storefront-image-banner .storefront-image-banner__content h2,
+  .home-redesign > .storefront-image-with-text h2,
+  .home-redesign > .storefront-slideshow .storefront-slideshow__content h2 {
+    font-size: clamp(27px, 7vw, 34px) !important;
+    line-height: 1.2 !important;
+  }
+}
