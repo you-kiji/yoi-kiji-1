@@ -808,7 +808,7 @@ footer{font-size:14px}
 
 /* Haus & Kinder-inspired editorial footer, using YOI KIJI content and admin-managed destinations. */
 .site-footer{margin-top:clamp(42px,5vw,72px);padding:clamp(38px,5vw,64px) clamp(16px,4vw,56px) 22px;background:transparent!important;color:inherit!important;border-top:1px solid currentColor;border-color:color-mix(in srgb,currentColor 18%,transparent)}
-.footer-top{display:grid;grid-template-columns:minmax(190px,1.2fr) repeat(3,minmax(140px,1fr));gap:clamp(22px,3.5vw,52px);align-items:start;padding-bottom:clamp(30px,4vw,48px)}
+.footer-top{display:grid;grid-template-columns:minmax(190px,1.2fr) repeat(4,minmax(120px,1fr));gap:clamp(22px,3.5vw,52px);align-items:start;padding-bottom:clamp(30px,4vw,48px)}
 .footer-brand-copy{max-width:260px}
 .footer-brand-copy>p{margin:12px 0 0;color:inherit!important;opacity:.72;font-size:12px;line-height:1.8}
 .footer-column{display:grid;align-content:start;gap:12px}
