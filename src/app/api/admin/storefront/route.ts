@@ -8,7 +8,7 @@ async function authorised() {
   return admin?.role === "ADMIN" ? admin : null;
 }
 const slideSchema = z.object({
-  imageUrl: z.union([z.string().url(), z.literal("")]),
+  imageUrl: z.union([z.string().url(), z.literal("")]).optional().default(""),
   imageAlt: z.string().max(200).optional().default(""),
   eyebrow: z.string().max(120).optional().default(""),
   title: z.string().max(180).optional().default(""),
