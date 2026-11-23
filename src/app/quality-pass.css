@@ -914,3 +914,53 @@ html, body, main, .site-header, .site-footer, .home-redesign {
     row-gap: 10px !important;
   }
 }
+
+/* Consistent homepage section rhythm and clearly visible gallery row gutters. */
+.home-redesign > section + section {
+  margin-block-start: 36px !important;
+}
+.home-redesign .storefront-gallery-section {
+  margin-block-start: 36px !important;
+}
+.home-redesign .storefront-photo-collage {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  grid-auto-rows: auto !important;
+  align-content: start !important;
+  align-items: stretch !important;
+  column-gap: 16px !important;
+  row-gap: 16px !important;
+  gap: 16px !important;
+}
+.home-redesign .storefront-photo-collage > a {
+  display: block !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  aspect-ratio: 4 / 5 !important;
+}
+.home-redesign .storefront-photo-collage > a > img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+@media (max-width: 760px) {
+  .home-redesign > section + section,
+  .home-redesign .storefront-gallery-section {
+    margin-block-start: 28px !important;
+  }
+  .home-redesign .storefront-photo-collage {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    column-gap: 14px !important;
+    row-gap: 14px !important;
+    gap: 14px !important;
+  }
+}
+@media (max-width: 420px) {
+  .home-redesign .storefront-photo-collage {
+    column-gap: 12px !important;
+    row-gap: 12px !important;
+    gap: 12px !important;
+  }
+}
