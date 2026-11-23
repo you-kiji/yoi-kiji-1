@@ -1719,3 +1719,31 @@ html, body, main, .site-header, .site-footer, .home-redesign {
   .contact-form__footer { align-items: flex-start; flex-direction: column; }
   .contact-form__footer button { width: 100%; }
 }
+
+
+/* Align collection/product section headings and their first cards to one shared left edge. */
+.home-redesign > .editorial-collections > .editorial-section-heading,
+.home-redesign > .editorial-collections > .editorial-collection-grid,
+.home-redesign > .storefront-product-pair .editorial-section-heading,
+.home-redesign > .storefront-product-pair .storefront-product-grid {
+  width: min(100%, 1080px) !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+.home-redesign > .editorial-collections > .editorial-section-heading,
+.home-redesign > .storefront-product-pair .editorial-section-heading {
+  text-align: left !important;
+  justify-content: space-between !important;
+}
+.home-redesign > .editorial-collections > .editorial-collection-grid,
+.home-redesign > .storefront-product-pair .storefront-product-grid {
+  justify-self: start;
+}
+@media (max-width: 760px) {
+  .home-redesign > .editorial-collections > .editorial-section-heading,
+  .home-redesign > .editorial-collections > .editorial-collection-grid,
+  .home-redesign > .storefront-product-pair .editorial-section-heading,
+  .home-redesign > .storefront-product-pair .storefront-product-grid {
+    width: 100% !important;
+  }
+}
