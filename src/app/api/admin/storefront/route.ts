@@ -68,11 +68,10 @@ export async function POST(request: NextRequest) {
     const parsed = sectionSchema.safeParse(body.data);
     if (!parsed.success) return NextResponse.json({ error: "Invalid homepage section.", details: parsed.error.flatten() }, { status: 400 });
     try {
-      const data = {
-        ...parsed.data,
-        ...(parsed.data.settings !== undefined
-          ? { settings: parsed.data.settings as Prisma.InputJsonValue }
-          : {}),
+      const { settings, ...sectionFields } = parsed.data;
+      const data: Prisma.HomepageSectionUncheckedCreateInput = {
+        ...sectionFields,
+        ...(settings !== undefined ? { settings: settings as Prisma.InputJsonValue } : {}),
       };
       const section = await prisma.homepageSection.create({ data });
       return NextResponse.json({ section }, { status: 201 });
@@ -107,11 +106,10 @@ export async function PATCH(request: NextRequest) {
     const parsed = sectionSchema.partial().safeParse(body.data);
     if (!parsed.success) return NextResponse.json({ error: "Invalid homepage section.", details: parsed.error.flatten() }, { status: 400 });
     try {
-      const data = {
-        ...parsed.data,
-        ...(parsed.data.settings !== undefined
-          ? { settings: parsed.data.settings as Prisma.InputJsonValue }
-          : {}),
+      const { settings, ...sectionFields } = parsed.data;
+      const data: Prisma.HomepageSectionUncheckedUpdateInput = {
+        ...sectionFields,
+        ...(settings !== undefined ? { settings: settings as Prisma.InputJsonValue } : {}),
       };
       const section = await prisma.homepageSection.update({ where: { id: body.id }, data });
       return NextResponse.json({ section });
