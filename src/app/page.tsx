@@ -22,6 +22,7 @@ export default async function HomePage() {
     prisma.product.findMany({where:{isActive:true},select:{id:true,name:true,slug:true,pricePaise:true,images:{where:{isPrimary:true},take:1,select:{url:true,alt:true}}},orderBy:{updatedAt:"desc"},take:8}).catch(()=>[]),
     prisma.blogPost.findMany({where:{status:"PUBLISHED",noIndex:false},select:{id:true,title:true,slug:true,excerpt:true,coverImageUrl:true,coverImageAlt:true,publishedAt:true},orderBy:{publishedAt:"desc"},take:3}).catch(()=>[]),
     prisma.review.findMany({where:{status:"APPROVED"},select:{id:true,rating:true,title:true,body:true,verifiedPurchase:true,user:{select:{name:true}}},orderBy:{createdAt:"desc"},take:6}).catch(()=>[]),
+    prisma.review.count({ where: { status: "APPROVED" } }).catch(() => 0),
   ]);
 
   const rootCategories = categoryRecords.filter((category) => category.parentId === null);
