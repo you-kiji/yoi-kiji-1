@@ -1034,3 +1034,148 @@ html, body, main, .site-header, .site-footer, .home-redesign {
     font-size: 27px !important;
   }
 }
+
+
+/* Premium customer review cards — distinct, composed surfaces on the deep-green canvas. */
+.home-redesign > .storefront-living-reviews {
+  padding: clamp(34px, 4.5vw, 62px) clamp(14px, 2.4vw, 36px) !important;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-reviews__heading {
+  max-width: 1440px !important;
+  margin: 0 auto clamp(22px, 2.8vw, 36px) !important;
+  text-align: center !important;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-reviews__heading h2 {
+  font-size: clamp(27px, 3.2vw, 42px) !important;
+  font-weight: 400 !important;
+  letter-spacing: -.035em !important;
+  line-height: 1.15 !important;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-reviews__grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  align-items: stretch !important;
+  gap: clamp(16px, 1.8vw, 26px) !important;
+  max-width: 1440px !important;
+  margin: 0 auto !important;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-review {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+  min-height: 100% !important;
+  overflow: hidden !important;
+  background: rgba(241, 240, 232, .045) !important;
+  border: 1px solid rgba(241, 240, 232, .24) !important;
+  border-radius: 3px !important;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, .16) !important;
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease !important;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-review:hover {
+  transform: translateY(-4px) !important;
+  border-color: rgba(241, 240, 232, .48) !important;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, .24) !important;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-review__photo {
+  position: relative !important;
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  aspect-ratio: 16 / 10 !important;
+  overflow: hidden !important;
+  background: rgba(241, 240, 232, .07) !important;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-review__photo img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  transition: transform .5s ease !important;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-review:hover .storefront-living-review__photo img {
+  transform: scale(1.035) !important;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-review__photo > span {
+  top: 14px !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: 14px !important;
+  padding: 7px 10px !important;
+  background: rgba(14, 48, 14, .92) !important;
+  border: 1px solid rgba(241, 240, 232, .24) !important;
+  border-radius: 2px !important;
+  color: #f1f0e8 !important;
+  font-size: 12px !important;
+  letter-spacing: .14em !important;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-review__copy {
+  position: static !important;
+  inset: auto !important;
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  gap: 20px !important;
+  min-width: 0 !important;
+  padding: 22px 22px 20px !important;
+  background: transparent !important;
+  color: #f1f0e8 !important;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-review__copy > p {
+  flex: 1 1 auto !important;
+  margin: 0 !important;
+  color: rgba(241, 240, 232, .9) !important;
+  font-size: 14px !important;
+  line-height: 1.8 !important;
+  overflow-wrap: anywhere;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-review__copy footer {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  margin-top: auto !important;
+  padding-top: 15px !important;
+  border-top: 1px solid rgba(241, 240, 232, .2) !important;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-review__copy footer strong {
+  color: #f1f0e8 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: .025em !important;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-review__copy footer small {
+  color: rgba(241, 240, 232, .64) !important;
+  font-size: 11px !important;
+  line-height: 1.5 !important;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-reviews__empty {
+  max-width: 1440px !important;
+  margin: 0 auto !important;
+  padding: 26px !important;
+  border: 1px solid rgba(241, 240, 232, .2) !important;
+  color: rgba(241, 240, 232, .78) !important;
+  text-align: center !important;
+}
+@media (max-width: 900px) {
+  .home-redesign > .storefront-living-reviews .storefront-living-reviews__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+@media (max-width: 600px) {
+  .home-redesign > .storefront-living-reviews {
+    padding: 30px 14px 38px !important;
+  }
+  .home-redesign > .storefront-living-reviews .storefront-living-reviews__grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  .home-redesign > .storefront-living-reviews .storefront-living-review__photo {
+    aspect-ratio: 16 / 9 !important;
+  }
+  .home-redesign > .storefront-living-reviews .storefront-living-review__copy {
+    gap: 16px !important;
+    padding: 18px !important;
+  }
+  .home-redesign > .storefront-living-reviews .storefront-living-review__copy > p {
+    font-size: 13px !important;
+  }
+}
