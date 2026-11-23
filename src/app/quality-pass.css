@@ -1262,3 +1262,62 @@ html, body, main, .site-header, .site-footer, .home-redesign {
 .storefront-journal-section .storefront-article-card:hover .storefront-article-card__read{color:#d7c29e!important;border-color:#d7c29e!important}
 @media(max-width:900px){.public-reviews-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){.public-reviews-page{padding:24px 18px 68px}.public-reviews-hero{margin:56px auto 38px}.public-reviews-hero h1{font-size:44px}.public-reviews-grid{grid-template-columns:1fr;gap:13px}.public-review-card{min-height:0;padding:22px}.public-review-card__body{margin:16px 0 20px}.public-review-card footer{align-items:flex-start;flex-direction:column;gap:6px}.public-reviews-pagination{gap:8px}.public-reviews-pagination>div{gap:4px}.public-reviews-pagination a,.public-reviews-pagination>span{min-width:34px;height:34px;padding:0 7px}.storefront-journal-section .storefront-article-card__copy{padding:15px 14px 17px!important}.storefront-journal-section .storefront-article-card__copy h3{font-size:14px!important}.storefront-living-reviews__view-all{padding:12px 15px}}
+
+
+/* Customer review action: remove the count bubble and colour-flip hover. */
+.storefront-living-reviews__view-all { gap: 0 !important; transition: opacity .2s ease, transform .2s ease !important; }
+.storefront-living-reviews__view-all:hover,
+.storefront-living-reviews__view-all:focus-visible {
+  background: transparent !important; border-color: rgba(233,233,233,.48) !important; color: var(--cream) !important;
+}
+.storefront-living-reviews__view-all:hover { opacity: .78; transform: translateY(-1px); }
+
+/* Journal archive pagination. */
+.journal-pagination { display:flex; justify-content:center; align-items:center; gap:18px; margin:46px auto 72px; }
+.journal-pagination > div { display:flex; align-items:center; gap:7px; }
+.journal-pagination a,.journal-pagination > span {
+  display:grid; place-items:center; min-width:38px; height:38px; padding:0 10px;
+  border:1px solid rgba(14,48,14,.22); color:#29432b; font-size:11px; text-decoration:none;
+  transition:background .18s ease,color .18s ease,border-color .18s ease;
+}
+.journal-pagination a[aria-current="page"] { background:#0e300e; border-color:#0e300e; color:#f1f0e8; }
+.journal-pagination a:hover:not([aria-current="page"]) { border-color:rgba(14,48,14,.55); background:rgba(14,48,14,.06); }
+.journal-pagination > span[aria-disabled="true"] { opacity:.38; }
+@media(max-width:640px) {
+  .journal-pagination { gap:8px; margin:34px auto 54px; }
+  .journal-pagination > div { gap:4px; }
+  .journal-pagination a,.journal-pagination > span { min-width:34px; height:34px; padding:0 7px; }
+}
+
+/* Trusted-service badges: refined, evenly spaced, and responsive on the existing green canvas. */
+.home-redesign > .storefront-trust-bar {
+  display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  align-items:stretch !important; gap:0 !important; padding:clamp(24px,3.4vw,40px) clamp(12px,2vw,28px) !important;
+  background:#0e300e !important; border-top:1px solid rgba(241,240,232,.16) !important;
+  border-bottom:1px solid rgba(241,240,232,.16) !important; box-shadow:none !important;
+}
+.home-redesign > .storefront-trust-bar > div {
+  display:flex !important; min-width:0; flex-direction:column !important; align-items:center !important;
+  justify-content:center !important; gap:8px !important; padding:8px clamp(10px,2vw,26px) !important;
+  text-align:center !important; border-right:1px solid rgba(241,240,232,.16) !important; background:transparent !important;
+}
+.home-redesign > .storefront-trust-bar > div:last-child { border-right:0 !important; }
+.home-redesign > .storefront-trust-bar .storefront-trust-icon {
+  display:block; width:27px !important; height:27px !important; margin-bottom:4px;
+  color:#f1f0e8 !important; fill:none; stroke:currentColor; stroke-width:1.35;
+  stroke-linecap:round; stroke-linejoin:round; opacity:.9;
+}
+.home-redesign > .storefront-trust-bar > div strong {
+  color:#f1f0e8 !important; font-size:clamp(11px,1vw,13px) !important;
+  font-weight:500 !important; letter-spacing:.025em; line-height:1.45 !important;
+}
+.home-redesign > .storefront-trust-bar > div span {
+  max-width:220px; color:rgba(241,240,232,.68) !important; font-size:10px !important;
+  letter-spacing:.035em; line-height:1.55 !important;
+}
+@media(max-width:700px) {
+  .home-redesign > .storefront-trust-bar { grid-template-columns:repeat(2,minmax(0,1fr)) !important; row-gap:0 !important; padding:22px 10px !important; }
+  .home-redesign > .storefront-trust-bar > div { min-height:112px; padding:14px 9px !important; }
+  .home-redesign > .storefront-trust-bar > div:nth-child(2) { border-right:0 !important; }
+  .home-redesign > .storefront-trust-bar > div:nth-child(-n+2) { border-bottom:1px solid rgba(241,240,232,.14) !important; }
+}
