@@ -90,20 +90,19 @@ export default async function HomePage() {
           : {};
         const slides = Array.isArray(section.slides) ? section.slides as Array<{imageUrl?:string;imageAlt?:string;title?:string;body?:string;eyebrow?:string;ctaHref?:string}> : [];
 
-        if (section.sectionType === "hero-video" || key === "hero") {
-          const videoUrl = typeof settings.videoUrl === "string" ? settings.videoUrl : "";
-          const mediaUrl = videoUrl || section.imageUrl || "";
-          const lowerMediaUrl = mediaUrl.toLowerCase();
-          const isVideo = [".mp4", ".webm", ".ogg"].some((extension) => lowerMediaUrl.includes(extension));
+        if (section.sectionType === "media-only" || section.sectionType === "hero-video" || key === "hero") {
+          const mediaType = settings.mediaType === "video" || (section.sectionType === "hero-video" && typeof settings.videoUrl === "string" && settings.videoUrl)
+            ? "video"
+            : "image";
+          const mediaUrl = mediaType === "video" && typeof settings.videoUrl === "string" && settings.videoUrl
+            ? settings.videoUrl
+            : section.imageUrl || "";
+          if (!mediaUrl) return null;
           return (
-            <section className="storefront-hero-video" key={section.id} aria-label="YOI KIJI introduction">
-              {isVideo ? <video autoPlay muted loop playsInline preload="metadata" poster={typeof settings.posterUrl === "string" ? settings.posterUrl : undefined}><source src={mediaUrl} /></video> : mediaUrl ? <div className="storefront-hero-video__image" style={{backgroundImage:`url("${mediaUrl}")`,backgroundSize:"cover",backgroundPosition:"center"}}/> : null}
-              {(section.title || section.body || section.ctaLabel) && <div className="storefront-hero-video__content">
-                {section.eyebrow && <p className="editorial-eyebrow">{section.eyebrow}</p>}
-                {section.title && <h1>{section.title}</h1>}
-                {section.body && <p>{section.body}</p>}
-                {section.ctaLabel && section.ctaHref && <a className="editorial-cta" href={section.ctaHref}>{section.ctaLabel}</a>}
-              </div>}
+            <section className="storefront-media-only" key={section.id} aria-label="Homepage media">
+              {mediaType === "video"
+                ? <video autoPlay muted loop playsInline preload="metadata"><source src={mediaUrl} /></video>
+                : <img src={mediaUrl} alt="" loading="lazy" />}
             </section>
           );
         }
