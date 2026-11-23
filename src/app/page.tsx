@@ -2,6 +2,7 @@ import { getLocaleData } from "@/lib/i18n";
 import { AdvancedSearch } from "@/components/advanced-search";
 import { getActiveCategories } from "@/lib/catalog";
 import { prisma } from "@/lib/prisma";
+import { LazyBackground } from "@/components/lazy-background";
 
 export const dynamic = "force-dynamic";
 
@@ -169,7 +170,7 @@ export default async function HomePage() {
           return (
             <section className="editorial-collections" key={section.id}>
               <div className="editorial-section-heading"><div><p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow || "EXPLORE"}</p><h2>{section.title || "Shop by collection"}</h2></div>{section.ctaHref && <a className="editorial-text-link" href={section.ctaHref}>{section.ctaLabel || "View all"}</a>}</div>
-              <div className="editorial-collection-grid">{categories.map((item,index)=><a className={"editorial-collection editorial-collection--"+(index+1)} href={item.href} key={item.id}><div className="editorial-collection__photo" style={{backgroundImage: `url("${item.image}")`}}/><div className="editorial-collection__shade"/><div className="editorial-collection__copy"><span>{item.note}</span><h3>{item.name}</h3><b>DISCOVER</b></div></a>)}</div>
+              <div className="editorial-collection-grid">{categories.map((item,index)=><a className={"editorial-collection editorial-collection--"+(index+1)} href={item.href} key={item.id}><LazyBackground className="editorial-collection__photo" backgroundImage={`url("${item.image}")`} /><div className="editorial-collection__shade"/><div className="editorial-collection__copy"><span>{item.note}</span><h3>{item.name}</h3><b>DISCOVER</b></div></a>)}</div>
             </section>
           );
         }
@@ -222,7 +223,7 @@ export default async function HomePage() {
           return (
             <section className="storefront-slideshow" aria-label={section.title || "Featured stories"} key={section.id}>
               {slides.map((slide,index)=><article className="storefront-slideshow__slide" key={index}>
-                {slide.imageUrl && <div className="storefront-slideshow__image" role="img" aria-label={slide.imageAlt || slide.title || "YOI KIJI collection"} style={{ backgroundImage: `url("${slide.imageUrl}")` }} /> }
+                {slide.imageUrl && <LazyBackground className="storefront-slideshow__image" role="img" ariaLabel={slide.imageAlt || slide.title || "YOI KIJI collection"} backgroundImage={`url("${slide.imageUrl}")`} /> }
                 <div className="storefront-slideshow__shade"/>
                 <div className="storefront-slideshow__content">
                   {slide.eyebrow && <p className="editorial-eyebrow"><span/>{slide.eyebrow}</p>}
@@ -247,8 +248,8 @@ export default async function HomePage() {
           const ctaLabel = getValue(section, "ctaLabel", "");
           const ctaHref = getValue(section, "ctaHref", "");
           return (
-            <section className="storefront-image-banner" aria-label={imageAlt} key={section.id}
-              style={imageUrl ? { backgroundImage: `linear-gradient(90deg, rgba(8, 25, 13, .68), rgba(8, 25, 13, .12)), url("${imageUrl}")` } : undefined}>
+            <section className="storefront-image-banner" aria-label={imageAlt} key={section.id}>
+              {imageUrl && <LazyBackground className="storefront-image-banner__background" backgroundImage={`linear-gradient(90deg, rgba(8, 25, 13, .68), rgba(8, 25, 13, .12)), url("${imageUrl}")`} /> }
               <div className="storefront-image-banner__content">
                 {eyebrow && <p className="editorial-eyebrow"><span />{eyebrow}</p>}
                 {title && <h2>{title}</h2>}
@@ -269,7 +270,7 @@ export default async function HomePage() {
           const ctaHref = getValue(section, "ctaHref", "");
           return (
             <section className="editorial-custom-section storefront-image-with-text" key={section.id}>
-              {imageUrl && <div className="editorial-custom-section__image" role="img" aria-label={imageAlt} style={{ backgroundImage: `url("${imageUrl}")` }} />}
+              {imageUrl && <LazyBackground className="editorial-custom-section__image" role="img" ariaLabel={imageAlt} backgroundImage={`url("${imageUrl}")`} />}
               <div>
                 {eyebrow && <p className="editorial-eyebrow editorial-eyebrow--dark">{eyebrow}</p>}
                 {title && <h2>{title}</h2>}
@@ -336,7 +337,7 @@ export default async function HomePage() {
               <div className="editorial-collection-grid">
                 {categories.map((item, index) => (
                   <a className={"editorial-collection editorial-collection--" + (index + 1)} href={item.href} key={item.id}>
-                    <div className="editorial-collection__photo" style={{ backgroundImage: "url(\"" + item.image + "\")" }} />
+                    <LazyBackground className="editorial-collection__photo" backgroundImage={`url("${item.image}")`} />
                     <div className="editorial-collection__shade" />
                     <div className="editorial-collection__copy"><span>{item.note}</span><h3>{item.name}</h3><b>{locale.labels["home.discover"] ?? "DISCOVER"}</b></div>
                   </a>
@@ -356,7 +357,7 @@ export default async function HomePage() {
           const ctaHref = getValue(section, "ctaHref", "/shop?category=bedsheets");
           return (
             <section className="editorial-feature" key={key}>
-              {imageUrl && <div className="editorial-feature__image" role="img" aria-label={imageAlt} style={{ backgroundImage: "url(\"" + imageUrl + "\")" }} />}
+              <LazyBackground className="editorial-feature__image" role="img" ariaLabel={imageAlt} backgroundImage={imageUrl ? `url("${imageUrl}")` : 'url("https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1800&q=92")'} />
               <div className="editorial-feature__copy">
                 <p className="editorial-eyebrow"><span />{eyebrow}</p>
                 <h2>{title}</h2>
@@ -404,7 +405,7 @@ export default async function HomePage() {
         const ctaHref = getValue(section, "ctaHref", "");
         return (
           <section className="editorial-custom-section" key={key}>
-            {imageUrl && <div className="editorial-custom-section__image" role="img" aria-label={imageAlt} style={{ backgroundImage: "url(\"" + imageUrl + "\")" }} />}
+            {imageUrl && <LazyBackground className="editorial-custom-section__image" role="img" ariaLabel={imageAlt} backgroundImage={`url("${imageUrl}")`} />}
             <div>
               {eyebrow && <p className="editorial-eyebrow editorial-eyebrow--dark">{eyebrow}</p>}
               {title && <h2>{title}</h2>}

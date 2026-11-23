@@ -249,7 +249,7 @@ footer{font-size:14px}
 
 /* Split bedding campaign */
 .editorial-feature{display:grid;grid-template-columns:1.05fr .95fr;min-height:690px;background:#1b4030}
-.editorial-feature__image{min-height:690px;background-image:url('https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1800&q=92');background-size:cover;background-position:center}
+.editorial-feature__image{min-height:690px;background-size:cover;background-position:center}
 .editorial-feature__copy{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:clamp(60px,8vw,120px) 12%}
 .editorial-feature h2{font-size:clamp(58px,7vw,92px);margin:34px 0 22px}
 .editorial-feature__copy>p:not(.editorial-eyebrow){max-width:430px;font-size:18px;line-height:1.8;color:#e0e6dc;margin:0 0 33px}
