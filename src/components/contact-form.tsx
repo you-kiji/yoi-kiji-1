@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { useState, type FormEvent } from "react";
 
 type FormState = { name: string; email: string; phone: string; subject: string; message: string; website: string };
 
