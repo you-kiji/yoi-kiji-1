@@ -12,7 +12,7 @@ export async function SiteHeader() {
   }
   const roots = categories
     .filter(category => category.showInMenu)
-    .map(({ id, name, slug, imageUrl }) => ({ id, name, slug, imageUrl }));
+    .map(({ id, name, slug }) => ({ id, name, slug }));
 
   const locale = await getLocaleData();
   const [categoryTranslations, availableLocales, socialAccounts, navigationItems] = await Promise.all([
