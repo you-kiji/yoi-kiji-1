@@ -864,3 +864,296 @@ body {
 html, body, main, .site-header, .site-footer, .home-redesign {
   background-image: none !important;
 }
+
+
+/* Homepage section surfaces requested by the YOI KIJI design review.
+   White surfaces: hero/media, first product feature, gallery, second product,
+   customer reviews and journal. The warmth strip and trust band remain green. */
+.home-redesign > .editorial-hero,
+.home-redesign > .storefront-media-only,
+.home-redesign > .editorial-intro,
+.home-redesign > .editorial-collections,
+.home-redesign > .editorial-feature,
+.home-redesign > .editorial-manifesto,
+.home-redesign > .editorial-journal,
+.home-redesign > .storefront-gallery-section,
+.home-redesign > .storefront-product-pair,
+.home-redesign > .storefront-dynamic-grid.storefront-product-pair,
+.home-redesign > .storefront-living-reviews,
+.home-redesign > .storefront-dynamic-grid.storefront-journal-section,
+.home-redesign > .storefront-dynamic-grid:not(.storefront-journal-section) {
+  background-color: #ffffff !important;
+  color: #17351c !important;
+  box-shadow: none !important;
+}
+.home-redesign > .storefront-gallery-section,
+.home-redesign > .storefront-gallery-section .storefront-gallery-heading,
+.home-redesign > .storefront-gallery-section .storefront-photo-collage,
+.home-redesign > .storefront-gallery-section .storefront-photo-collage > a,
+.home-redesign > .storefront-living-reviews,
+.home-redesign > .storefront-living-reviews .storefront-living-review,
+.home-redesign > .storefront-living-reviews .storefront-living-review__copy,
+.home-redesign > .storefront-dynamic-grid.storefront-journal-section,
+.home-redesign > .storefront-dynamic-grid.storefront-journal-section .storefront-article-card {
+  background-color: #ffffff !important;
+}
+.home-redesign > .editorial-hero,
+.home-redesign > .storefront-media-only {
+  background-color: #ffffff !important;
+}
+.home-redesign > .editorial-intro,
+.home-redesign > .editorial-collections,
+.home-redesign > .editorial-feature,
+.home-redesign > .editorial-manifesto,
+.home-redesign > .editorial-journal,
+.home-redesign > .storefront-gallery-section,
+.home-redesign > .storefront-product-pair,
+.home-redesign > .storefront-living-reviews,
+.home-redesign > .storefront-dynamic-grid.storefront-journal-section,
+.home-redesign > .storefront-dynamic-grid:not(.storefront-journal-section) {
+  color: #17351c !important;
+}
+.home-redesign > .editorial-intro :where(h1,h2,h3,h4,p,span,a,small,strong),
+.home-redesign > .editorial-collections :where(h1,h2,h3,h4,p,span,a,small,strong),
+.home-redesign > .editorial-feature :where(h1,h2,h3,h4,p,span,a,small,strong),
+.home-redesign > .editorial-manifesto :where(h1,h2,h3,h4,p,span,a,small,strong),
+.home-redesign > .editorial-journal :where(h1,h2,h3,h4,p,span,a,small,strong),
+.home-redesign > .storefront-gallery-section :where(h1,h2,h3,h4,p,span,a,small,strong),
+.home-redesign > .storefront-product-pair :where(h1,h2,h3,h4,p,span,a,small,strong),
+.home-redesign > .storefront-living-reviews :where(h1,h2,h3,h4,p,span,a,small,strong),
+.home-redesign > .storefront-dynamic-grid.storefront-journal-section :where(h1,h2,h3,h4,p,span,a,small,strong),
+.home-redesign > .storefront-dynamic-grid:not(.storefront-journal-section) :where(h1,h2,h3,h4,p,span,a,small,strong) {
+  color: #17351c !important;
+}
+.home-redesign > .editorial-feature .editorial-cta,
+.home-redesign > .editorial-feature .editorial-cta--light {
+  background: #0e300e !important;
+  color: #ffffff !important;
+  border-color: #0e300e !important;
+}
+.home-redesign > .editorial-hero .editorial-hero__shade {
+  /* Preserve the hero image treatment; only the section canvas is white. */
+  background: transparent;
+}
+.home-redesign > .storefront-text-strip,
+.home-redesign > .storefront-trust-bar {
+  background-color: #0e300e !important;
+  color: #ffffff !important;
+}
+
+/* Premium YOI KIJI footer — editorial brand signature + practical mega-footer. */
+.site-footer {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin-top: clamp(36px, 5vw, 72px) !important;
+  padding: clamp(58px, 7vw, 100px) clamp(22px, 5.5vw, 84px) 26px !important;
+  background: #0e300e !important;
+  color: #f6f5ee !important;
+  border-top: 1px solid rgba(233,233,233,.18) !important;
+  box-shadow: none !important;
+}
+.site-footer::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 8% 0%, rgba(255,255,255,.055), transparent 42%);
+}
+.site-footer .footer-top {
+  position: relative;
+  display: grid !important;
+  grid-template-columns: minmax(230px, 1.55fr) repeat(3, minmax(125px, .72fr)) minmax(145px, .8fr) !important;
+  gap: clamp(24px, 3.4vw, 54px) !important;
+  width: min(100%, 1480px);
+  margin-inline: auto;
+  padding: 0 0 clamp(52px, 5.5vw, 78px) !important;
+  border-bottom: 1px solid rgba(246,245,238,.2);
+}
+.site-footer .footer-brand-copy {
+  max-width: 340px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.site-footer .footer-kicker {
+  display: block;
+  margin: 0 0 20px;
+  color: #d6c7a5 !important;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .22em;
+  line-height: 1.5;
+}
+.site-footer .footer-wordmark {
+  display: inline-block;
+  color: #ffffff !important;
+  font-size: clamp(29px, 3vw, 42px) !important;
+  font-weight: 400;
+  letter-spacing: .24em !important;
+  line-height: 1.1;
+  text-decoration: none;
+}
+.site-footer .footer-brand-copy > p {
+  max-width: 290px !important;
+  margin: 22px 0 24px !important;
+  color: rgba(246,245,238,.78) !important;
+  font-size: 13px !important;
+  line-height: 1.9 !important;
+}
+.site-footer .footer-brand-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 42px;
+  padding: 0 0 5px;
+  border-bottom: 1px solid rgba(214,199,165,.65);
+  color: #f6f5ee !important;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-decoration: none;
+  transition: gap .2s ease, color .2s ease;
+}
+.site-footer .footer-brand-cta:hover {
+  gap: 18px;
+  color: #e1d2b0 !important;
+}
+.site-footer .footer-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 13px !important;
+  min-width: 0;
+}
+.site-footer .footer-column h3 {
+  margin: 3px 0 10px !important;
+  color: #d6c7a5 !important;
+  font-size: 9px !important;
+  font-weight: 650 !important;
+  letter-spacing: .2em !important;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+.site-footer .footer-column a {
+  width: fit-content !important;
+  max-width: 100%;
+  color: rgba(246,245,238,.82) !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  line-height: 1.75 !important;
+  text-decoration: none;
+  transition: color .18s ease, transform .18s ease;
+  overflow-wrap: anywhere;
+}
+.site-footer .footer-column a:hover {
+  color: #ffffff !important;
+  transform: translateX(3px);
+}
+.site-footer .footer-social-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+.site-footer .footer-social-link {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
+  border: 1px solid rgba(246,245,238,.32) !important;
+  border-radius: 50%;
+  color: #f6f5ee !important;
+  transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+.site-footer .footer-social-link svg {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
+}
+.site-footer .footer-social-link svg .icon-cutout {
+  fill: none;
+  stroke: #0e300e;
+  stroke-width: 1.6;
+}
+.site-footer .footer-social-link:hover {
+  transform: translateY(-2px);
+  background: rgba(255,255,255,.1);
+  border-color: rgba(246,245,238,.72) !important;
+}
+.site-footer .footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px 28px;
+  width: min(100%, 1480px);
+  margin: 0 auto;
+  padding-top: 22px;
+  border-top: 0 !important;
+  color: rgba(246,245,238,.68) !important;
+  font-size: 10px !important;
+  letter-spacing: .08em !important;
+  line-height: 1.7 !important;
+}
+.site-footer .footer-bottom > span:nth-child(2) {
+  color: rgba(246,245,238,.82) !important;
+  letter-spacing: .2em;
+}
+.site-footer .footer-bottom > div {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+}
+.site-footer .footer-bottom a,
+.site-footer .footer-bottom button {
+  color: rgba(246,245,238,.8) !important;
+  font-size: 10px !important;
+  text-decoration: none;
+}
+.site-footer .footer-bottom a:hover,
+.site-footer .footer-bottom button:hover {
+  color: #ffffff !important;
+}
+.site-footer :where(a,button):focus-visible {
+  outline: 2px solid #e1d2b0 !important;
+  outline-offset: 4px !important;
+}
+@media (max-width: 1050px) {
+  .site-footer .footer-top {
+    grid-template-columns: minmax(220px, 1.4fr) repeat(2, minmax(130px, .8fr)) !important;
+    gap: 34px 26px !important;
+  }
+  .site-footer .footer-brand-copy { grid-column: 1 / -1; max-width: 480px !important; }
+}
+@media (max-width: 640px) {
+  .site-footer {
+    margin-top: 34px !important;
+    padding: 44px 20px 22px !important;
+  }
+  .site-footer .footer-top {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 34px 18px !important;
+    padding-bottom: 38px !important;
+  }
+  .site-footer .footer-brand-copy { grid-column: 1 / -1; }
+  .site-footer .footer-wordmark { font-size: 32px !important; }
+  .site-footer .footer-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .site-footer .footer-bottom > div {
+    justify-content: flex-start;
+    gap: 12px 18px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-footer .footer-brand-cta,
+  .site-footer .footer-column a,
+  .site-footer .footer-social-link { transition: none; }
+}
