@@ -7,8 +7,19 @@ async function authorised() {
   const admin = await requireAdmin();
   return admin?.role === "ADMIN" ? admin : null;
 }
+const slideSchema = z.object({
+  imageUrl: z.union([z.string().url(), z.literal("")]),
+  imageAlt: z.string().max(200).optional().default(""),
+  eyebrow: z.string().max(120).optional().default(""),
+  title: z.string().max(180).optional().default(""),
+  body: z.string().max(1000).optional().default(""),
+  ctaLabel: z.string().max(80).optional().default(""),
+  ctaHref: z.string().max(300).optional().default(""),
+});
 const sectionSchema = z.object({
   key: z.string().trim().min(2).max(60).regex(/^[a-z0-9-]+$/),
+  sectionType: z.enum(["slideshow","image-banner","rich-text","image-with-text","featured-collections","product-grid","testimonial","blog-grid","spacer"]).default("rich-text"),
+  slides: z.array(slideSchema).max(30).optional(),
   eyebrow: z.string().max(120).optional().nullable(),
   title: z.string().max(180).optional().nullable(),
   body: z.string().max(3000).optional().nullable(),

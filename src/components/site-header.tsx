@@ -15,7 +15,7 @@ export async function SiteHeader() {
     .map(({ id, name, slug }) => ({ id, name, slug }));
 
   const locale = await getLocaleData();
-  const [categoryTranslations, availableLocales] = await Promise.all([
+  const [categoryTranslations, availableLocales, socialAccounts, navigationItems] = await Promise.all([
     locale.code === "en"
       ? Promise.resolve([])
       : prisma.contentTranslation.findMany({
@@ -27,8 +27,10 @@ export async function SiteHeader() {
       select: { code: true, name: true, nativeName: true, isDefault: true, direction: true },
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
     }).catch(() => []),
+    prisma.socialAccount.findMany({where:{isActive:true,placement:{in:["header","both"]}},orderBy:{sortOrder:"asc"},select:{id:true,label:true,url:true,platform:true}}).catch(()=>[]),
+    prisma.storeNavigationItem.findMany({where:{isActive:true,location:"HEADER"},orderBy:[{sortOrder:"asc"},{createdAt:"asc"}],select:{id:true,label:true,href:true,openInNewTab:true}}).catch(()=>[]),
   ]);
   const names = new Map(categoryTranslations.map(item => [item.entityId, item.value]));
   const localizedRoots = roots.map(item => ({ ...item, name: names.get(item.id) ?? item.name }));
-  return <SiteHeaderClient categories={localizedRoots} labels={locale.labels} availableLocales={availableLocales} currentLocale={locale.code} />;
+  return <SiteHeaderClient categories={localizedRoots} labels={locale.labels} availableLocales={availableLocales} currentLocale={locale.code} socialAccounts={socialAccounts} navigationItems={navigationItems} />;
 }

@@ -20,8 +20,12 @@ export async function GET(request:NextRequest){
   return download([["Product","SKU","Stock","Variant","Variant SKU","Variant stock"],...products.flatMap(p=>p.variants.length?p.variants.map(v=>[p.name,p.sku,p.inventoryQty,v.label,v.sku,v.inventoryQty]):[[p.name,p.sku,p.inventoryQty,"","", ""]])],"yoi-kiji-inventory.csv");
  }
  if(type==="customers"){
-  const customers=await prisma.user.findMany({where:{role:"CUSTOMER"},select:{name:true,email:true,whatsappOptIn:true,createdAt:true,_count:{select:{orders:true}}},orderBy:{createdAt:"desc"},take:10000});
-  return download([["Name","Email","WhatsApp consent","Registered at","Orders"],...customers.map(c=>[c.name,c.email,c.whatsappOptIn,c.createdAt.toISOString(),c._count.orders])],"yoi-kiji-customers.csv");
+  const [customers,spend]=await Promise.all([
+   prisma.user.findMany({where:{role:"CUSTOMER"},select:{id:true,name:true,email:true,whatsappOptIn:true,createdAt:true,customerTagAssignments:{select:{tag:{select:{name:true}}}}},orderBy:{createdAt:"desc"},take:10000}),
+   prisma.order.groupBy({by:["userId"],where:{status:{in:["CONFIRMED","PROCESSING","SHIPPED","DELIVERED"]}},_sum:{totalPaise:true},_count:{_all:true},_max:{createdAt:true}})
+  ]);
+  const byUser=new Map(spend.filter(row=>row.userId).map(row=>[row.userId!,{ltv:row._sum.totalPaise??0,orders:row._count._all,last:row._max.createdAt?.toISOString()??""}]));
+  return download([["Name","Email","WhatsApp consent","Registered at","Recognised orders","Lifetime value paise","Last purchase","Customer tags"],...customers.map(c=>{const metrics=byUser.get(c.id);return [c.name,c.email,c.whatsappOptIn,c.createdAt.toISOString(),metrics?.orders??0,metrics?.ltv??0,metrics?.last??"",c.customerTagAssignments.map(a=>a.tag.name).join("; ")]})],"yoi-kiji-customers.csv");
  }
  return NextResponse.json({error:"Choose sales, products, inventory or customers report."},{status:400});
 }

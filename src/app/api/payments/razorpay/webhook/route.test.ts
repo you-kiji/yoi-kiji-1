@@ -59,6 +59,18 @@ function signedRequest(overrides: Record<string, unknown> = {}, signatureOverrid
  });
 }
 
+function refundRequest(refund: Record<string, unknown> = {}) {
+ const raw=JSON.stringify({event:"refund.processed",payload:{refund:{entity:{
+  id:"rfnd_1",payment_id:"pay_1",amount:259900,currency:"INR",...refund,
+ }}}});
+ const signature=createHmac("sha256","webhook-test").update(raw).digest("hex");
+ return new NextRequest("http://localhost/api/payments/razorpay/webhook",{
+  method:"POST",
+  headers:{"content-type":"application/json","x-razorpay-signature":signature,"x-razorpay-event-id":"evt_refund_1"},
+  body:raw,
+ });
+}
+
 describe("Razorpay webhook payment integrity", () => {
  beforeEach(() => {
   vi.clearAllMocks();

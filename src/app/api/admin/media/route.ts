@@ -9,8 +9,14 @@ function validSignature(publicId:string,version:string,signature:string,secret:s
 export async function GET(request:NextRequest){
  const admin=await authorised();if(!admin)return NextResponse.json({error:"Administrator permission required."},{status:403});
  const folderId=request.nextUrl.searchParams.get("folderId"),q=request.nextUrl.searchParams.get("q")?.trim().slice(0,100),type=request.nextUrl.searchParams.get("type");
- const assets=await prisma.mediaAsset.findMany({where:{...(folderId==="root"?{folderId:null}:folderId?{folderId}:{}),...(type&&["IMAGE","VIDEO","RAW"].includes(type)?{resourceType:type as "IMAGE"|"VIDEO"|"RAW"}:{}),...(q?{OR:[{title:{contains:q,mode:"insensitive"}},{originalFilename:{contains:q,mode:"insensitive"}},{altText:{contains:q,mode:"insensitive"}},{tags:{has:q}}]}:{})},include:{folder:{select:{id:true,name:true}}},orderBy:{createdAt:"desc"},take:100});
- const folders=await prisma.mediaFolder.findMany({orderBy:{name:"asc"},include:{_count:{select:{assets:true}}}});return NextResponse.json({assets,folders});
+ const page=Math.max(1,Math.min(10000,Number(request.nextUrl.searchParams.get("page"))||1)),pageSize=40;
+ const where={...(folderId==="root"?{folderId:null}:folderId?{folderId}:{}),...(type&&["IMAGE","VIDEO","RAW"].includes(type)?{resourceType:type as "IMAGE"|"VIDEO"|"RAW"}:{}),...(q?{OR:[{title:{contains:q,mode:"insensitive" as const}},{originalFilename:{contains:q,mode:"insensitive" as const}},{altText:{contains:q,mode:"insensitive" as const}},{tags:{has:q}}]}:{})};
+ const [assets,total,folders]=await Promise.all([
+  prisma.mediaAsset.findMany({where,include:{folder:{select:{id:true,name:true}}},orderBy:{createdAt:"desc"},skip:(page-1)*pageSize,take:pageSize}),
+  prisma.mediaAsset.count({where}),
+  prisma.mediaFolder.findMany({orderBy:{name:"asc"},include:{_count:{select:{assets:true}}}})
+ ]);
+ return NextResponse.json({assets,total,page,pageSize,totalPages:Math.max(1,Math.ceil(total/pageSize)),folders});
 }
 export async function POST(request:NextRequest){
  const admin=await authorised();if(!admin)return NextResponse.json({error:"Administrator permission required."},{status:403});
