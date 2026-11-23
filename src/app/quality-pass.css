@@ -1438,8 +1438,8 @@ html, body, main, .site-header, .site-footer, .home-redesign {
 
 /* Fuller footer navigation and true edge-to-edge lower rule. */
 .site-footer .footer-top {
-  grid-template-columns:minmax(175px,1.3fr) repeat(6,minmax(0,1fr)) !important;
-  gap:clamp(12px,1.7vw,24px) !important;
+  grid-template-columns:minmax(175px,1.3fr) repeat(5,minmax(0,1fr)) !important;
+  gap:clamp(16px,2vw,28px) !important;
 }
 .site-footer .footer-column {
   min-height:190px;
@@ -1485,4 +1485,26 @@ html, body, main, .site-header, .site-footer, .home-redesign {
     margin-right:-18px !important;
     padding:18px 18px 0 !important;
   }
+}
+
+
+/* Footer social links are populated from the admin-managed SocialAccount records. */
+.site-footer .footer-social-column { min-width:0; }
+.site-footer .footer-social-list {
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px;
+  max-width:180px; margin-top:2px;
+}
+.site-footer .footer-social-link {
+  display:grid !important; place-items:center; flex:0 0 36px;
+  width:36px !important; height:36px !important; padding:8px !important;
+  border:1px solid rgba(241,240,232,.38) !important; border-radius:50%;
+  color:#f1f0e8 !important; background:rgba(241,240,232,.035) !important;
+  transition:color .18s ease,border-color .18s ease,transform .18s ease;
+}
+.site-footer .footer-social-link svg { display:block; width:17px; height:17px; fill:currentColor; }
+.site-footer .footer-social-link .icon-cutout { fill:none; stroke:#0a260b; stroke-width:1.7; }
+.site-footer .footer-social-link:hover { color:#d4b783 !important; border-color:#d4b783 !important; transform:translateY(-2px); }
+.site-footer .footer-social-empty {
+  max-width:190px; margin:0; color:rgba(241,240,232,.54);
+  font-size:10px; line-height:1.7;
 }

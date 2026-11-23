@@ -40,7 +40,7 @@ export async function SiteFooter() {
         </div>
         <nav className="footer-column" aria-label="Explore YOI KIJI">
           <h3>Explore</h3>
-          {navigationItems.length ? navigationItems.map(item => <Link href={item.href} key={item.id} target={item.openInNewTab ? "_blank" : undefined} rel={item.openInNewTab ? "noopener noreferrer" : undefined}>{item.label}</Link>) : <><Link href="/">Home</Link><Link href="/shop">All Collections</Link><Link href="/journal">Journal</Link><Link href="/our-story">Our Story</Link></>}
+          {navigationItems.length ? navigationItems.map(item => <Link href={item.href} key={item.id} target={item.openInNewTab ? "_blank" : undefined} rel={item.openInNewTab ? "noopener noreferrer" : undefined}>{item.href === "/our-story" ? "YOI KIJI Story" : item.label}</Link>) : <><Link href="/">Home</Link><Link href="/shop">All Collections</Link><Link href="/journal">Journal</Link><Link href="/our-story">YOI KIJI Story</Link></>}
         </nav>
         <nav className="footer-column" aria-label="Shop categories">
           <h3>Shop</h3>
@@ -61,14 +61,11 @@ export async function SiteFooter() {
           <Link href="/cancellation">Cancellation Policy</Link>
           <Link href="/account/orders">Track Your Order</Link>
         </nav>
-        <nav className="footer-column" aria-label="Customer care and policies">
-          <h3>Customer Care</h3>
-          {legalPages.map(page => <Link href={"/legal/" + page.slug} key={page.id}>{legalNames.get(page.id) ?? page.title}</Link>)}
-        </nav>
         <div className="footer-column footer-social-column">
           <h3>Follow YOI KIJI</h3>
           <div className="footer-social-list">
             {socialAccounts.map(account => <a className="footer-social-link" href={account.url} key={account.id} target="_blank" rel="noopener noreferrer" aria-label={account.label} title={account.label}><SocialIcon platform={account.platform}/></a>)}
+            {!socialAccounts.length && <p className="footer-social-empty">Add your social profile links in Admin → Storefront to display the follow icons here.</p>}
           </div>
         </div>
       </div>

@@ -14,6 +14,6 @@ export function SocialAccountManager(){
  <label className="wide">Profile URL<input required type="url" value={url} onChange={e=>setUrl(e.target.value)} placeholder="https://…"/></label>
  <label>Placement<select value={placement} onChange={e=>setPlacement(e.target.value)}><option value="header">Header</option><option value="footer">Footer</option><option value="both">Header and footer</option></select></label>
  <button disabled={busy}>{busy?"Saving…":"Add social account"}</button></form>
- <div className="admin-content-list">{items.map(item=><article key={item.id}><div><strong>{item.label} · {item.platform}</strong><p>{item.url}</p><small>{item.placement} · {item.isActive?"Enabled":"Disabled"}</small></div>{item.isActive&&<button type="button" onClick={()=>void hide(item.id)}>Disable</button>}</article>)}</div>
+ <div className="admin-content-list">{items.length ? items.map(item=><article key={item.id}><div><strong>{item.label} · {item.platform}</strong><p>{item.url}</p><small>{item.placement} · {item.isActive?"Enabled":"Disabled"}</small></div>{item.isActive&&<button type="button" onClick={()=>void hide(item.id)}>Disable</button>}</article>) : <p className="admin-feedback">No social profiles added yet. Add Instagram, Facebook, Pinterest, YouTube or another profile above. Active accounts assigned to Footer or Header and footer appear as clickable icons on the storefront.</p>}</div>
  {message&&<p role="status" className="admin-feedback">{message}</p>}</section>;
 }
