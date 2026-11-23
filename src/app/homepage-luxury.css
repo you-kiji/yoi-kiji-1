@@ -1,3 +1,16 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Serif+JP:wght@400;500&display=swap');
+.editorial-hero__actions { display:flex; flex-wrap:wrap; align-items:center; gap:24px; }
+.editorial-hero__actions .editorial-cta { display:inline-flex; align-items:center; gap:22px; }
+.editorial-hero__secondary { min-height:46px; display:inline-flex; align-items:center; gap:16px; padding:0 4px; border-bottom:1px solid rgba(255,250,243,.62); color:#fffaf3!important; font-size:9px!important; letter-spacing:.16em!important; text-transform:uppercase; transition:opacity .25s,border-color .25s; }
+.editorial-hero__secondary:hover { opacity:.72; border-color:#fffaf3; }
+.site-header .locale-switcher__trigger { min-width:52px!important; padding-inline:10px!important; border:0!important; background:transparent!important; color:var(--yk-charcoal)!important; font-size:10px!important; letter-spacing:.12em!important; }
+.site-header .locale-switcher__code { width:auto!important; height:auto!important; background:transparent!important; color:var(--yk-charcoal)!important; font-size:10px!important; }
+.site-header .locale-switcher__native { display:none!important; }
+.site-header .locale-switcher__menu { background:var(--yk-ivory)!important; border:1px solid var(--yk-line)!important; border-radius:0!important; box-shadow:0 12px 30px rgba(43,43,43,.1)!important; }
+.site-header .locale-switcher__option { color:var(--yk-charcoal)!important; }
+.site-header .locale-switcher__option:hover,.site-header .locale-switcher__option[aria-current="true"] { background:var(--yk-beige)!important; color:var(--yk-charcoal)!important; }
+@media(max-width:640px){.editorial-hero__actions{align-items:flex-start;flex-direction:column;gap:14px}.editorial-hero__secondary{min-height:42px}}
 /* YOI KIJI — Japanese minimal luxury homepage system. UI-only; all CMS content/data remains untouched. */
 :root {
   --yk-ivory:#FAF7F2; --yk-beige:#EDE6DC; --yk-sand:#D8C9B7;
