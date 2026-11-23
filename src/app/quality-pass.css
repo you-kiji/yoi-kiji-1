@@ -864,3 +864,22 @@ body {
 html, body, main, .site-header, .site-footer, .home-redesign {
   background-image: none !important;
 }
+
+
+/* Lazy-loaded image banner background layer */
+.home-redesign .storefront-image-banner {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.storefront-image-banner__background {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+.storefront-image-banner__content {
+  position: relative;
+  z-index: 1;
+}
