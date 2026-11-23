@@ -48,7 +48,6 @@ export async function SiteFooter() {
         <nav className="footer-column" aria-label="Customer care and policies">
           <h3>Customer Care</h3>
           {legalPages.map(page => <Link href={"/legal/" + page.slug} key={page.id}>{legalNames.get(page.id) ?? page.title}</Link>)}
-          <Link href="/contact">{locale.labels["footer.contact"] ?? "Contact"}</Link>
         </nav>
         <div className="footer-column footer-social-column">
           <h3>Follow YOI KIJI</h3>
