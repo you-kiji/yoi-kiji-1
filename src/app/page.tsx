@@ -180,13 +180,15 @@ export default async function HomePage() {
             <section className="storefront-dynamic-grid storefront-journal-section" key={section.id}>
               <div className="editorial-section-heading">
                 <div><h2>{section.title || "IDEAS of YOI KIJI"}</h2></div>
-                <a className="editorial-text-link" href={section.ctaHref || "/journal"}>{section.ctaLabel || "View All"}</a>
               </div>
               <div className="storefront-article-grid">
                 {recentArticles.slice(0,3).map((article,index)=><a className="storefront-article-card" href={"/journal/"+article.slug} key={article.id}>
                   <div className="storefront-article-card__image">{article.coverImageUrl&&<img src={article.coverImageUrl} alt={article.coverImageAlt||article.title} loading="lazy"/>}<span>0{index+1}</span></div>
                   <div className="storefront-article-card__copy"><h3>{article.title}</h3>{article.excerpt&&<p>{article.excerpt}</p>}<span className="storefront-article-card__read">READ STORY</span></div>
                 </a>)}
+              </div>
+              <div className="storefront-living-reviews__actions storefront-journal__actions">
+                <a href={section.ctaHref || "/journal"} className="storefront-living-reviews__view-all">{section.ctaLabel || "VIEW ALL STORIES"}</a>
               </div>
             </section>
           );
