@@ -102,7 +102,7 @@ export default async function HomePage() {
             <section className="storefront-media-only" key={section.id} aria-label="Homepage media">
               {mediaType === "video"
                 ? <video autoPlay muted loop playsInline preload="metadata"><source src={mediaUrl} /></video>
-                : <img src={mediaUrl} alt="" loading="lazy" />}
+                : <img src={mediaUrl} alt="" loading="eager" fetchPriority="high" decoding="async" />}
             </section>
           );
         }
@@ -111,8 +111,8 @@ export default async function HomePage() {
           return <section className="storefront-gallery-section" aria-label={section.title || "YOI KIJI Gallery"} key={section.id}>
             <div className="storefront-gallery-heading"><h2>{section.title || "Gallery"}</h2></div>
             <div className="storefront-photo-collage">
-              {slides.slice(0,8).map((slide,index)=><a href={slide.ctaHref || "/shop"} key={index} aria-label={slide.imageAlt || slide.title || `YOI KIJI image ${index+1}`}>
-                {slide.imageUrl && <img src={slide.imageUrl} alt={slide.imageAlt || slide.title || "YOI KIJI home textiles"} loading="lazy" />}
+              {slides.filter((slide)=>Boolean(slide.imageUrl)).slice(0,8).map((slide,index)=><a href={slide.ctaHref || "/shop"} key={slide.imageUrl} aria-label={slide.imageAlt || slide.title || `YOI KIJI image ${index+1}`}>
+                <img src={slide.imageUrl} alt={slide.imageAlt || slide.title || "YOI KIJI home textiles"} loading="lazy" decoding="async" />
               </a>)}
             </div>
           </section>;
