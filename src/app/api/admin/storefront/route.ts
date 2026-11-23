@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
@@ -67,7 +68,13 @@ export async function POST(request: NextRequest) {
     const parsed = sectionSchema.safeParse(body.data);
     if (!parsed.success) return NextResponse.json({ error: "Invalid homepage section.", details: parsed.error.flatten() }, { status: 400 });
     try {
-      const section = await prisma.homepageSection.create({ data: parsed.data });
+      const data = {
+        ...parsed.data,
+        ...(parsed.data.settings !== undefined
+          ? { settings: parsed.data.settings as Prisma.InputJsonValue }
+          : {}),
+      };
+      const section = await prisma.homepageSection.create({ data });
       return NextResponse.json({ section }, { status: 201 });
     } catch {
       return NextResponse.json({ error: "That section key already exists." }, { status: 409 });
@@ -100,7 +107,13 @@ export async function PATCH(request: NextRequest) {
     const parsed = sectionSchema.partial().safeParse(body.data);
     if (!parsed.success) return NextResponse.json({ error: "Invalid homepage section.", details: parsed.error.flatten() }, { status: 400 });
     try {
-      const section = await prisma.homepageSection.update({ where: { id: body.id }, data: parsed.data });
+      const data = {
+        ...parsed.data,
+        ...(parsed.data.settings !== undefined
+          ? { settings: parsed.data.settings as Prisma.InputJsonValue }
+          : {}),
+      };
+      const section = await prisma.homepageSection.update({ where: { id: body.id }, data });
       return NextResponse.json({ section });
     } catch {
       return NextResponse.json({ error: "Section not found or its key is already in use." }, { status: 404 });
