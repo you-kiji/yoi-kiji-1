@@ -14,12 +14,13 @@ function paragraphs(value: string) {
 export default async function HomePage() {
   const locale = await getLocaleData();
   const localeCode = locale.code;
-  const [allSections, collectionRecords, categoryRecords, featuredProducts, recentArticles] = await Promise.all([
+  const [allSections, collectionRecords, categoryRecords, featuredProducts, recentArticles, approvedReviews] = await Promise.all([
     prisma.homepageSection.findMany({ orderBy: [{ position: "asc" }, { key: "asc" }] }).catch(() => []),
     prisma.storeCollection.findMany({ where: { isActive: true }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] }).catch(() => []),
     getActiveCategories(),
     prisma.product.findMany({where:{isActive:true},select:{id:true,name:true,slug:true,pricePaise:true,images:{where:{isPrimary:true},take:1,select:{url:true,alt:true}}},orderBy:{updatedAt:"desc"},take:8}).catch(()=>[]),
     prisma.blogPost.findMany({where:{status:"PUBLISHED",noIndex:false},select:{id:true,title:true,slug:true,excerpt:true,coverImageUrl:true,coverImageAlt:true,publishedAt:true},orderBy:{publishedAt:"desc"},take:3}).catch(()=>[]),
+    prisma.review.findMany({where:{status:"APPROVED"},select:{id:true,rating:true,title:true,body:true,verifiedPurchase:true,user:{select:{name:true}}},orderBy:{createdAt:"desc"},take:6}).catch(()=>[]),
   ]);
 
   const rootCategories = categoryRecords.filter((category) => category.parentId === null);
@@ -84,6 +85,45 @@ export default async function HomePage() {
   return (
     <main className="home-redesign">
       {homepageItems.map(({ key, section }) => {
+        const settings = section.settings && typeof section.settings === "object" && !Array.isArray(section.settings)
+          ? section.settings as Record<string, unknown>
+          : {};
+        const slides = Array.isArray(section.slides) ? section.slides as Array<{imageUrl?:string;imageAlt?:string;title?:string;body?:string;eyebrow?:string;ctaHref?:string}> : [];
+
+        if (section.sectionType === "hero-video" || key === "hero") {
+          const videoUrl = typeof settings.videoUrl === "string" ? settings.videoUrl : "";
+          const mediaUrl = videoUrl || section.imageUrl || "";
+          const isVideo = /\\.(mp4|webm|ogg)(?:$|[?#])/i.test(mediaUrl);
+          return (
+            <section className="storefront-hero-video" key={section.id} aria-label="YOI KIJI introduction">
+              {isVideo ? <video autoPlay muted loop playsInline preload="metadata" poster={typeof settings.posterUrl === "string" ? settings.posterUrl : undefined}><source src={mediaUrl} /></video> : mediaUrl ? <div className="storefront-hero-video__image" style={{backgroundImage:`url("${mediaUrl}")`,backgroundSize:"cover",backgroundPosition:"center"}}/> : null}
+              {(section.title || section.body || section.ctaLabel) && <div className="storefront-hero-video__content">
+                {section.eyebrow && <p className="editorial-eyebrow">{section.eyebrow}</p>}
+                {section.title && <h1>{section.title}</h1>}
+                {section.body && <p>{section.body}</p>}
+                {section.ctaLabel && section.ctaHref && <a className="editorial-cta" href={section.ctaHref}>{section.ctaLabel}</a>}
+              </div>}
+            </section>
+          );
+        }
+
+        if (section.sectionType === "photo-collage") {
+          return <section className="storefront-photo-collage" aria-label={section.title || "YOI KIJI moments"} key={section.id}>
+            {slides.slice(0,8).map((slide,index)=><a href={slide.ctaHref || "/shop"} key={index} aria-label={slide.imageAlt || slide.title || `YOI KIJI image ${index+1}`}>
+              {slide.imageUrl && <img src={slide.imageUrl} alt={slide.imageAlt || slide.title || "YOI KIJI home textiles"} loading="lazy" />}
+            </a>)}
+          </section>;
+        }
+
+        if (section.sectionType === "text-strip") {
+          return <section className="storefront-text-strip" key={section.id}><h2>{section.title || section.body || "Feel the warmth of Home"}</h2></section>;
+        }
+
+        if (section.sectionType === "trust-bar") {
+          const trustItems = slides.length ? slides.slice(0,4).map(item=>item.title || item.body || item.eyebrow || "") : ["1 Lakh+ Happy Customers","Easy Exchange and Return","Secure Payment","100% Cotton"];
+          return <section className="storefront-trust-bar" aria-label="YOI KIJI promises" key={section.id}>{trustItems.map((item,index)=><div key={index}>{item}</div>)}</section>;
+        }
+
         if (section.sectionType === "product-grid") {
           return (
             <section className="storefront-dynamic-grid" key={section.id}>
@@ -107,7 +147,7 @@ export default async function HomePage() {
           return (
             <section className="storefront-dynamic-grid" key={section.id}>
               <div className="editorial-section-heading"><div><p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow || "JOURNAL"}</p><h2>{section.title || "Notes for living well"}</h2></div>{section.ctaHref && <a className="editorial-text-link" href={section.ctaHref}>{section.ctaLabel || "Read all"}</a>}</div>
-              <div className="storefront-article-grid">{recentArticles.map(article=><a className="storefront-article-card" href={"/journal/"+article.slug} key={article.id}>{article.coverImageUrl&&<img src={article.coverImageUrl} alt={article.coverImageAlt||article.title} loading="lazy"/>}<h3>{article.title}</h3>{article.excerpt&&<p>{article.excerpt}</p>}</a>)}</div>
+              <div className="storefront-article-grid">{recentArticles.slice(0,3).map(article=><a className="storefront-article-card" href={"/journal/"+article.slug} key={article.id}>{article.coverImageUrl&&<img src={article.coverImageUrl} alt={article.coverImageAlt||article.title} loading="lazy"/>}<h3>{article.title}</h3>{article.excerpt&&<p>{article.excerpt}</p>}</a>)}</div>
             </section>
           );
         }
