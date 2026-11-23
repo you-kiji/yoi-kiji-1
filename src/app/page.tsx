@@ -125,7 +125,13 @@ export default async function HomePage() {
         if (section.sectionType === "trust-bar") {
           const defaults=[{title:"1 Lakh+",body:"Happy Customers"},{title:"Easy Exchange and Return",body:""},{title:"Secure Payment",body:""},{title:"100% Cotton",body:""}];
           const items=slides.length?defaults.map((fallback,index)=>({title:slides[index]?.title||fallback.title,body:slides[index]?.body||fallback.body})):defaults;
-          return <section className="storefront-trust-bar" aria-label="YOI KIJI promises" key={section.id}>{items.map((item,index)=><div key={index}><strong>{item.title}</strong>{item.body&&<span>{item.body}</span>}</div>)}</section>;
+          const icons=[
+            <><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/><path d="M9 12h6M12 9v6"/></>,
+            <><path d="M3 7h13v11H3zM16 11h3l2 3v4h-5"/><circle cx="7.5" cy="18" r="1.8"/><circle cx="18.5" cy="18" r="1.8"/><path d="m7 11 2 2 4-4"/></>,
+            <><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></>,
+            <><path d="M12 3 19 6v5c0 4.5-3 7.8-7 10-4-2.2-7-5.5-7-10V6z"/><path d="m8.5 12 2.2 2.2 4.8-4.8"/></>
+          ];
+          return <section className="storefront-trust-bar" aria-label="YOI KIJI promises" key={section.id}>{items.map((item,index)=><div key={index}><svg className="storefront-trust-icon" viewBox="0 0 24 24" aria-hidden="true">{icons[index]}</svg><strong>{item.title}</strong>{item.body&&<span>{item.body}</span>}</div>)}</section>;
         }
 
         if (section.sectionType === "product-grid") {
