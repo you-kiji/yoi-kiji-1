@@ -34,8 +34,10 @@ export async function SiteFooter() {
     <footer className="site-footer">
       <div className="footer-top">
         <div className="footer-brand-copy">
+          <span className="footer-kicker">THE ART OF TEXTILE LIVING</span>
           <Link className="wordmark footer-wordmark" href="/">YOI KIJI</Link>
           <p>Textiles for the way you live. Thoughtfully considered home textiles for everyday comfort.</p>
+          <Link className="footer-brand-cta" href="/shop">Explore the collection <span aria-hidden="true">↗</span></Link>
         </div>
         <nav className="footer-column" aria-label="Explore YOI KIJI">
           <h3>Explore</h3>
