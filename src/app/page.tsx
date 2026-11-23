@@ -93,7 +93,8 @@ export default async function HomePage() {
         if (section.sectionType === "hero-video" || key === "hero") {
           const videoUrl = typeof settings.videoUrl === "string" ? settings.videoUrl : "";
           const mediaUrl = videoUrl || section.imageUrl || "";
-          const isVideo = /\\.(mp4|webm|ogg)(?:$|[?#])/i.test(mediaUrl);
+          const lowerMediaUrl = mediaUrl.toLowerCase();
+          const isVideo = [".mp4", ".webm", ".ogg"].some((extension) => lowerMediaUrl.includes(extension));
           return (
             <section className="storefront-hero-video" key={section.id} aria-label="YOI KIJI introduction">
               {isVideo ? <video autoPlay muted loop playsInline preload="metadata" poster={typeof settings.posterUrl === "string" ? settings.posterUrl : undefined}><source src={mediaUrl} /></video> : mediaUrl ? <div className="storefront-hero-video__image" style={{backgroundImage:`url("${mediaUrl}")`,backgroundSize:"cover",backgroundPosition:"center"}}/> : null}
