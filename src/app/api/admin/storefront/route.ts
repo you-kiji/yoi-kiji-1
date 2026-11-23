@@ -18,7 +18,8 @@ const slideSchema = z.object({
 });
 const sectionSchema = z.object({
   key: z.string().trim().min(2).max(60).regex(/^[a-z0-9-]+$/),
-  sectionType: z.enum(["slideshow","image-banner","rich-text","image-with-text","featured-collections","product-grid","testimonial","blog-grid","spacer"]).default("rich-text"),
+  sectionType: z.enum(["slideshow","image-banner","rich-text","image-with-text","featured-collections","product-grid","testimonial","blog-grid","spacer","hero-video","photo-collage","text-strip","trust-bar"]).default("rich-text"),
+  settings: z.record(z.string(), z.unknown()).optional().nullable(),
   slides: z.array(slideSchema).max(30).optional(),
   eyebrow: z.string().max(120).optional().nullable(),
   title: z.string().max(180).optional().nullable(),
