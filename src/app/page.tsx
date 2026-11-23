@@ -357,7 +357,7 @@ export default async function HomePage() {
           const ctaHref = getValue(section, "ctaHref", "/shop?category=bedsheets");
           return (
             <section className="editorial-feature" key={key}>
-              {imageUrl && <LazyBackground className="editorial-feature__image" role="img" ariaLabel={imageAlt} backgroundImage={`url("${imageUrl}")`} />}
+              <LazyBackground className="editorial-feature__image" role="img" ariaLabel={imageAlt} backgroundImage={imageUrl ? `url("${imageUrl}")` : 'url("https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1800&q=92")'} />
               <div className="editorial-feature__copy">
                 <p className="editorial-eyebrow"><span />{eyebrow}</p>
                 <h2>{title}</h2>
