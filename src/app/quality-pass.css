@@ -734,3 +734,133 @@
   .site-footer .footer-column a { font-size: 11px !important; }
   .site-footer .footer-bottom { gap: 12px 18px !important; }
 }
+
+
+/* YOI KIJI — unified single-colour canvas.
+   All page and section surfaces use the exact same deep green. Photography and
+   product imagery remain intact; text stays light for accessible contrast. */
+:root {
+  --yk-deep-green: #0e300e;
+  --yk-page-bg: #0e300e;
+}
+html,
+body,
+body > div,
+#__next,
+main,
+.site-header,
+.site-footer,
+.home-redesign,
+.commerce-page,
+.journal-page,
+.journal-article-page,
+.product-detail-page,
+.account-page,
+.account-panel,
+.auth-panel,
+.admin-shell,
+.admin-main,
+.admin-content,
+.admin-content-panel {
+  background-color: #0e300e !important;
+}
+body {
+  background: #0e300e !important;
+  color: #f1f0e8;
+}
+
+/* One uninterrupted background across every homepage section and content panel. */
+.home-redesign > *,
+.home-redesign section,
+.home-redesign article,
+.home-redesign aside,
+.home-redesign .editorial-intro,
+.home-redesign .editorial-collections,
+.home-redesign .editorial-feature__copy,
+.home-redesign .editorial-manifesto,
+.home-redesign .editorial-journal,
+.home-redesign .storefront-image-banner,
+.home-redesign .storefront-image-with-text,
+.home-redesign .storefront-dynamic-grid,
+.home-redesign .storefront-testimonials,
+.home-redesign .storefront-product-grid,
+.home-redesign .storefront-article-grid,
+.home-redesign .storefront-gallery-section,
+.home-redesign .storefront-living-reviews,
+.home-redesign .storefront-journal-section,
+.home-redesign .storefront-media-only,
+.home-redesign .storefront-text-strip,
+.home-redesign .storefront-trust-bar,
+.home-redesign [class*="card"],
+.home-redesign [class*="panel"],
+.home-redesign [class*="section"],
+.home-redesign [class*="strip"] {
+  background-color: #0e300e !important;
+  box-shadow: none !important;
+}
+
+/* Keep image assets visible while eliminating coloured image-frame surfaces. */
+.home-redesign img,
+.home-redesign picture,
+.home-redesign video,
+.home-redesign .editorial-collection,
+.home-redesign .editorial-feature__image,
+.home-redesign .storefront-photo-collage,
+.home-redesign .storefront-article-card__image,
+.home-redesign .storefront-living-review__photo {
+  background-color: #0e300e !important;
+}
+
+/* Formerly distinct green bands now blend into the same page canvas. */
+.home-redesign > .storefront-text-strip,
+.home-redesign > .storefront-trust-bar,
+.site-footer {
+  background: #0e300e !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Remove decorative gold/alternate colour accents from the page chrome. */
+.site-footer .footer-column h3,
+.site-footer .footer-column a:hover,
+.site-footer .footer-social-link:hover,
+.site-footer .footer-wordmark,
+.site-footer .footer-bottom,
+.site-footer .footer-bottom a,
+.site-footer .footer-bottom button {
+  color: #f1f0e8 !important;
+}
+.site-footer .footer-social-link,
+.site-footer .footer-column a,
+.site-footer .footer-bottom {
+  border-color: rgba(241,240,232,.22) !important;
+}
+.home-redesign > .storefront-trust-bar > div {
+  border-right-color: rgba(241,240,232,.18) !important;
+}
+.home-redesign > .storefront-trust-bar .storefront-trust-icon {
+  color: #f1f0e8 !important;
+}
+
+/* Keep readable foreground contrast on the unified dark-green surface. */
+.home-redesign,
+.home-redesign :where(h1,h2,h3,h4,p,span,small,a,li,strong,em),
+.site-footer,
+.site-footer :where(h1,h2,h3,h4,p,span,small,a,li,strong,em) {
+  color: #f1f0e8;
+}
+.home-redesign a:hover,
+.site-footer a:hover {
+  color: #ffffff !important;
+}
+.site-footer .footer-top {
+  border-color: rgba(241,240,232,.18) !important;
+}
+.site-footer .footer-bottom {
+  border-top-color: rgba(241,240,232,.18) !important;
+}
+
+/* Mobile and desktop retain identical background colour with no gradient. */
+html, body, main, .site-header, .site-footer, .home-redesign {
+  background-image: none !important;
+}
