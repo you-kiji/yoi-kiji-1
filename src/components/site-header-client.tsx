@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { CartCount } from "@/components/cart-count";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 
-type Category = { id: string; name: string; slug: string };
+type Category = { id: string; name: string; slug: string; imageUrl?: string | null };
 type Labels = Record<string,string>;
 type Locale = { code:string; name:string; nativeName:string; isDefault:boolean; direction:string };
 type SocialAccount = {id:string;label:string;url:string;platform:string};
@@ -89,7 +89,7 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
             <Link href="/shop" onClick={closeAll}>{text("header.product","Product")}</Link>
             {categories.map(category => (
               <Link key={category.id} href={`/shop?category=${encodeURIComponent(category.slug)}`} onClick={closeAll}>
-                {category.name}
+                <span className="header-collection-preview">{category.imageUrl ? <img src={category.imageUrl} alt="" loading="lazy" /> : null}<span>{category.name}</span></span>
               </Link>
             ))}
           </div>
