@@ -634,3 +634,9 @@ footer{font-size:14px}
  .storefront-trust-bar>div:nth-child(-n+2){border-bottom:1px solid #c9d0c5}
 }
 @media(max-width:420px){.shop-filter-form{grid-template-columns:1fr}.shop-filter-form label:first-child{grid-column:auto}.storefront-product-pair .storefront-product-grid{gap:10px}.storefront-product-pair .storefront-product-card__name{font-size:13px}}
+
+
+/* Reusable homepage media-only block: image OR video, never copy or overlays. */
+.storefront-media-only{position:relative;width:100%;height:min(78vh,820px);min-height:420px;overflow:hidden;background:#e9e9e9}
+.storefront-media-only>img,.storefront-media-only>video{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+@media(max-width:700px){.storefront-media-only{height:62vh;min-height:300px;max-height:620px}}
