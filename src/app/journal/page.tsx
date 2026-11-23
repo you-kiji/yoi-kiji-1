@@ -9,12 +9,16 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: locale.labels["seo.journalTitle"] ?? "Journal", description: locale.labels["seo.journalDescription"] ?? "Care guides, textile stories and considered ideas for making everyday spaces feel like home.", alternates: { canonical: "/journal" } };
 }
 
-type SearchParams = Promise<{ category?: string; tag?: string }>;
+type SearchParams = Promise<{ category?: string; tag?: string; page?: string }>;
+
+const PAGE_SIZE = 9;
 
 export default async function JournalPage({ searchParams }: { searchParams: SearchParams }) {
   const filters = await searchParams;
   const category = filters.category?.trim();
   const tag = filters.tag?.trim();
+  const requestedPage = Number.parseInt(filters.page ?? "1", 10);
+  const currentPage = Number.isFinite(requestedPage) ? Math.max(1, requestedPage) : 1;
   const now = new Date();
   const where = {
     status: "PUBLISHED" as const,
@@ -23,21 +27,25 @@ export default async function JournalPage({ searchParams }: { searchParams: Sear
     ...(category ? { categories: { some: { category: { slug: category } } } } : {}),
     ...(tag ? { tags: { some: { tag: { slug: tag } } } } : {}),
   };
-  const [posts, categories, tags] = await Promise.all([
-    prisma.blogPost.findMany({
-      where,
-      select: {
-        id: true, title: true, slug: true, excerpt: true, coverImageUrl: true,
-        coverImageAlt: true, publishedAt: true,
-        author: { select: { name: true } },
-        categories: { include: { category: { select: { id: true, name: true, slug: true } } } },
-      },
-      orderBy: [{ publishedAt: "desc" }, { id: "desc" }],
-      take: 48,
-    }).catch(() => []),
+  const [totalPosts, categories, tags] = await Promise.all([
+    prisma.blogPost.count({ where }).catch(() => 0),
     prisma.blogCategory.findMany({ where: { posts: { some: { post: { status: "PUBLISHED", publishedAt: { lte: now }, noIndex: false } } } }, orderBy: { name: "asc" } }).catch(() => []),
     prisma.blogTag.findMany({ where: { posts: { some: { post: { status: "PUBLISHED", publishedAt: { lte: now }, noIndex: false } } } }, orderBy: { name: "asc" } }).catch(() => []),
   ]);
+  const totalPages = Math.max(1, Math.ceil(totalPosts / PAGE_SIZE));
+  const page = Math.min(currentPage, totalPages);
+  const posts = await prisma.blogPost.findMany({
+    where,
+    select: {
+      id: true, title: true, slug: true, excerpt: true, coverImageUrl: true,
+      coverImageAlt: true, publishedAt: true,
+      author: { select: { name: true } },
+      categories: { include: { category: { select: { id: true, name: true, slug: true } } } },
+    },
+    orderBy: [{ publishedAt: "desc" }, { id: "desc" }],
+    skip: (page - 1) * PAGE_SIZE,
+    take: PAGE_SIZE,
+  }).catch(() => []);
   const locale = await getLocaleData();
   const t = (key: string, fallback: string) => locale.labels[key] ?? fallback;
   const translationTargets = [
@@ -59,6 +67,14 @@ export default async function JournalPage({ searchParams }: { searchParams: Sear
   const localizedCategories = categories.map(item => ({ ...item, name: localized.get(`blogCategory:${item.id}:name`) ?? item.name }));
   const localizedTags = tags.map(item => ({ ...item, name: localized.get(`blogTag:${item.id}:name`) ?? item.name }));
   const selectedLabel = category ? localizedCategories.find(item => item.slug === category)?.name : tag ? localizedTags.find(item => item.slug === tag)?.name : null;
+  const paginationHref = (targetPage: number) => {
+    const query = new URLSearchParams();
+    if (category) query.set("category", category);
+    if (tag) query.set("tag", tag);
+    if (targetPage > 1) query.set("page", String(targetPage));
+    const value = query.toString();
+    return value ? "/journal?" + value : "/journal";
+  };
 
   return <main className="journal-page">
     <div className="commerce-breadcrumb"><Link href="/">Home</Link><span>/</span> {t("common.journal","Journal")}</div>
@@ -74,7 +90,7 @@ export default async function JournalPage({ searchParams }: { searchParams: Sear
     </nav>
     <div className="journal-results-heading">
       <h2>{selectedLabel ? t("journal.stories","Stories: ") + selectedLabel : t("journal.heading","The journal")}</h2>
-      <span>{posts.length} {posts.length === 1 ? "story" : "stories"}</span>
+      <span>{totalPosts} {totalPosts === 1 ? "story" : "stories"}</span>
     </div>
     {posts.length ? <section className="journal-grid" aria-label="Journal articles">
       {localizedPosts.map((post, index) => <article className={"journal-card" + (index === 0 && !category && !tag ? " journal-card-featured" : "")} key={post.id}>
@@ -90,5 +106,12 @@ export default async function JournalPage({ searchParams }: { searchParams: Sear
         </div>
       </article>)}
     </section> : <section className="journal-empty"><span>✳</span><h2>{t("journal.noStories","No stories here just yet.")}</h2><p>{t("journal.noStoriesHint","Try another category or return to all journal stories.")}</p><Link href="/journal">{t("journal.allStories","View all stories")}</Link></section>}
+    {totalPages > 1 ? <nav className="journal-pagination" aria-label="Journal pagination">
+      {page > 1 ? <Link href={paginationHref(page - 1)} rel="prev">Previous</Link> : <span aria-disabled="true">Previous</span>}
+      <div>{Array.from({ length: totalPages }, (_, index) => index + 1).map(number => (
+        <Link key={number} href={paginationHref(number)} aria-current={number === page ? "page" : undefined}>{number}</Link>
+      ))}</div>
+      {page < totalPages ? <Link href={paginationHref(page + 1)} rel="next">Next</Link> : <span aria-disabled="true">Next</span>}
+    </nav> : null}
   </main>;
 }

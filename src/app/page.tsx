@@ -215,7 +215,7 @@ export default async function HomePage() {
                   ))}
                 </div>
               ) : <p className="storefront-living-reviews__empty">Customer stories will appear here as reviews are approved.</p>}
-              {approvedReviewCount > 0 ? <div className="storefront-living-reviews__actions"><a href="/reviews" className="storefront-living-reviews__view-all">VIEW ALL REVIEWS <span>{approvedReviewCount}</span></a></div> : null}
+              {approvedReviewCount > 0 ? <div className="storefront-living-reviews__actions"><a href="/reviews" className="storefront-living-reviews__view-all">VIEW ALL REVIEWS</a></div> : null}
             </section>
           );
         }
