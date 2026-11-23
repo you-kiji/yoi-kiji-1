@@ -503,3 +503,234 @@
   }
   .storefront-image-banner__content h2 { font-size:clamp(34px,9vw,54px); }
 }
+
+
+/* YOI KIJI homepage section surface system — final, authoritative overrides.
+   Keep editorial sections open on the page canvas; reserve solid green panels for
+   the warmth statement, trust band and footer only. */
+.home-redesign > .editorial-hero,
+.home-redesign > .storefront-media-only {
+  background: transparent !important;
+}
+.home-redesign > .editorial-hero {
+  isolation: isolate;
+}
+.home-redesign > .storefront-media-only {
+  background-color: transparent !important;
+}
+
+/* Section 3 — Gallery: no panel behind the collage. */
+.home-redesign > .storefront-gallery-section {
+  background: transparent !important;
+  color: var(--cream) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.home-redesign > .storefront-gallery-section .storefront-gallery-heading,
+.home-redesign > .storefront-gallery-section .storefront-photo-collage,
+.home-redesign > .storefront-gallery-section .storefront-photo-collage > a {
+  background: transparent !important;
+}
+
+/* Section 4 — green warmth statement, visibly separated from the gallery. */
+.home-redesign > .storefront-text-strip {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: clamp(132px, 15vw, 190px) !important;
+  margin: clamp(54px, 6vw, 88px) 0 clamp(38px, 4.5vw, 64px) !important;
+  padding: clamp(30px, 4vw, 56px) clamp(18px, 7vw, 100px) !important;
+  background: #123b16 !important;
+  color: #e9e9e9 !important;
+  border-top: 1px solid rgba(233,233,233,.16) !important;
+  border-bottom: 1px solid rgba(233,233,233,.16) !important;
+  box-shadow: 0 18px 50px rgba(0,0,0,.10) !important;
+  text-align: center !important;
+}
+.home-redesign > .storefront-text-strip h2 {
+  max-width: 1080px !important;
+  margin: 0 !important;
+  color: #f1f0e8 !important;
+  font-size: clamp(22px, 3vw, 40px) !important;
+  font-weight: 400 !important;
+  line-height: 1.28 !important;
+  letter-spacing: -.025em !important;
+  text-wrap: balance;
+}
+
+/* Section 6 — Reviews: transparent section and transparent review cards. */
+.home-redesign > .storefront-living-reviews {
+  background: transparent !important;
+  color: var(--cream) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-reviews__heading h2 {
+  color: var(--cream) !important;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-review,
+.home-redesign > .storefront-living-reviews .storefront-living-review__photo,
+.home-redesign > .storefront-living-reviews .storefront-living-review__copy {
+  background-color: transparent !important;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-review__copy {
+  color: var(--cream) !important;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-review__copy p {
+  color: rgba(233,233,233,.88) !important;
+}
+.home-redesign > .storefront-living-reviews .storefront-living-review__copy footer,
+.home-redesign > .storefront-living-reviews .storefront-living-review__copy small {
+  color: rgba(233,233,233,.72) !important;
+}
+
+/* Section 7 — Journal: open/transparent editorial surface, readable light copy. */
+.home-redesign > .storefront-journal-section {
+  background: transparent !important;
+  color: var(--cream) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.home-redesign > .storefront-journal-section .editorial-section-heading h2,
+.home-redesign > .storefront-journal-section .editorial-text-link,
+.home-redesign > .storefront-journal-section .storefront-article-card,
+.home-redesign > .storefront-journal-section .storefront-article-card h3,
+.home-redesign > .storefront-journal-section .storefront-article-card__read {
+  color: var(--cream) !important;
+}
+.home-redesign > .storefront-journal-section .storefront-article-card__copy p {
+  color: rgba(233,233,233,.82) !important;
+}
+.home-redesign > .storefront-journal-section .storefront-article-card__image {
+  background: transparent !important;
+}
+
+/* Section 8 — trust band: intentional green panel with clear breathing room. */
+.home-redesign > .storefront-trust-bar {
+  margin: clamp(54px, 6vw, 88px) 0 clamp(42px, 5vw, 72px) !important;
+  padding: clamp(24px, 3vw, 38px) 0 !important;
+  background: #123b16 !important;
+  color: #f1f0e8 !important;
+  border-top: 1px solid rgba(233,233,233,.22) !important;
+  border-bottom: 1px solid rgba(233,233,233,.22) !important;
+  box-shadow: 0 18px 50px rgba(0,0,0,.10) !important;
+}
+.home-redesign > .storefront-trust-bar > div {
+  background: transparent !important;
+  border-right-color: rgba(233,233,233,.22) !important;
+}
+.home-redesign > .storefront-trust-bar > div strong {
+  color: #f1f0e8 !important;
+  font-size: clamp(12px, 1.05vw, 15px) !important;
+  line-height: 1.5 !important;
+}
+.home-redesign > .storefront-trust-bar > div span {
+  color: rgba(241,240,232,.82) !important;
+  line-height: 1.55 !important;
+}
+.home-redesign > .storefront-trust-bar .storefront-trust-icon {
+  color: #d4b783 !important;
+}
+
+/* Footer — deep green brand panel, restrained gold detail, high-contrast typography. */
+.site-footer {
+  margin-top: 0 !important;
+  padding: clamp(54px, 6.5vw, 88px) clamp(22px, 5.5vw, 84px) 24px !important;
+  background: #082b0d !important;
+  color: #f1f0e8 !important;
+  border-top: 1px solid rgba(212,183,131,.42) !important;
+  box-shadow: 0 -18px 55px rgba(0,0,0,.10) !important;
+}
+.site-footer .footer-top {
+  grid-template-columns: minmax(210px, 1.45fr) repeat(3, minmax(130px, .8fr)) minmax(150px, .9fr) !important;
+  gap: clamp(22px, 3.2vw, 50px) !important;
+  padding-bottom: clamp(38px, 4.5vw, 62px) !important;
+}
+.site-footer .footer-brand-copy { max-width: 300px !important; }
+.site-footer .footer-wordmark {
+  color: #f1f0e8 !important;
+  font-size: clamp(25px, 2.6vw, 34px) !important;
+  letter-spacing: .22em !important;
+}
+.site-footer .footer-brand-copy > p {
+  max-width: 270px !important;
+  margin-top: 18px !important;
+  color: rgba(241,240,232,.84) !important;
+  font-size: 12px !important;
+  line-height: 1.9 !important;
+  opacity: 1 !important;
+}
+.site-footer .footer-column { gap: 14px !important; }
+.site-footer .footer-column h3 {
+  margin: 2px 0 8px !important;
+  color: #d4b783 !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  letter-spacing: .16em !important;
+}
+.site-footer .footer-column a {
+  width: auto !important;
+  max-width: 100% !important;
+  color: rgba(241,240,232,.9) !important;
+  font-size: 12px !important;
+  line-height: 1.7 !important;
+  font-weight: 400 !important;
+  opacity: 1 !important;
+  overflow-wrap: anywhere;
+}
+.site-footer .footer-column a:hover {
+  color: #d4b783 !important;
+  transform: translateX(2px);
+}
+.site-footer .footer-social-link {
+  color: #f1f0e8 !important;
+  border-color: rgba(241,240,232,.48) !important;
+}
+.site-footer .footer-social-link:hover {
+  color: #d4b783 !important;
+  border-color: #d4b783 !important;
+}
+.site-footer .footer-bottom {
+  border-top: 1px solid rgba(241,240,232,.22) !important;
+  color: rgba(241,240,232,.76) !important;
+  font-size: 10px !important;
+  letter-spacing: .08em !important;
+  line-height: 1.7 !important;
+}
+.site-footer .footer-bottom a,
+.site-footer .footer-bottom button {
+  color: rgba(241,240,232,.9) !important;
+  font-size: 10px !important;
+  opacity: 1 !important;
+}
+.site-footer a:focus-visible,
+.site-footer button:focus-visible {
+  outline: 2px solid #d4b783 !important;
+  outline-offset: 4px !important;
+}
+
+@media (max-width: 900px) {
+  .site-footer .footer-top { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  .site-footer .footer-brand-copy { grid-column: 1 / -1 !important; max-width: 460px !important; }
+}
+@media (max-width: 640px) {
+  .home-redesign > .storefront-text-strip {
+    min-height: 118px !important;
+    margin-block: 38px 32px !important;
+    padding: 28px 18px !important;
+  }
+  .home-redesign > .storefront-trust-bar {
+    margin-block: 42px 40px !important;
+    padding-block: 16px !important;
+  }
+  .home-redesign > .storefront-trust-bar > div {
+    min-height: 100px !important;
+    padding: 14px 9px !important;
+  }
+  .site-footer { padding: 42px 20px 22px !important; }
+  .site-footer .footer-top { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 30px 18px !important; }
+  .site-footer .footer-brand-copy { grid-column: 1 / -1 !important; }
+  .site-footer .footer-column h3 { font-size: 9px !important; }
+  .site-footer .footer-column a { font-size: 11px !important; }
+  .site-footer .footer-bottom { gap: 12px 18px !important; }
+}
