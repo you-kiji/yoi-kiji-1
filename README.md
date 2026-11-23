@@ -13,6 +13,7 @@ A premium home-textile e-commerce platform for the YOI KIJI brand.
 
 ## Implemented application areas
 - Editorial homepage and responsive global navigation/footer
+- Customer contact enquiry form with server-side validation and Resend delivery
 - Collection pages, product detail pages and product search
 - Customer registration, login, signed HTTP-only sessions, account and saved delivery addresses
 - Browser cart with server-side product and price validation
@@ -34,6 +35,9 @@ This repository is under active development and is not yet build-verified or pro
 - Legal business details and approved privacy, terms, cancellation, return and shipping policies
 
 Delhivery shipment manifestation is not yet enabled. The client must supply its registered pickup warehouse, origin PIN, account client name, GST details and product HSN data. ATS direct API integration awaits the seller's official Amazon Shipping API package and credentials. The current printable order document is an order summary, not a statutory GST tax invoice.
+
+## Contact enquiries
+Set `CONTACT_TO_EMAIL` to the YOI KIJI support inbox in the deployment environment. The contact form sends validated enquiries through the configured Resend account (`EMAIL_API_KEY` and `EMAIL_FROM`) and uses the customer's email as the reply-to address.
 
 ## Technology
 - Next.js App Router, React, TypeScript
