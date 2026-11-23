@@ -125,10 +125,12 @@ export default async function HomePage() {
         }
 
         if (section.sectionType === "product-grid") {
+          const productLimit = typeof settings.limit === "number" ? Math.min(8, Math.max(2, settings.limit)) : 2;
+          const showHeading = settings.showHeading !== false;
           return (
-            <section className="storefront-dynamic-grid" key={section.id}>
-              <div className="editorial-section-heading"><div><p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow || "THE EDIT"}</p><h2>{section.title || "Considered essentials"}</h2></div>{section.ctaHref && <a className="editorial-text-link" href={section.ctaHref}>{section.ctaLabel || "Shop all"}</a>}</div>
-              <div className="storefront-product-grid">{featuredProducts.slice(0,8).map(product=><a className="storefront-product-card" href={"/shop?search="+encodeURIComponent(product.name)} key={product.id}>
+            <section className="storefront-dynamic-grid storefront-product-pair" key={section.id}>
+              {showHeading && <div className="editorial-section-heading"><div><p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow || "THE EDIT"}</p><h2>{section.title || "Considered essentials"}</h2></div>{section.ctaHref && <a className="editorial-text-link" href={section.ctaHref}>{section.ctaLabel || "Discover"}</a></div>}
+              <div className="storefront-product-grid">{featuredProducts.slice(0,productLimit).map(product=><a className="storefront-product-card" href={"/products/"+product.slug} key={product.id}>
                 {product.images[0]?.url ? <img src={product.images[0].url} alt={product.images[0].alt || product.name} loading="lazy"/> : <span className="storefront-product-card__placeholder"/>}
                 <span className="storefront-product-card__name">{product.name}</span><span className="storefront-product-card__price">{new Intl.NumberFormat(localeCode==="ja"?"ja-JP":"en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(product.pricePaise/100)}</span>
               </a>)}</div>
@@ -152,8 +154,10 @@ export default async function HomePage() {
           );
         }
         if (section.sectionType === "testimonial") {
-          const quotes = Array.isArray(section.slides) ? section.slides as Array<{title?:string;body?:string;eyebrow?:string}> : [];
-          return <section className="storefront-testimonials" key={section.id}><p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow||"KIND WORDS"}</p><h2>{section.title||"A little love for the everyday"}</h2><div>{quotes.map((quote,index)=><blockquote key={index}><p>“{quote.body||quote.title||""}”</p><cite>{quote.eyebrow||"YOI KIJI customer"}</cite></blockquote>)}</div></section>;
+          const quotes = approvedReviews.length
+            ? approvedReviews.map(review=>({body:review.body,title:review.title||"",eyebrow:review.user.name || "YOI KIJI customer",rating:review.rating}))
+            : slides.map(slide=>({body:slide.body||"",title:slide.title||"",eyebrow:slide.eyebrow||"YOI KIJI customer",rating:0}));
+          return <section className="storefront-testimonials" key={section.id}><p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow||"LIVING WITH YOI KIJI"}</p><h2>{section.title||"Customer Reviews"}</h2><div>{quotes.slice(0,6).map((quote,index)=><blockquote key={index}>{quote.rating>0&&<p aria-label={quote.rating+" out of 5 stars"}>{"★".repeat(quote.rating)}</p>}<p>“{quote.body||quote.title||""}”</p><cite>{quote.eyebrow||"YOI KIJI customer"}</cite></blockquote>)}</div></section>;
         }
         if (section.sectionType === "slideshow") {
           const slides = Array.isArray(section.slides) ? section.slides as Array<{imageUrl:string;imageAlt?:string;eyebrow?:string;title?:string;body?:string;ctaLabel?:string;ctaHref?:string}> : [];
