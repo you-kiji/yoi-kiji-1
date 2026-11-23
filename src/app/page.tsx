@@ -123,8 +123,9 @@ export default async function HomePage() {
         }
 
         if (section.sectionType === "trust-bar") {
-          const trustItems = slides.length ? slides.slice(0,4).map(item=>item.title || item.body || item.eyebrow || "") : ["1 Lakh+ Happy Customers","Easy Exchange and Return","Secure Payment","100% Cotton"];
-          return <section className="storefront-trust-bar" aria-label="YOI KIJI promises" key={section.id}>{trustItems.map((item,index)=><div key={index}>{item}</div>)}</section>;
+          const defaults=[{title:"1 Lakh+",body:"Happy Customers"},{title:"Easy Exchange and Return",body:""},{title:"Secure Payment",body:""},{title:"100% Cotton",body:""}];
+          const items=slides.length?defaults.map((fallback,index)=>({title:slides[index]?.title||fallback.title,body:slides[index]?.body||fallback.body})):defaults;
+          return <section className="storefront-trust-bar" aria-label="YOI KIJI promises" key={section.id}>{items.map((item,index)=><div key={index}><strong>{item.title}</strong>{item.body&&<span>{item.body}</span>}</div>)}</section>;
         }
 
         if (section.sectionType === "product-grid") {
@@ -168,9 +169,17 @@ export default async function HomePage() {
         }
         if (section.sectionType === "blog-grid") {
           return (
-            <section className="storefront-dynamic-grid" key={section.id}>
-              <div className="editorial-section-heading"><div><p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow || "JOURNAL"}</p><h2>{section.title || "Notes for living well"}</h2></div>{section.ctaHref && <a className="editorial-text-link" href={section.ctaHref}>{section.ctaLabel || "Read all"}</a>}</div>
-              <div className="storefront-article-grid">{recentArticles.slice(0,3).map(article=><a className="storefront-article-card" href={"/journal/"+article.slug} key={article.id}>{article.coverImageUrl&&<img src={article.coverImageUrl} alt={article.coverImageAlt||article.title} loading="lazy"/>}<h3>{article.title}</h3>{article.excerpt&&<p>{article.excerpt}</p>}</a>)}</div>
+            <section className="storefront-dynamic-grid storefront-journal-section" key={section.id}>
+              <div className="editorial-section-heading">
+                <div><h2>{section.title || "IDEAS of YOI KIJI"}</h2></div>
+                <a className="editorial-text-link" href={section.ctaHref || "/journal"}>{section.ctaLabel || "View All"}</a>
+              </div>
+              <div className="storefront-article-grid">
+                {recentArticles.slice(0,3).map((article,index)=><a className="storefront-article-card" href={"/journal/"+article.slug} key={article.id}>
+                  <div className="storefront-article-card__image">{article.coverImageUrl&&<img src={article.coverImageUrl} alt={article.coverImageAlt||article.title} loading="lazy"/>}<span>0{index+1}</span></div>
+                  <div className="storefront-article-card__copy"><h3>{article.title}</h3>{article.excerpt&&<p>{article.excerpt}</p>}<span className="storefront-article-card__read">READ STORY ↗</span></div>
+                </a>)}
+              </div>
             </section>
           );
         }
