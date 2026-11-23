@@ -72,7 +72,6 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
       </Link>
 
       <nav className="desktop-navigation" aria-label="Main navigation">
-        <Link href="/shop" onClick={closeAll}>{text("header.shop","Shop")}</Link>
         <details
           className="header-collections"
           ref={desktopRef}
@@ -85,9 +84,9 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
               event.preventDefault();
               setDesktopOpen(value => !value);
             }}
-          >{text("header.categories","Categories")}</summary>
+          >{text("header.product","Product")}</summary>
           <div className="header-collections-menu">
-            <Link href="/shop" onClick={closeAll}>{text("header.shopAllCategories","Shop all categories")}</Link>
+            <Link href="/shop" onClick={closeAll}>{text("header.product","Product")}</Link>
             {categories.map(category => (
               <Link key={category.id} href={`/shop?category=${encodeURIComponent(category.slug)}`} onClick={closeAll}>
                 {category.name}
@@ -95,9 +94,9 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
             ))}
           </div>
         </details>
-        <Link href="/our-story" onClick={closeAll}>{text("header.story","Our story")}</Link>
+        <Link href="/our-story" onClick={closeAll}>YOI KIJI Story</Link>
         <Link href="/journal" onClick={closeAll}>{text("header.journal","Journal")}</Link>
-        {navigationItems.map(item=><Link key={item.id} href={item.href} target={item.openInNewTab?"_blank":undefined} rel={item.openInNewTab?"noopener noreferrer":undefined} onClick={closeAll}>{item.label}</Link>)}
+        {navigationItems.filter(item=>item.href!=="/shop" && item.label.trim().toLowerCase()!=="shop").map(item=><Link key={item.id} href={item.href} target={item.openInNewTab?"_blank":undefined} rel={item.openInNewTab?"noopener noreferrer":undefined} onClick={closeAll}>{item.label}</Link>)}
       </nav>
 
       <details
@@ -116,16 +115,15 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
         >{mobileOpen ? text("header.close","Close") : text("header.menu","Menu")}</summary>
         <nav aria-label="Mobile navigation">
           <LocaleSwitcher locales={availableLocales} currentCode={currentLocale} />
-          <Link href="/shop" onClick={closeAll}>{text("header.shopAll","Shop all")}</Link>
-          <p>{text("header.categories","Categories")}</p>
+          <p>Product</p>
           {categories.map(category => (
             <Link key={category.id} href={`/shop?category=${encodeURIComponent(category.slug)}`} onClick={closeAll}>
               {category.name}
             </Link>
           ))}
-          <Link href="/our-story" onClick={closeAll}>{text("header.story","Our story")}</Link>
+          <Link href="/our-story" onClick={closeAll}>YOI KIJI Story</Link>
           <Link href="/journal" onClick={closeAll}>{text("header.journal","Journal")}</Link>
-          {navigationItems.map(item=><Link key={item.id} href={item.href} target={item.openInNewTab?"_blank":undefined} rel={item.openInNewTab?"noopener noreferrer":undefined} onClick={closeAll}>{item.label}</Link>)}
+          {navigationItems.filter(item=>item.href!=="/shop" && item.label.trim().toLowerCase()!=="shop").map(item=><Link key={item.id} href={item.href} target={item.openInNewTab?"_blank":undefined} rel={item.openInNewTab?"noopener noreferrer":undefined} onClick={closeAll}>{item.label}</Link>)}
           <Link href="/search" onClick={closeAll}>{text("header.search","Search")}</Link>
           <Link href="/account" onClick={closeAll}>{text("header.account","Account")}</Link>
           <Link href="/cart" onClick={closeAll}>{text("header.bag","Bag")} <CartCount /></Link>

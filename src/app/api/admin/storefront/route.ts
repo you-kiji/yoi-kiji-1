@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
@@ -8,7 +9,7 @@ async function authorised() {
   return admin?.role === "ADMIN" ? admin : null;
 }
 const slideSchema = z.object({
-  imageUrl: z.union([z.string().url(), z.literal("")]),
+  imageUrl: z.union([z.string().url(), z.literal("")]).optional().default(""),
   imageAlt: z.string().max(200).optional().default(""),
   eyebrow: z.string().max(120).optional().default(""),
   title: z.string().max(180).optional().default(""),
@@ -18,7 +19,8 @@ const slideSchema = z.object({
 });
 const sectionSchema = z.object({
   key: z.string().trim().min(2).max(60).regex(/^[a-z0-9-]+$/),
-  sectionType: z.enum(["slideshow","image-banner","rich-text","image-with-text","featured-collections","product-grid","testimonial","blog-grid","spacer"]).default("rich-text"),
+  sectionType: z.enum(["slideshow","image-banner","rich-text","image-with-text","featured-collections","product-grid","testimonial","blog-grid","spacer","hero-video","photo-collage","text-strip","trust-bar"]).default("rich-text"),
+  settings: z.record(z.string(), z.unknown()).optional(),
   slides: z.array(slideSchema).max(30).optional(),
   eyebrow: z.string().max(120).optional().nullable(),
   title: z.string().max(180).optional().nullable(),
@@ -66,7 +68,12 @@ export async function POST(request: NextRequest) {
     const parsed = sectionSchema.safeParse(body.data);
     if (!parsed.success) return NextResponse.json({ error: "Invalid homepage section.", details: parsed.error.flatten() }, { status: 400 });
     try {
-      const section = await prisma.homepageSection.create({ data: parsed.data });
+      const { settings, ...sectionFields } = parsed.data;
+      const data: Prisma.HomepageSectionUncheckedCreateInput = {
+        ...sectionFields,
+        ...(settings !== undefined ? { settings: settings as Prisma.InputJsonValue } : {}),
+      };
+      const section = await prisma.homepageSection.create({ data });
       return NextResponse.json({ section }, { status: 201 });
     } catch {
       return NextResponse.json({ error: "That section key already exists." }, { status: 409 });
@@ -99,7 +106,12 @@ export async function PATCH(request: NextRequest) {
     const parsed = sectionSchema.partial().safeParse(body.data);
     if (!parsed.success) return NextResponse.json({ error: "Invalid homepage section.", details: parsed.error.flatten() }, { status: 400 });
     try {
-      const section = await prisma.homepageSection.update({ where: { id: body.id }, data: parsed.data });
+      const { settings, ...sectionFields } = parsed.data;
+      const data: Prisma.HomepageSectionUncheckedUpdateInput = {
+        ...sectionFields,
+        ...(settings !== undefined ? { settings: settings as Prisma.InputJsonValue } : {}),
+      };
+      const section = await prisma.homepageSection.update({ where: { id: body.id }, data });
       return NextResponse.json({ section });
     } catch {
       return NextResponse.json({ error: "Section not found or its key is already in use." }, { status: 404 });
