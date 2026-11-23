@@ -108,10 +108,13 @@ export default async function HomePage() {
         }
 
         if (section.sectionType === "photo-collage") {
-          return <section className="storefront-photo-collage" aria-label={section.title || "YOI KIJI moments"} key={section.id}>
-            {slides.slice(0,8).map((slide,index)=><a href={slide.ctaHref || "/shop"} key={index} aria-label={slide.imageAlt || slide.title || `YOI KIJI image ${index+1}`}>
-              {slide.imageUrl && <img src={slide.imageUrl} alt={slide.imageAlt || slide.title || "YOI KIJI home textiles"} loading="lazy" />}
-            </a>)}
+          return <section className="storefront-gallery-section" aria-label={section.title || "YOI KIJI Gallery"} key={section.id}>
+            <div className="storefront-gallery-heading"><h2>{section.title || "Gallery"}</h2></div>
+            <div className="storefront-photo-collage">
+              {slides.slice(0,8).map((slide,index)=><a href={slide.ctaHref || "/shop"} key={index} aria-label={slide.imageAlt || slide.title || `YOI KIJI image ${index+1}`}>
+                {slide.imageUrl && <img src={slide.imageUrl} alt={slide.imageAlt || slide.title || "YOI KIJI home textiles"} loading="lazy" />}
+              </a>)}
+            </div>
           </section>;
         }
 
@@ -127,19 +130,16 @@ export default async function HomePage() {
         if (section.sectionType === "product-grid") {
           const productLimit = 2; // Homepage product-pair sections always render exactly two cards.
           const productOffset = typeof settings.offset === "number" ? Math.max(0, settings.offset) : 0;
-          const showHeading = settings.showHeading !== false;
           const visibleProducts = featuredProducts.slice(productOffset, productOffset + productLimit);
           return (
             <section className="storefront-dynamic-grid storefront-product-pair" key={section.id}>
-              {showHeading ? (
-                <div className="editorial-section-heading">
-                  <div>
-                    <p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow || "THE EDIT"}</p>
-                    <h2>{section.title || "Considered essentials"}</h2>
-                  </div>
-                  {section.ctaHref ? <a className="editorial-text-link" href={section.ctaHref}>{section.ctaLabel || "Discover"}</a> : null}
+              <div className="editorial-section-heading">
+                <div>
+                  {section.eyebrow ? <p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow}</p> : null}
+                  <h2>{section.title || "Considered essentials"}</h2>
                 </div>
-              ) : null}
+                {section.ctaHref ? <a className="editorial-text-link" href={section.ctaHref}>{section.ctaLabel || "Discover"}</a> : null}
+              </div>
               <div className="storefront-product-grid">
                 {visibleProducts.map((product) => (
                   <a className="storefront-product-card" href={`/products/${product.slug}`} key={product.id}>
