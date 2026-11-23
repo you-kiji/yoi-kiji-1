@@ -125,7 +125,8 @@ export default async function HomePage() {
         }
 
         if (section.sectionType === "product-grid") {
-          const productLimit = typeof settings.limit === "number" ? Math.min(8, Math.max(2, settings.limit)) : 2;\n          const productOffset = typeof settings.offset === "number" ? Math.max(0, settings.offset) : 0;
+          const productLimit = typeof settings.limit === "number" ? Math.min(8, Math.max(2, settings.limit)) : 2;
+          const productOffset = typeof settings.offset === "number" ? Math.max(0, settings.offset) : 0;
           const showHeading = settings.showHeading !== false;
           return (
             <section className="storefront-dynamic-grid storefront-product-pair" key={section.id}>
