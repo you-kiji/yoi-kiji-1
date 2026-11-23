@@ -35,15 +35,31 @@ export async function SiteFooter() {
       <div className="footer-top">
         <div className="footer-brand-copy">
           <Link className="wordmark footer-wordmark" href="/">YOI KIJI</Link>
-          <p>Textiles for the way you live. Thoughtfully considered home textiles for everyday comfort.</p>
+          <p>Textiles for the way you live. Thoughtfully considered home textiles for everyday comfort, quiet moments and the everyday rituals that make a space feel like home.</p>
+          <span className="footer-brand-note">BED LINEN · BATH LINEN · KITCHEN · LIVING</span>
         </div>
         <nav className="footer-column" aria-label="Explore YOI KIJI">
           <h3>Explore</h3>
-          {navigationItems.map(item => <Link href={item.href} key={item.id} target={item.openInNewTab ? "_blank" : undefined} rel={item.openInNewTab ? "noopener noreferrer" : undefined}>{item.label}</Link>)}
+          {navigationItems.length ? navigationItems.map(item => <Link href={item.href} key={item.id} target={item.openInNewTab ? "_blank" : undefined} rel={item.openInNewTab ? "noopener noreferrer" : undefined}>{item.label}</Link>) : <><Link href="/">Home</Link><Link href="/shop">All Collections</Link><Link href="/journal">Journal</Link><Link href="/our-story">Our Story</Link></>}
         </nav>
         <nav className="footer-column" aria-label="Shop categories">
           <h3>Shop</h3>
           {rootCategories.map(category => <Link href={"/shop?category=" + encodeURIComponent(category.slug)} key={category.id}>{category.name}</Link>)}
+        </nav>
+        <nav className="footer-column" aria-label="Discover YOI KIJI">
+          <h3>Discover</h3>
+          <Link href="/our-story">Our Story</Link>
+          <Link href="/journal">Journal & Ideas</Link>
+          <Link href="/reviews">Customer Reviews</Link>
+          <Link href="/contact">Get in Touch</Link>
+        </nav>
+        <nav className="footer-column" aria-label="Help and order support">
+          <h3>Help & Support</h3>
+          <Link href="/contact">Contact Us</Link>
+          <Link href="/shipping">Shipping Information</Link>
+          <Link href="/returns">Returns & Exchanges</Link>
+          <Link href="/cancellation">Cancellation Policy</Link>
+          <Link href="/account/orders">Track Your Order</Link>
         </nav>
         <nav className="footer-column" aria-label="Customer care and policies">
           <h3>Customer Care</h3>
