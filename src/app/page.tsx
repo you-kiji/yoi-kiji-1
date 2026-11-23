@@ -125,7 +125,7 @@ export default async function HomePage() {
         }
 
         if (section.sectionType === "product-grid") {
-          const productLimit = typeof settings.limit === "number" ? Math.min(8, Math.max(2, settings.limit)) : 2;
+          const productLimit = 2; // Homepage product-pair sections always render exactly two cards.
           const productOffset = typeof settings.offset === "number" ? Math.max(0, settings.offset) : 0;
           const showHeading = settings.showHeading !== false;
           const visibleProducts = featuredProducts.slice(productOffset, productOffset + productLimit);
