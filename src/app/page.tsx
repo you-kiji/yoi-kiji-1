@@ -15,7 +15,7 @@ function paragraphs(value: string) {
 export default async function HomePage() {
   const locale = await getLocaleData();
   const localeCode = locale.code;
-  const [allSections, collectionRecords, categoryRecords, featuredProducts, recentArticles, approvedReviews] = await Promise.all([
+  const [allSections, collectionRecords, categoryRecords, featuredProducts, recentArticles, approvedReviews, approvedReviewCount] = await Promise.all([
     prisma.homepageSection.findMany({ orderBy: [{ position: "asc" }, { key: "asc" }] }).catch(() => []),
     prisma.storeCollection.findMany({ where: { isActive: true }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] }).catch(() => []),
     getActiveCategories(),
@@ -184,7 +184,7 @@ export default async function HomePage() {
               <div className="storefront-article-grid">
                 {recentArticles.slice(0,3).map((article,index)=><a className="storefront-article-card" href={"/journal/"+article.slug} key={article.id}>
                   <div className="storefront-article-card__image">{article.coverImageUrl&&<img src={article.coverImageUrl} alt={article.coverImageAlt||article.title} loading="lazy"/>}<span>0{index+1}</span></div>
-                  <div className="storefront-article-card__copy"><h3>{article.title}</h3>{article.excerpt&&<p>{article.excerpt}</p>}<span className="storefront-article-card__read">READ STORY ↗</span></div>
+                  <div className="storefront-article-card__copy"><h3>{article.title}</h3>{article.excerpt&&<p>{article.excerpt}</p>}<span className="storefront-article-card__read">READ STORY</span></div>
                 </a>)}
               </div>
             </section>
@@ -214,6 +214,7 @@ export default async function HomePage() {
                   ))}
                 </div>
               ) : <p className="storefront-living-reviews__empty">Customer stories will appear here as reviews are approved.</p>}
+              {approvedReviewCount > 0 ? <div className="storefront-living-reviews__actions"><a href="/reviews" className="storefront-living-reviews__view-all">VIEW ALL REVIEWS <span>{approvedReviewCount}</span></a></div> : null}
             </section>
           );
         }
