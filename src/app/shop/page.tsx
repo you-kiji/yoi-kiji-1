@@ -1,6 +1,7 @@
 import "../reviews-wishlist.css";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { FilterDrawer } from "@/components/filter-drawer";
 import { getActiveCategories, getActiveProducts, getCategoryBranchIds } from "@/lib/catalog";
 import { prisma } from "@/lib/prisma";
 import { formatINR } from "@/lib/money";
@@ -107,12 +108,8 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
     const categoryHref = `/shop?category=${encodeURIComponent(params.category)}`;
     return (
       <main className="commerce-page catalogue-products-first shop-category-products-first">
-        <details className="catalogue-filter-dropdown">
-          <summary aria-label="Open product filters">
-            <span className="catalogue-filter-icon" aria-hidden="true"><i/><i/><i/></span>
-            <span>{t("category.refine", "Filter")}</span>
-          </summary>
-          <form method="get" action="/shop" className="catalogue-filter-popover">
+        <FilterDrawer label={t("category.refine", "Filter")} closeLabel={t("common.close", "Close")}>
+          <form method="get" action="/shop" className="catalogue-filter-drawer-form">
             <input type="hidden" name="category" value={params.category} />
             {selected && <input type="hidden" name="collection" value={selected.slug} />}
             <div className="catalogue-filter-popover-top">
@@ -140,7 +137,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
             </div>
             <button className="catalogue-apply-button" type="submit">{t("shop.applyFilters", "Apply filters")}</button>
           </form>
-        </details>
+        </FilterDrawer>
         {products.length ? (
           <section className="product-grid catalogue-product-grid" aria-label={t("shop.products", "Products")}>
             {products.map((product) => {
