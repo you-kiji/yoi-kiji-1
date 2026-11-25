@@ -2779,3 +2779,310 @@ html, body, main, .site-header, .site-footer, .home-redesign {
   .product-page-redesign .product-gallery-main { aspect-ratio:1 / 1.04; }
   .product-page-redesign .product-detail-copy .product-specs > div { grid-template-columns:minmax(90px,.7fr) minmax(0,1.3fr); }
 }
+
+
+/* Content-first storefront pass: let imagery, products and shopping actions lead. */
+.home-redesign .editorial-hero__content { max-width:700px; }
+.home-redesign .editorial-hero h1 {
+  max-width:760px;
+  font-size:clamp(54px,7.4vw,108px);
+  line-height:.96;
+  letter-spacing:-.06em;
+}
+.home-redesign .editorial-hero__description {
+  max-width:340px;
+  margin-top:18px;
+  font-size:13px;
+  line-height:1.65;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
+.home-redesign .editorial-hero__topline,
+.home-redesign .editorial-hero__bottom { font-size:9px; }
+.home-redesign .editorial-intro {
+  padding-block:clamp(58px,7vw,96px);
+}
+.home-redesign .editorial-intro h2,
+.home-redesign .editorial-section-heading h2,
+.home-redesign .editorial-feature h2,
+.home-redesign .editorial-journal h2 {
+  font-size:clamp(38px,4.8vw,66px);
+  line-height:1.04;
+}
+.home-redesign .editorial-intro__grid {
+  grid-template-columns:minmax(0,1.05fr) minmax(250px,.75fr);
+  gap:clamp(28px,5vw,76px);
+  margin-top:28px;
+}
+.home-redesign .editorial-intro__grid>div p {
+  max-width:390px;
+  margin:0 0 12px;
+  font-size:13px;
+  line-height:1.7;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
+.home-redesign .editorial-intro__grid>div p:not(:first-child) { display:none; }
+.home-redesign .editorial-intro__grid>div .editorial-text-link { margin-top:8px; }
+.home-redesign .editorial-collections {
+  padding-block:clamp(58px,7vw,100px);
+}
+.home-redesign .editorial-section-heading { margin-bottom:28px; }
+.home-redesign .editorial-collection { min-height:clamp(300px,37vw,500px); }
+.home-redesign .editorial-collection__copy { gap:9px; }
+.home-redesign .editorial-collection__copy>span { display:none; }
+.home-redesign .editorial-collection__copy h3 {
+  max-width:90%;
+  font-size:clamp(25px,2.8vw,38px);
+}
+.home-redesign .editorial-collection__copy b { margin-top:4px; }
+.home-redesign .editorial-feature { min-height:clamp(480px,54vw,700px); }
+.home-redesign .editorial-feature__copy { padding:clamp(34px,5vw,72px); }
+.home-redesign .editorial-feature__copy>p:not(.editorial-eyebrow) {
+  max-width:340px;
+  font-size:13px;
+  line-height:1.7;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
+.home-redesign .editorial-feature__copy small { margin-top:16px; }
+.home-redesign .editorial-manifesto { padding-block:clamp(68px,9vw,120px); }
+.home-redesign .editorial-manifesto p {
+  max-width:900px;
+  font-size:clamp(38px,5.3vw,72px);
+  line-height:1.08;
+}
+.home-redesign .editorial-journal {
+  padding-block:clamp(58px,7vw,100px);
+  grid-template-columns:minmax(0,1fr) minmax(180px,.55fr) auto;
+  gap:clamp(20px,3vw,48px);
+}
+.home-redesign .editorial-journal h2 { max-width:520px; }
+.home-redesign .editorial-journal>p {
+  max-width:300px;
+  font-size:12px;
+  line-height:1.65;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
+.home-redesign .storefront-dynamic-grid,
+.home-redesign .storefront-testimonials { padding-block:clamp(48px,6vw,76px); }
+.home-redesign .storefront-dynamic-grid .editorial-section-heading h2,
+.home-redesign .storefront-testimonials h2 { font-size:clamp(28px,3.5vw,44px); }
+.home-redesign .storefront-article-card p {
+  font-size:12px;
+  line-height:1.6;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
+.home-redesign .storefront-testimonials blockquote { padding:18px; }
+.home-redesign .storefront-testimonials blockquote p {
+  font-size:13px;
+  line-height:1.65;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:3;
+  overflow:hidden;
+}
+
+/* Catalogue: reduce editorial introductions and bring the product grid into focus. */
+.shop-heading { margin-bottom:clamp(20px,3vw,36px); }
+.shop-heading .eyebrow { margin-bottom:9px; font-size:9px; }
+.shop-heading h1 {
+  max-width:760px;
+  margin:0;
+  font-size:clamp(34px,4.5vw,58px);
+  line-height:1.06;
+}
+.shop-heading>p:not(.eyebrow) {
+  max-width:520px;
+  margin:10px 0 0;
+  font-size:12px;
+  line-height:1.55;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:1;
+  overflow:hidden;
+}
+.shop-discovery { margin-block:22px 28px; padding:18px 0; }
+.shop-filter-heading { align-items:center; margin-bottom:14px; }
+.shop-filter-heading .eyebrow { display:none; }
+.shop-filter-heading h2 { margin:0; font-size:18px; line-height:1.2; }
+.shop-filter-heading>p { display:none; }
+.shop-filter-form { gap:10px 12px; }
+.shop-filter-form label { gap:5px; font-size:10px; }
+.shop-filter-form input,.shop-filter-form select { min-height:42px; font-size:12px; }
+.shop-filter-actions { align-items:center; gap:12px; }
+.shop-results-bar { margin:14px 0 18px; font-size:11px; }
+.shop-product-grid,.catalogue-product-grid { row-gap:26px; }
+.product-card { gap:6px; }
+.product-card-image { overflow:hidden; }
+.product-card-category { margin:5px 0 0; font-size:9px; letter-spacing:.1em; }
+.product-card h2,.catalogue-product-card-info h2 {
+  margin:0;
+  font-size:13px;
+  font-weight:500;
+  line-height:1.45;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
+.product-card-price,.catalogue-product-card-info .product-card-price {
+  margin:0;
+  font-size:12px;
+  font-weight:500;
+}
+.catalogue-empty h2,.shop-empty-state h2 { font-size:clamp(24px,3vw,36px); }
+.shop-empty-state>p:not(.eyebrow) { max-width:360px; font-size:12px; }
+
+/* Product cards and related items: keep names and price readable, never paragraph-heavy. */
+.product-grid .product-card .product-card-description,
+.product-grid .product-card .product-card-excerpt { display:none; }
+.related-products__heading h2 { font-size:clamp(25px,3vw,38px); }
+.related-products .product-card h3,
+.related-products .product-card h2 { font-size:12px; }
+
+/* Interior storefront pages: compact page introductions, preserve task-critical content. */
+.commerce-heading { margin-bottom:clamp(22px,3vw,38px); }
+.commerce-heading .eyebrow { margin-bottom:8px; font-size:9px; }
+.commerce-heading h1 {
+  margin:0;
+  font-size:clamp(34px,4.5vw,58px);
+  line-height:1.06;
+  letter-spacing:-.05em;
+}
+.commerce-heading>p:not(.eyebrow) {
+  max-width:520px;
+  margin:10px 0 0;
+  font-size:12px;
+  line-height:1.6;
+}
+.editorial-page { max-width:980px; }
+.editorial-page .eyebrow { font-size:9px; margin-bottom:12px; }
+.editorial-page h1 { font-size:clamp(40px,6vw,76px); line-height:1.02; }
+.editorial-page>p:not(.eyebrow) {
+  max-width:500px;
+  font-size:14px;
+  line-height:1.75;
+}
+.contact-page__intro h1,.auth-panel h1 {
+  font-size:clamp(38px,5vw,64px);
+  line-height:1.04;
+}
+.contact-page__intro>p:not(.eyebrow) {
+  max-width:480px;
+  font-size:13px;
+  line-height:1.7;
+}
+.contact-page__form-heading h2 { font-size:clamp(22px,3vw,32px); }
+.contact-page__form-heading>p:not(.eyebrow) { font-size:12px; }
+.search-heading h1 { font-size:clamp(38px,5vw,64px); }
+.search-heading>p:not(.eyebrow) { max-width:420px; font-size:12px; }
+
+/* Journal listing: imagery and story titles lead; excerpts stay supporting. */
+.journal-page>header h1,.journal-page .journal-heading h1 {
+  font-size:clamp(38px,5vw,64px);
+  line-height:1.05;
+}
+.journal-page>header>p:not(.eyebrow),
+.journal-page .journal-heading>p:not(.eyebrow) {
+  max-width:480px;
+  font-size:12px;
+  line-height:1.65;
+}
+.journal-page .journal-card p:not(.eyebrow),
+.journal-page article p:not(.eyebrow) {
+  font-size:12px;
+  line-height:1.6;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
+.journal-article-header h1 { font-size:clamp(36px,5vw,64px); line-height:1.08; }
+.journal-article-excerpt { max-width:680px; font-size:14px; line-height:1.7; }
+.journal-article-page article> :is(p,ul,ol) { font-size:14px; line-height:1.85; }
+.journal-related-products h2 { font-size:clamp(24px,3vw,36px); }
+
+/* Reviews: concise intro and tidy review cards, with customer feedback retained. */
+.public-reviews-hero h1 { font-size:clamp(38px,5vw,64px); line-height:1.05; }
+.public-reviews-hero>p:not(.eyebrow) {
+  max-width:440px;
+  margin:10px auto;
+  font-size:12px;
+  line-height:1.6;
+}
+.public-review-card { padding:clamp(16px,2vw,24px); }
+.public-review-card h2 { font-size:16px; line-height:1.35; }
+.public-review-card__body {
+  font-size:12px;
+  line-height:1.65;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:4;
+  overflow:hidden;
+}
+
+/* Account and order pages: task labels first, less decorative copy. */
+.account-panel>h1 { font-size:clamp(30px,4vw,48px); line-height:1.12; }
+.account-panel .account-intro { max-width:600px; font-size:12px; line-height:1.65; }
+.account-preferences>p { font-size:12px; line-height:1.6; }
+.account-subpage-heading h1 { font-size:clamp(32px,4vw,50px); }
+.account-subpage-heading>p:not(.eyebrow) { font-size:12px; }
+.order-card-label,.address-card-heading .eyebrow { font-size:9px; letter-spacing:.1em; }
+.order-card-date,.order-card-total>p { font-size:11px; }
+.address-management-note { font-size:11px; line-height:1.55; }
+.account-empty-state h2 { font-size:clamp(24px,3vw,34px); }
+.account-empty-state>p:not(.eyebrow) { max-width:420px; font-size:12px; }
+
+/* Cart, checkout and auth: keep instructions concise so forms and actions dominate. */
+.commerce-page>.commerce-heading:not(.shop-heading) { margin-bottom:24px; }
+.auth-panel { padding:clamp(24px,4vw,44px); }
+.auth-panel .eyebrow { font-size:9px; }
+.auth-switch { font-size:11px; }
+.checkout-panel { margin-top:12px; }
+.checkout-panel>p,.checkout-panel .form-hint { font-size:11px; line-height:1.55; }
+
+/* Footer is navigation, not an additional brand essay. */
+.footer-brand-copy>p {
+  max-width:300px;
+  font-size:11px;
+  line-height:1.6;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
+.footer-column h3 { font-size:11px; }
+.footer-column a { font-size:10px; }
+
+@media(max-width:760px) {
+  .home-redesign .editorial-hero h1 { font-size:clamp(50px,13vw,76px); }
+  .home-redesign .editorial-intro__grid { grid-template-columns:1fr; gap:18px; }
+  .home-redesign .editorial-intro h2,
+  .home-redesign .editorial-section-heading h2,
+  .home-redesign .editorial-feature h2,
+  .home-redesign .editorial-journal h2 { font-size:clamp(36px,10vw,52px); }
+  .home-redesign .editorial-collection { min-height:clamp(300px,95vw,430px); }
+  .home-redesign .editorial-feature__copy { padding:38px 24px; }
+  .home-redesign .editorial-journal { grid-template-columns:1fr; gap:12px; }
+  .home-redesign .editorial-journal>p { display:none; }
+  .shop-filter-form { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .shop-filter-form label:first-child { grid-column:1/-1; }
+  .shop-filter-actions { grid-column:1/-1; }
+  .shop-heading h1,.commerce-heading h1 { font-size:clamp(32px,9vw,46px); }
+  .product-card h2,.catalogue-product-card-info h2 { font-size:12px; }
+  .public-reviews-grid { gap:12px; }
+  .contact-page__intro h1,.auth-panel h1 { font-size:clamp(36px,10vw,50px); }
+}
