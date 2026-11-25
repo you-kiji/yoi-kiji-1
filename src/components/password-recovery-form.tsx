@@ -1,13 +1,18 @@
 "use client";
+
 import { FormEvent, useState } from "react";
 
-export function PasswordRecoveryForm({ mode, token = "" }: { mode: "request" | "reset"; token?: string }) {
+type Labels = Record<string, string>;
+
+export function PasswordRecoveryForm({ mode, token = "", labels = {} }: { mode: "request" | "reset"; token?: string; labels?: Labels }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+
+  const t = (key: string, fallback: string) => labels[key] ?? fallback;
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -37,13 +42,31 @@ export function PasswordRecoveryForm({ mode, token = "" }: { mode: "request" | "
     }
   }
 
-  return <form className="password-recovery-form" onSubmit={submit}>
-    {mode === "request" ? <label>Email address<input type="email" required maxLength={254} autoComplete="email" value={email} onChange={event => setEmail(event.target.value)} /></label> : <>
-      <label>New password<input type="password" required minLength={12} maxLength={128} autoComplete="new-password" value={password} onChange={event => setPassword(event.target.value)} /><small>Use at least 12 characters.</small></label>
-      <label>Confirm new password<input type="password" required minLength={12} maxLength={128} autoComplete="new-password" value={confirm} onChange={event => setConfirm(event.target.value)} /></label>
-    </>}
-    {error && <p className="form-error" role="alert">{error}</p>}
-    {message && <p className="password-recovery-feedback" role="status">{message}</p>}
-    <button type="submit" disabled={busy || (mode === "reset" && !token)}>{busy ? "Please wait…" : mode === "request" ? "Send reset link" : "Update password"}</button>
-  </form>;
+  return (
+    <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
+      {mode === "request" ? (
+        <div className="form-group">
+          <label htmlFor="recovery-email" className="form-label">Email address <span className="required">*</span></label>
+          <input id="recovery-email" type="email" required maxLength={254} autoComplete="email" value={email} onChange={event => setEmail(event.target.value)} placeholder="you@example.com" className="form-input" />
+        </div>
+      ) : (
+        <>
+          <div className="form-group">
+            <label htmlFor="recovery-password" className="form-label">New password <span className="required">*</span></label>
+            <input id="recovery-password" type="password" required minLength={12} maxLength={128} autoComplete="new-password" value={password} onChange={event => setPassword(event.target.value)} placeholder="At least 12 characters" className="form-input" />
+            <small className="form-hint">Use at least 12 characters.</small>
+          </div>
+          <div className="form-group">
+            <label htmlFor="recovery-confirm" className="form-label">Confirm new password <span className="required">*</span></label>
+            <input id="recovery-confirm" type="password" required minLength={12} maxLength={128} autoComplete="new-password" value={confirm} onChange={event => setConfirm(event.target.value)} placeholder="Enter your password again" className="form-input" />
+          </div>
+        </>
+      )}
+      {error && <p className="form-error" role="alert">{error}</p>}
+      {message && <p className="alert alert-success" role="status">{message}</p>}
+      <button type="submit" disabled={busy || (mode === "reset" && !token)} className="btn btn-primary btn-full btn-lg">
+        {busy ? "Please wait…" : mode === "request" ? t("auth.sendResetLink","Send reset link") : t("auth.updatePassword","Update password")}
+      </button>
+    </form>
+  );
 }

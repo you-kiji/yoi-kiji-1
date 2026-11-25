@@ -32,9 +32,9 @@ export async function SiteFooter() {
   const rootCategories = categoryRecords.filter(category => category.parentId === null);
   return (
     <footer className="site-footer">
-      <div className="footer-top">
-        <div className="footer-brand-copy">
-          <Link className="wordmark footer-wordmark" href="/">YOI KIJI</Link>
+      <div className="footer-grid">
+        <div className="footer-brand">
+          <Link className="footer-wordmark" href="/">YOI KIJI</Link>
           <p>Textiles for the way you live. Thoughtfully considered home textiles for everyday comfort, quiet moments and the everyday rituals that make a space feel like home.</p>
           <span className="footer-brand-note">BED LINEN · BATH LINEN · KITCHEN · LIVING</span>
         </div>
@@ -56,14 +56,14 @@ export async function SiteFooter() {
         <nav className="footer-column" aria-label="Help and order support">
           <h3>Help & Support</h3>
           <Link href="/contact">Contact Us</Link>
-          <Link href="/shipping">Shipping Information</Link>
-          <Link href="/returns">Returns & Exchanges</Link>
-          <Link href="/cancellation">Cancellation Policy</Link>
+          <Link href="/legal/shipping-policy">Shipping Information</Link>
+          <Link href="/legal/returns-refunds">Returns & Exchanges</Link>
+          <Link href="/legal/cancellation-policy">Cancellation Policy</Link>
           <Link href="/account/orders">Track Your Order</Link>
         </nav>
-        <div className="footer-column footer-social-column">
+        <div className="footer-column">
           <h3>Follow YOI KIJI</h3>
-          <div className="footer-social-list">
+          <div className="footer-social">
             {socialAccounts.map(account => <a className="footer-social-link" href={account.url} key={account.id} target="_blank" rel="noopener noreferrer" aria-label={account.label} title={account.label}><SocialIcon platform={account.platform}/></a>)}
             {!socialAccounts.length && <p className="footer-social-empty">Add your social profile links in Admin → Storefront to display the follow icons here.</p>}
           </div>
@@ -72,7 +72,7 @@ export async function SiteFooter() {
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} YOI KIJI</span>
         <span>COMFORT, CONSIDERED.</span>
-        <div>{legalPages.map(page => <Link href={"/legal/" + page.slug} key={page.id}>{legalNames.get(page.id) ?? page.title}</Link>)}<CookieSettingsButton/><Link href="#">Back to top</Link></div>
+        <div className="footer-legal">{legalPages.map(page => <Link href={"/legal/" + page.slug} key={page.id}>{legalNames.get(page.id) ?? page.title}</Link>)}<CookieSettingsButton/><Link href="#" className="back-to-top">Back to top</Link></div>
       </div>
     </footer>
   );

@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!item) return {};
   const locale = await getLocaleData();
   const translations = locale.code === "en" ? [] : await prisma.contentTranslation.findMany({ where: { localeCode: locale.code, entityType: "category", entityId: item.id, fieldKey: { in: ["name", "description", "seoTitle", "seoDescription"] } } });
-  const text = new Map(translations.map(entry => [entry.fieldKey, entry.value]));
+  const text = new Map(translations.map((entry: typeof translations[0]) => [entry.fieldKey, entry.value]));
   return { title: text.get("seoTitle") ?? text.get("name") ?? item.seoTitle ?? item.name, description: text.get("seoDescription") ?? text.get("description") ?? item.seoDescription ?? item.description ?? undefined };
 }
 
@@ -40,28 +40,28 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const locale = await getLocaleData();
   const t = (key: string, fallback: string) => locale.labels[key] ?? fallback;
   const translationTargets = [
-    ...catalogueProducts.map(product => ({ entityType: "product", entityId: product.id })),
-    ...catalogueProducts.flatMap(product => product.productType?.attributes.map(link => ({ entityType: "attribute", entityId: link.attribute.id })) ?? []),
+    ...catalogueProducts.map((product: typeof catalogueProducts[0]) => ({ entityType: "product", entityId: product.id })),
+    ...catalogueProducts.flatMap((product: typeof catalogueProducts[0]) => product.productType?.attributes.map((link: any) => ({ entityType: "attribute", entityId: link.attribute.id })) ?? []),
   ];
   const translations = locale.code === "en" || !translationTargets.length ? [] : await prisma.contentTranslation.findMany({
-    where: { localeCode: locale.code, OR: translationTargets.map(target => ({ entityType: target.entityType, entityId: target.entityId })) },
+    where: { localeCode: locale.code, OR: translationTargets.map((target: typeof translationTargets[0]) => ({ entityType: target.entityType, entityId: target.entityId })) },
     select: { entityType: true, entityId: true, fieldKey: true, value: true },
   }).catch(() => []);
-  const localized = new Map(translations.map(entry => [`${entry.entityType}:${entry.entityId}:${entry.fieldKey}`, entry.value]));
+  const localized = new Map(translations.map((entry: typeof translations[0]) => [`${entry.entityType}:${entry.entityId}:${entry.fieldKey}`, entry.value]));
   const facetsByKey = new Map<string, { key: string; name: string; unit: string | null; options: string[] }>();
   for (const product of catalogueProducts) {
     for (const link of product.productType?.attributes ?? []) {
       const attribute = link.attribute;
       if (!(link.isFilterable || attribute.isFilterable)) continue;
-      const configured = Array.isArray(attribute.options) ? attribute.options.filter((value): value is string => typeof value === "string") : [];
+      const configured = Array.isArray(attribute.options) ? attribute.options.filter((value: unknown): value is string => typeof value === "string") : [];
       const currentValue = product.attributeValues.find(value => value.attributeId === attribute.id)?.value;
-      const variantValues = attribute.isVariantAxis ? product.variants.flatMap(variant => {
+      const variantValues = attribute.isVariantAxis ? product.variants.flatMap((variant: typeof product.variants[0]) => {
         const attributes = variant.attributes;
         if (!attributes || typeof attributes !== "object" || Array.isArray(attributes)) return [];
         return [(attributes as Record<string, unknown>)[attribute.key]];
       }) : [];
       const observed = attribute.isVariantAxis
-        ? variantValues.flatMap(value => value === null || value === undefined ? [] : Array.isArray(value) ? value.map(displayValue) : [displayValue(value)])
+        ? variantValues.flatMap((value: unknown) => value === null || value === undefined ? [] : Array.isArray(value) ? value.map(displayValue) : [displayValue(value)])
         : Array.isArray(currentValue) ? currentValue.map(displayValue) : currentValue === null || currentValue === undefined ? [] : [displayValue(currentValue)];
       const existing = facetsByKey.get(attribute.key);
       const options = existing?.options ?? [];
@@ -70,27 +70,27 @@ export default async function CategoryPage({ params, searchParams }: Props) {
       facetsByKey.set(attribute.key, { key: attribute.key, name: localized.get(`attribute:${attribute.id}:name`) ?? attribute.name, unit: attribute.unit, options });
     }
   }
-  const facets = [...facetsByKey.values()].filter(facet => facet.options.length > 0).sort((a, b) => a.name.localeCompare(b.name));
-  const activeFilters = Object.fromEntries(facets.map(facet => [facet.key, asValues(query[`f_${facet.key}`])]).filter(([, values]) => values.length > 0)) as Record<string, string[]>;
+  const facets = [...facetsByKey.values()].filter((facet: { key: string; name: string; unit: string | null; options: string[] }) => facet.options.length > 0).sort((a, b) => a.name.localeCompare(b.name));
+  const activeFilters = Object.fromEntries(facets.map((facet: typeof facets[0]) => [facet.key, asValues(query[`f_${facet.key}`])] as [string, string[]]).filter((entry: [string, string[]]) => entry[1].length > 0)) as Record<string, string[]>;
 
-  const variantAxisKeys = new Set(catalogueProducts.flatMap(product =>
+  const variantAxisKeys = new Set(catalogueProducts.flatMap((product: typeof catalogueProducts[0]) =>
     product.productType?.attributes.filter(link => link.attribute.isVariantAxis).map(link => link.attribute.key) ?? []
   ));
   const parentFilters = Object.entries(activeFilters).filter(([key]) => !variantAxisKeys.has(key));
   const variantFilters = Object.entries(activeFilters).filter(([key]) => variantAxisKeys.has(key));
-  let products = catalogueProducts.filter(product => {
-    const matchesParentAttributes = parentFilters.every(([key, selected]) => {
+  let products = catalogueProducts.filter((product: typeof catalogueProducts[0]) => {
+    const matchesParentAttributes = parentFilters.every(([key, selected]: [string, string[]]) => {
       const value = product.attributeValues.find(item => item.attribute.key === key)?.value;
       const values = Array.isArray(value) ? value.map(displayValue) : value === null || value === undefined ? [] : [displayValue(value)];
       return selected.some(option => values.includes(option));
     });
     if (!matchesParentAttributes) return false;
     if (!variantFilters.length) return true;
-    return product.variants.some(variant => {
+    return product.variants.some((variant: typeof product.variants[0]) => {
       const attributes = variant.attributes && typeof variant.attributes === "object" && !Array.isArray(variant.attributes)
         ? variant.attributes as Record<string, unknown>
         : {};
-      return variantFilters.every(([key, selected]) => {
+      return variantFilters.every(([key, selected]: [string, string[]]) => {
         const value = attributes[key];
         const values = Array.isArray(value) ? value.map(displayValue) : value === null || value === undefined ? [] : [displayValue(value)];
         return selected.some(option => values.includes(option));
@@ -123,9 +123,9 @@ export default async function CategoryPage({ params, searchParams }: Props) {
             <option value="name">{t("shop.nameSort", "Name")}</option>
           </select>
         </label>
-        <div className="catalogue-filter-grid">{facets.map(facet => <fieldset key={facet.key}>
+        <div className="catalogue-filter-grid">{facets.map((facet: typeof facets[0]) => <fieldset key={facet.key}>
           <legend>{facet.name}{facet.unit ? ` · ${facet.unit}` : ""}</legend>
-          {facet.options.map(option => <label key={option}>
+          {facet.options.map((option: string) => <label key={option}>
             <input type="checkbox" name={`f_${facet.key}`} value={option} defaultChecked={activeFilters[facet.key]?.includes(option) ?? false}/>
             <span>{option}</span>
           </label>)}
@@ -134,7 +134,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
       </form>
     </FilterDrawer>}
     {products.length ? <section className="product-grid catalogue-product-grid" aria-label={t("shop.products","Products")}>
-      {products.map(p=><Link className="product-card" href={`/products/${p.slug}`} key={p.id} aria-label={`${localized.get(`product:${p.id}:name`) ?? p.name}, ${formatINR(p.pricePaise)}`}>
+      {products.map((p: typeof products[0])=><Link className="product-card" href={`/products/${p.slug}`} key={p.id} aria-label={`${localized.get(`product:${p.id}:name`) ?? p.name}, ${formatINR(p.pricePaise)}`}>
         <div className="product-card-image">{p.images[0] ? <img src={p.images[0].url} alt={p.images[0].alt} loading="lazy" decoding="async"/> : <span>YOI KIJI</span>}</div>
         <div className="catalogue-product-card-info">
           <h2>{localized.get(`product:${p.id}:name`) ?? p.name}</h2>

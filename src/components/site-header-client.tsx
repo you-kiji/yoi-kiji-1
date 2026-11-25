@@ -71,7 +71,7 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
         <span className="wordmark-sub">THE ART OF TEXTILE LIVING</span>
       </Link>
 
-      <nav className="desktop-navigation" aria-label="Main navigation">
+      <nav className="site-nav" aria-label="Main navigation">
         <details
           className="header-collections"
           ref={desktopRef}

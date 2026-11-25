@@ -1,18 +1,6 @@
 import type { Metadata } from "next";
-import type { CSSProperties } from "react";
-import { prisma } from "@/lib/prisma";
-import "./globals.css";
-import "./ui-overhaul.css";
-import "./admin-operations.css";
-import "./admin-shopify.css";
-import "./journal.css";
-import "./visual-stability.css";
-import "./premium-system.css";
-import "./experience-overrides.css";
-import "./advanced-search.css";
-import "./content-management.css";
-import "./quality-pass.css";
 import { getLocaleData } from "@/lib/i18n";
+import "./design-system.css";
 import { SiteChrome } from "@/components/site-chrome";
 import { AnnouncementBar } from "@/components/announcement-bar";
 import { SiteHeader } from "@/components/site-header";
@@ -31,22 +19,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const [locale, brand] = await Promise.all([
-    getLocaleData(),
-    prisma.storefrontBrandSettings.findUnique({ where: { id: "global" } }).catch(() => null),
-  ]);
-  const brandStyle = {
-    "--green": brand?.background ?? "#0e300e",
-    "--green-2": brand?.surface ?? "#19451b",
-    "--cream": brand?.text ?? "#e9e9e9",
-    "--cream-dim": brand?.muted ?? "#c8d0c5",
-    "--accent": brand?.accent ?? "#c9a878",
-    "--yk-content-max-width": `${brand?.contentMaxWidth ?? 1440}px`,
-    "--yk-section-space": `${brand?.sectionSpacing ?? 96}px`,
-    "--yk-button-radius": `${brand?.buttonRadius ?? 8}px`,
-  } as CSSProperties;
+  const locale = await getLocaleData();
   return (
-    <html lang={locale.code} dir={locale.direction} style={brandStyle}>
+    <html lang={locale.code} dir={locale.direction}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

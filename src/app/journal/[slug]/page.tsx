@@ -58,42 +58,96 @@ export default async function JournalArticlePage({ params }: { params: Params })
   const t = (key: string, fallback: string) => locale.labels[key] ?? fallback;
   const translationTargets = [
     { entityType: "blogPost", entityId: post.id },
-    ...post.categories.map(item => ({ entityType: "blogCategory", entityId: item.category.id })),
-    ...post.tags.map(item => ({ entityType: "blogTag", entityId: item.tag.id })),
-    ...post.relatedProducts.map(item => ({ entityType: "product", entityId: item.product.id })),
+    ...post.categories.map((item: typeof post.categories[0]) => ({ entityType: "blogCategory", entityId: item.category.id })),
+    ...post.tags.map((item: typeof post.tags[0]) => ({ entityType: "blogTag", entityId: item.tag.id })),
+    ...post.relatedProducts.map((item: typeof post.relatedProducts[0]) => ({ entityType: "product", entityId: item.product.id })),
   ];
   const translations = locale.code === "en" || !translationTargets.length ? [] : await prisma.contentTranslation.findMany({
-    where: { localeCode: locale.code, OR: translationTargets.map(target => ({ entityType: target.entityType, entityId: target.entityId })) },
+    where: { localeCode: locale.code, OR: translationTargets.map((target: typeof translationTargets[0]) => ({ entityType: target.entityType, entityId: target.entityId })) },
     select: { entityType: true, entityId: true, fieldKey: true, value: true },
   }).catch(() => []);
-  const localized = new Map(translations.map(item => [`${item.entityType}:${item.entityId}:${item.fieldKey}`, item.value]));
+  const localized = new Map(translations.map((item: typeof translations[0]) => [`${item.entityType}:${item.entityId}:${item.fieldKey}`, item.value]));
   const displayPost = {
     ...post,
     title: localized.get(`blogPost:${post.id}:title`) ?? post.title,
     excerpt: localized.get(`blogPost:${post.id}:excerpt`) ?? post.excerpt,
     contentMarkdown: localized.get(`blogPost:${post.id}:contentMarkdown`) ?? post.contentMarkdown,
-    categories: post.categories.map(item => ({ ...item, category: { ...item.category, name: localized.get(`blogCategory:${item.category.id}:name`) ?? item.category.name } })),
-    tags: post.tags.map(item => ({ ...item, tag: { ...item.tag, name: localized.get(`blogTag:${item.tag.id}:name`) ?? item.tag.name } })),
-    relatedProducts: post.relatedProducts.map(item => ({ ...item, product: { ...item.product, name: localized.get(`product:${item.product.id}:name`) ?? item.product.name } })),
+    categories: post.categories.map((item: typeof post.categories[0]) => ({ ...item, category: { ...item.category, name: localized.get(`blogCategory:${item.category.id}:name`) ?? item.category.name } })),
+    tags: post.tags.map((item: typeof post.tags[0]) => ({ ...item, tag: { ...item.tag, name: localized.get(`blogTag:${item.tag.id}:name`) ?? item.tag.name } })),
+    relatedProducts: post.relatedProducts.map((item: typeof post.relatedProducts[0]) => ({ ...item, product: { ...item.product, name: localized.get(`product:${item.product.id}:name`) ?? item.product.name } })),
   };
 
-  return <main className="journal-article-page">
-    <div className="commerce-breadcrumb"><Link href="/">Home</Link><span>/</span><Link href="/journal">{t("common.journal","Journal")}</Link><span>/</span>{displayPost.title}</div>
-    <article>
-      <header className="journal-article-header">
-        <div className="journal-article-categories">{displayPost.categories.map(item => <Link href={"/journal?category=" + encodeURIComponent(item.category.slug)} key={item.category.slug}>{item.category.name}</Link>)}</div>
-        <h1>{displayPost.title}</h1>
-        {displayPost.excerpt && <p className="journal-article-excerpt">{displayPost.excerpt}</p>}
-        <div className="journal-article-byline"><span>{t("journal.wordsBy","Words by")} {post.author?.name ?? "YOI KIJI Editorial"}</span><time dateTime={post.publishedAt?.toISOString()}>{post.publishedAt?.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}</time></div>
-      </header>
-      {post.coverImageUrl && <figure className="journal-article-cover"><img src={post.coverImageUrl} alt={post.coverImageAlt ?? ""} loading="lazy" decoding="async"/></figure>}
-      <BlogMarkdown content={displayPost.contentMarkdown}/>
-      {displayPost.tags.length > 0 && <nav className="journal-article-tags" aria-label="Article tags">{displayPost.tags.map(item => <Link href={"/journal?tag=" + encodeURIComponent(item.tag.slug)} key={item.tag.slug}># {item.tag.name}</Link>)}</nav>}
-      {displayPost.relatedProducts.length > 0 && <section className="journal-related-products"><p className="eyebrow">{t("journal.relatedEyebrow","DISCOVER THE DETAILS")}</p><h2>{t("journal.relatedTitle","Pieces in this story")}</h2><div>{displayPost.relatedProducts.map(({ product }) => <Link href={"/products/" + product.slug} key={product.slug}>
-        {product.images[0] ? <img src={product.images[0].url} alt={product.images[0].alt} loading="lazy" decoding="async"/> : <span className="journal-related-placeholder">YOI KIJI</span>}
-        <strong>{product.name}</strong><small>₹{(product.pricePaise / 100).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</small>
-      </Link>)}</div></section>}
-    </article>
-    <div className="journal-article-back"><Link href="/journal">← {t("journal.backToJournal","Back to the journal")}</Link></div>
-  </main>;
+  return (
+    <main className="page">
+      <div className="page-content" style={{ maxWidth: '800px' }}>
+        <nav className="breadcrumb" aria-label="Breadcrumb">
+          <Link href="/">Home</Link>
+          <span className="separator">/</span>
+          <Link href="/journal">{t("common.journal","Journal")}</Link>
+          <span className="separator">/</span>
+          <span className="current">{displayPost.title}</span>
+        </nav>
+
+        <article>
+          <header style={{ marginBottom: 'var(--space-2xl)' }}>
+            <div className="flex flex-wrap gap-sm mb-md" style={{ fontSize: '0.875rem' }}>
+              {displayPost.categories.map((item: typeof displayPost.categories[0]) => (
+                <Link key={item.category.slug} href={"/journal?category=" + encodeURIComponent(item.category.slug)} className="badge badge-info">{item.category.name}</Link>
+              ))}
+            </div>
+            <h1 style={{ marginBottom: 'var(--space-md)' }}>{displayPost.title}</h1>
+            {displayPost.excerpt && <p style={{ fontSize: '1.125rem', color: 'var(--color-moss)', lineHeight: 1.6, marginBottom: 'var(--space-lg)' }}>{displayPost.excerpt}</p>}
+            <div className="flex flex-wrap items-center gap-md text-sm" style={{ color: 'var(--color-sage)' }}>
+              <span>{t("journal.wordsBy","Words by")} {post.author?.name ?? "YOI KIJI Editorial"}</span>
+              <time dateTime={post.publishedAt?.toISOString()}>{post.publishedAt?.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}</time>
+            </div>
+          </header>
+
+          {post.coverImageUrl && (
+            <figure style={{ margin: 'var(--space-2xl) calc(var(--space-lg) * -1) var(--space-2xl)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
+              <img src={post.coverImageUrl} alt={post.coverImageAlt ?? ""} loading="lazy" decoding="async" style={{ width: '100%', height: 'auto' }} />
+            </figure>
+          )}
+
+          <div style={{ fontSize: '1.0625rem', lineHeight: 1.8, color: 'var(--color-forest)' }}>
+            <BlogMarkdown content={displayPost.contentMarkdown} />
+          </div>
+
+          {displayPost.tags.length > 0 && (
+            <nav aria-label="Article tags" className="flex flex-wrap gap-sm mt-2xl pt-xl" style={{ borderTop: '1px solid var(--color-line)' }}>
+              {displayPost.tags.map((item: typeof displayPost.tags[0]) => (
+                <Link key={item.tag.slug} href={"/journal?tag=" + encodeURIComponent(item.tag.slug)} className="badge badge-neutral"># {item.tag.name}</Link>
+              ))}
+            </nav>
+          )}
+
+          {displayPost.relatedProducts.length > 0 && (
+            <section style={{ marginTop: 'var(--space-4xl)', paddingTop: 'var(--space-2xl)', borderTop: '1px solid var(--color-line)' }}>
+              <div className="section-header" style={{ textAlign: 'left', marginBottom: 'var(--space-xl)' }}>
+                <p className="section-eyebrow">{t("journal.relatedEyebrow","DISCOVER THE DETAILS")}</p>
+                <h2 className="section-title">{t("journal.relatedTitle","Pieces in this story")}</h2>
+              </div>
+              <div className="grid-4" style={{ gap: 'var(--space-lg)' }}>
+                {displayPost.relatedProducts.map(({ product }: typeof displayPost.relatedProducts[0]) => (
+                  <Link key={product.slug} href={"/products/" + product.slug} className="product-card">
+                    <div className="product-card-image">
+                      {product.images[0] ? <img src={product.images[0].url} alt={product.images[0].alt} loading="lazy" decoding="async" /> : <span>YOI KIJI</span>}
+                    </div>
+                    <div className="product-card-info">
+                      <h3 className="product-card-title">{product.name}</h3>
+                      <p className="product-card-price">₹{(product.pricePaise / 100).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <div className="flex justify-center mt-2xl pt-xl" style={{ borderTop: '1px solid var(--color-line)' }}>
+            <Link href="/journal" className="btn btn-secondary">← {t("journal.backToJournal","Back to the journal")}</Link>
+          </div>
+        </article>
+      </div>
+    </main>
+  );
 }

@@ -27,21 +27,21 @@ export default async function HomePage() {
 
   const rootCategories = categoryRecords.filter((category) => category.parentId === null);
   const translationTargets = [
-    ...allSections.map((item) => ({ entityType: "homepageSection", entityId: item.id })),
-    ...collectionRecords.map((item) => ({ entityType: "collection", entityId: item.id })),
-    ...categoryRecords.map((item) => ({ entityType: "category", entityId: item.id })),
+    ...allSections.map((item: typeof allSections[0]) => ({ entityType: "homepageSection", entityId: item.id })),
+    ...collectionRecords.map((item: typeof collectionRecords[0]) => ({ entityType: "collection", entityId: item.id })),
+    ...categoryRecords.map((item: typeof categoryRecords[0]) => ({ entityType: "category", entityId: item.id })),
   ];
   const translations = localeCode === "en" || !translationTargets.length
     ? []
     : await prisma.contentTranslation.findMany({
         where: {
           localeCode,
-          OR: translationTargets.map((target) => ({ entityType: target.entityType, entityId: target.entityId })),
+          OR: translationTargets.map((target: typeof translationTargets[0]) => ({ entityType: target.entityType, entityId: target.entityId })),
         },
         select: { entityType: true, entityId: true, fieldKey: true, value: true },
       }).catch(() => []);
 
-  const translated = new Map(translations.map((item) => [
+  const translated = new Map(translations.map((item: typeof translations[0]) => [
     item.entityType + ":" + item.entityId + ":" + item.fieldKey,
     item.value,
   ]));
@@ -56,14 +56,14 @@ export default async function HomePage() {
   };
 
   const categories = collectionRecords.length
-    ? collectionRecords.map((item) => ({
+    ? collectionRecords.map((item: typeof collectionRecords[0]) => ({
         id: item.id,
         name: translated.get("collection:" + item.id + ":name") ?? item.name,
         note: translated.get("collection:" + item.id + ":description") ?? item.description ?? "",
         image: item.imageUrl ?? "",
         href: "/shop?collection=" + encodeURIComponent(item.slug),
       }))
-    : rootCategories.map((category) => ({
+    : rootCategories.map((category: typeof rootCategories[0]) => ({
         id: category.id,
         name: translated.get("category:" + category.id + ":name") ?? category.name,
         note: translated.get("category:" + category.id + ":description") ?? category.description ?? "",
@@ -73,20 +73,20 @@ export default async function HomePage() {
 
   // Preserve the original LIVE editorial composition. CMS values replace copy/media in-place;
   // The homepage content and visibility are database-owned; absent or hidden sections stay hidden.
-  const baselineItems = defaultSectionOrder.flatMap((key) => {
+  const baselineItems = defaultSectionOrder.flatMap((key: string) => {
     const section = sectionByKey.get(key) ?? null;
     if (!section || !section.isActive) return [];
     return [{ key, section, position: section.position }];
   });
   const customItems = allSections
-    .filter((section) => section.isActive && !defaultSectionOrder.includes(section.key as (typeof defaultSectionOrder)[number]))
-    .filter((section) => section.key !== "announcement" && section.key !== "search" && !section.key.startsWith("demo-"))
-    .map((section) => ({ key: section.key, section, position: section.position }));
+    .filter((section: typeof allSections[0]) => section.isActive && !defaultSectionOrder.includes(section.key as (typeof defaultSectionOrder)[number]))
+    .filter((section: typeof allSections[0]) => section.key !== "announcement" && section.key !== "search" && !section.key.startsWith("demo-"))
+    .map((section: typeof allSections[0]) => ({ key: section.key, section, position: section.position }));
   const homepageItems = [...baselineItems, ...customItems].sort((a, b) => a.position - b.position);
 
   return (
     <main className="home-redesign">
-      {homepageItems.map(({ key, section }) => {
+      {homepageItems.map(({ key, section }: typeof homepageItems[0]) => {
         const settings = section.settings && typeof section.settings === "object" && !Array.isArray(section.settings)
           ? section.settings as Record<string, unknown>
           : {};
@@ -113,7 +113,7 @@ export default async function HomePage() {
           return <section className="storefront-gallery-section" aria-label={section.title || "YOI KIJI Gallery"} key={section.id}>
             <div className="storefront-gallery-heading"><h2>{section.title || "Gallery"}</h2></div>
             <div className="storefront-photo-collage">
-              {slides.filter((slide)=>Boolean(slide.imageUrl)).slice(0,8).map((slide,index)=><a href={slide.ctaHref || "/shop"} key={slide.imageUrl} aria-label={slide.imageAlt || slide.title || `YOI KIJI image ${index+1}`}>
+              {slides.filter((slide: typeof slides[0])=>Boolean(slide.imageUrl)).slice(0,8).map((slide: typeof slides[0], index: number)=><a href={slide.ctaHref || "/shop"} key={slide.imageUrl} aria-label={slide.imageAlt || slide.title || `YOI KIJI image ${index+1}`}>
                 <img src={slide.imageUrl} alt={slide.imageAlt || slide.title || "YOI KIJI home textiles"} loading="lazy" decoding="async" />
               </a>)}
             </div>
@@ -126,14 +126,14 @@ export default async function HomePage() {
 
         if (section.sectionType === "trust-bar") {
           const defaults=[{title:"1 Lakh+",body:"Happy Customers"},{title:"Easy Exchange and Return",body:""},{title:"Secure Payment",body:""},{title:"100% Cotton",body:""}];
-          const items=slides.length?defaults.map((fallback,index)=>({title:slides[index]?.title||fallback.title,body:slides[index]?.body||fallback.body})):defaults;
+          const items=slides.length?defaults.map((fallback: typeof defaults[0], index: number)=>({title:slides[index]?.title||fallback.title,body:slides[index]?.body||fallback.body})):defaults;
           const icons=[
             <><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/><path d="M9 12h6M12 9v6"/></>,
             <><path d="M3 7h13v11H3zM16 11h3l2 3v4h-5"/><circle cx="7.5" cy="18" r="1.8"/><circle cx="18.5" cy="18" r="1.8"/><path d="m7 11 2 2 4-4"/></>,
             <><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></>,
             <><path d="M12 3 19 6v5c0 4.5-3 7.8-7 10-4-2.2-7-5.5-7-10V6z"/><path d="m8.5 12 2.2 2.2 4.8-4.8"/></>
           ];
-          return <section className="storefront-trust-bar" aria-label="YOI KIJI promises" key={section.id}>{items.map((item,index)=><div key={index}><svg className="storefront-trust-icon" viewBox="0 0 24 24" aria-hidden="true">{icons[index]}</svg><strong>{item.title}</strong>{item.body&&<span>{item.body}</span>}</div>)}</section>;
+          return <section className="storefront-trust-bar" aria-label="YOI KIJI promises" key={section.id}>{items.map((item: typeof items[0], index: number)=><div key={index}><svg className="storefront-trust-icon" viewBox="0 0 24 24" aria-hidden="true">{icons[index]}</svg><strong>{item.title}</strong>{item.body&&<span>{item.body}</span>}</div>)}</section>;
         }
 
         if (section.sectionType === "product-grid") {
@@ -150,7 +150,7 @@ export default async function HomePage() {
                 {section.ctaHref ? <a className="editorial-text-link" href={section.ctaHref}>{section.ctaLabel || "Discover"}</a> : null}
               </div>
               <div className="storefront-product-grid">
-                {visibleProducts.map((product) => (
+                {visibleProducts.map((product: typeof visibleProducts[0]) => (
                   <a className="storefront-product-card" href={`/products/${product.slug}`} key={product.id}>
                     {product.images[0]?.url ? (
                       <img src={product.images[0].url} alt={product.images[0].alt || product.name} loading="lazy" />
@@ -171,7 +171,7 @@ export default async function HomePage() {
           return (
             <section className="editorial-collections" key={section.id}>
               <div className="editorial-section-heading"><div><p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow || "EXPLORE"}</p><h2>{section.title || "Shop by collection"}</h2></div>{section.ctaHref && <a className="editorial-text-link" href={section.ctaHref}>{section.ctaLabel || "View all"}</a>}</div>
-              <div className="editorial-collection-grid">{categories.map((item,index)=><a className={"editorial-collection editorial-collection--"+(index+1)} href={item.href} key={item.id}><LazyBackground className="editorial-collection__photo" backgroundImage={`url("${item.image}")`} /><div className="editorial-collection__shade"/><div className="editorial-collection__copy"><span>{item.note}</span><h3>{item.name}</h3><b>DISCOVER</b></div></a>)}</div>
+              <div className="editorial-collection-grid">{categories.map((item: typeof categories[0], index: number)=><a className={"editorial-collection editorial-collection--"+(index+1)} href={item.href} key={item.id}><LazyBackground className="editorial-collection__photo" backgroundImage={`url("${item.image}")`} /><div className="editorial-collection__shade"/><div className="editorial-collection__copy"><span>{item.note}</span><h3>{item.name}</h3><b>DISCOVER</b></div></a>)}</div>
             </section>
           );
         }
@@ -182,7 +182,7 @@ export default async function HomePage() {
                 <div><h2>{section.title || "IDEAS of YOI KIJI"}</h2></div>
               </div>
               <div className="storefront-article-grid">
-                {recentArticles.slice(0,3).map((article,index)=><a className="storefront-article-card" href={"/journal/"+article.slug} key={article.id}>
+                {recentArticles.slice(0,3).map((article: typeof recentArticles[0], index: number)=><a className="storefront-article-card" href={"/journal/"+article.slug} key={article.id}>
                   <div className="storefront-article-card__image">{article.coverImageUrl&&<img src={article.coverImageUrl} alt={article.coverImageAlt||article.title} loading="lazy"/>}<span>0{index+1}</span></div>
                   <div className="storefront-article-card__copy"><h3>{article.title}</h3>{article.excerpt&&<p>{article.excerpt}</p>}<span className="storefront-article-card__read">READ STORY</span></div>
                 </a>)}
@@ -194,7 +194,7 @@ export default async function HomePage() {
           );
         }
         if (section.sectionType === "testimonial") {
-          const quotes = approvedReviews.map(review=>({body:review.body,title:review.title||"",name:review.user.name || "YOI KIJI customer",rating:review.rating}));
+          const quotes = approvedReviews.map((review: typeof approvedReviews[0])=>({body:review.body,title:review.title||"",name:review.user.name || "YOI KIJI customer",rating:review.rating}));
           const reviewPhotos = slides.slice(0,6);
           return (
             <section className="storefront-living-reviews" key={section.id} aria-label={section.title || "Customer reviews"}>
@@ -203,7 +203,7 @@ export default async function HomePage() {
               </header>
               {quotes.length ? (
                 <div className="storefront-living-reviews__grid">
-                  {quotes.slice(0,6).map((quote,index)=>(
+                  {quotes.slice(0,6).map((quote: typeof quotes[0], index: number)=>(
                     <article className="storefront-living-review" key={index}>
                       <div className="storefront-living-review__photo">
                         {reviewPhotos[index]?.imageUrl ? <img src={reviewPhotos[index].imageUrl} alt={reviewPhotos[index].imageAlt || "YOI KIJI customer home"} loading="lazy"/> : <div aria-hidden="true"/>}
@@ -226,7 +226,7 @@ export default async function HomePage() {
           if (!slides.length) return null;
           return (
             <section className="storefront-slideshow" aria-label={section.title || "Featured stories"} key={section.id}>
-              {slides.map((slide,index)=><article className="storefront-slideshow__slide" key={index}>
+              {slides.map((slide: typeof slides[0], index: number)=><article className="storefront-slideshow__slide" key={index}>
                 {slide.imageUrl && <LazyBackground className="storefront-slideshow__image" role="img" ariaLabel={slide.imageAlt || slide.title || "YOI KIJI collection"} backgroundImage={`url("${slide.imageUrl}")`} /> }
                 <div className="storefront-slideshow__shade"/>
                 <div className="storefront-slideshow__content">
@@ -339,7 +339,7 @@ export default async function HomePage() {
                 <a className="editorial-text-link" href={ctaHref}>{ctaLabel}</a>
               </div>
               <div className="editorial-collection-grid">
-                {categories.map((item, index) => (
+                {categories.map((item: typeof categories[0], index: number) => (
                   <a className={"editorial-collection editorial-collection--" + (index + 1)} href={item.href} key={item.id}>
                     <LazyBackground className="editorial-collection__photo" backgroundImage={`url("${item.image}")`} />
                     <div className="editorial-collection__shade" />

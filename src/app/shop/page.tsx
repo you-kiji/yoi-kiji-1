@@ -1,5 +1,3 @@
-import "../reviews-wishlist.css";
-import type { Metadata } from "next";
 import Link from "next/link";
 import { FilterDrawer } from "@/components/filter-drawer";
 import { getActiveCategories, getActiveProducts, getCategoryBranchIds } from "@/lib/catalog";
@@ -8,7 +6,7 @@ import { formatINR } from "@/lib/money";
 import { getLocaleData } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = {
+export const metadata = {
   title: "Shop the collections",
   description: "Explore the YOI KIJI home textile collections.",
 };
@@ -107,7 +105,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   if (params.category) {
     const categoryHref = `/shop?category=${encodeURIComponent(params.category)}`;
     return (
-      <main className="commerce-page catalogue-products-first shop-category-products-first">
+      <main className="page">
         <FilterDrawer label={t("category.refine", "Filter")} closeLabel={t("common.close", "Close")}>
           <form method="get" action="/shop" className="catalogue-filter-drawer-form">
             <input type="hidden" name="category" value={params.category} />
@@ -118,16 +116,16 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
             </div>
             <div className="catalogue-shop-filter-fields">
               <label>{t("shop.searchLabel", "Search products")}
-                <input type="search" name="q" defaultValue={params.q ?? ""} placeholder={t("shop.searchPlaceholder", "Product name, detail or SKU")} maxLength={120} />
+                <input type="search" name="q" defaultValue={params.q ?? ""} placeholder={t("shop.searchPlaceholder", "Product name, detail or SKU")} maxLength={120} className="form-input" />
               </label>
               <label>{t("shop.minimumPrice", "Minimum price")} (₹)
-                <input type="number" name="minPrice" min="0" step="1" inputMode="numeric" defaultValue={params.minPrice ?? ""} placeholder={t("shop.noMinimum", "No minimum")} />
+                <input type="number" name="minPrice" min="0" step="1" inputMode="numeric" defaultValue={params.minPrice ?? ""} placeholder={t("shop.noMinimum", "No minimum")} className="form-input" />
               </label>
               <label>{t("shop.maximumPrice", "Maximum price")} (₹)
-                <input type="number" name="maxPrice" min="0" step="1" inputMode="numeric" defaultValue={params.maxPrice ?? ""} placeholder={t("shop.noMaximum", "No maximum")} />
+                <input type="number" name="maxPrice" min="0" step="1" inputMode="numeric" defaultValue={params.maxPrice ?? ""} placeholder={t("shop.noMaximum", "No maximum")} className="form-input" />
               </label>
               <label>{t("shop.sortBy", "Sort by")}
-                <select name="sort" defaultValue={params.sort ?? "newest"}>
+                <select name="sort" defaultValue={params.sort ?? "newest"} className="form-select">
                   <option value="newest">{t("shop.newest", "Newest arrivals")}</option>
                   <option value="price-asc">{t("shop.priceLow", "Price: low to high")}</option>
                   <option value="price-desc">{t("shop.priceHigh", "Price: high to low")}</option>
@@ -135,11 +133,170 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
                 </select>
               </label>
             </div>
-            <button className="catalogue-apply-button" type="submit">{t("shop.applyFilters", "Apply filters")}</button>
+            <button className="btn btn-primary btn-full catalogue-apply-button" type="submit">{t("shop.applyFilters", "Apply filters")}</button>
           </form>
         </FilterDrawer>
+        <div className="page-content">
+          <nav className="breadcrumb" aria-label="Breadcrumb">
+            <Link href="/">Home</Link>
+            <span className="separator">/</span>
+            <Link href="/shop">Shop</Link>
+            <span className="separator">/</span>
+            <span className="current">{selectedName ?? t("shop.categoryProducts", "Category")}</span>
+          </nav>
+          {products.length ? (
+            <section className="product-grid catalogue-product-grid" aria-label={t("shop.products", "Products")}>
+              {products.map((product) => {
+                const available = product.hasVariants
+                  ? product.variants.some((variant) => variant.inventoryQty > 0)
+                  : product.inventoryQty > 0;
+                const startingPrice = product.hasVariants && product.variants.length
+                  ? Math.min(...product.variants.map((variant) => variant.pricePaise ?? product.pricePaise))
+                  : product.pricePaise;
+                return (
+                  <Link
+                    className={available ? "product-card" : "product-card is-unavailable"}
+                    href={"/products/" + product.slug}
+                    key={product.id}
+                    aria-label={`${product.name}, ${available ? "available" : "currently unavailable"}, ${formatINR(startingPrice)}`}
+                  >
+                    <div className="product-card-image">
+                      {product.images[0] ? (
+                        <img src={product.images[0].url} alt={product.images[0].alt || product.name} loading="lazy" decoding="async" />
+                      ) : <span>YOI KIJI</span>}
+                      {!available && <span className="product-card-badge sale">Currently unavailable</span>}
+                    </div>
+                    <div className="product-card-info">
+                      <h2 className="product-card-title">{product.name}</h2>
+                      <p className="product-card-price">
+                        {product.hasVariants ? <span className="from">From </span> : null}
+                        {formatINR(startingPrice)}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </section>
+          ) : (
+            <section className="empty-state" aria-labelledby="shop-category-empty-title">
+              <div className="empty-state-icon">✳</div>
+              <h2 id="shop-category-empty-title">{t("category.noFilterMatches", "No products found in this collection.")}</h2>
+              <Link className="btn btn-primary" href={categoryHref}>{t("category.clearFilters", "Clear filters")}</Link>
+            </section>
+          )}
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="page">
+      <div className="page-content">
+        <nav className="breadcrumb" aria-label="Breadcrumb">
+          <Link href="/">Home</Link>
+          <span className="separator">/</span>
+          <span className="current">{selectedName ?? t("shop.all","Shop all")}</span>
+        </nav>
+
+        <header className="page-header">
+          <p className="section-eyebrow">{selected ? "CURATED BY YOI KIJI" : "THE YOI KIJI COLLECTIONS"}</p>
+          <h1>
+            {selected ? selectedName : <>{t("shop.title","Considered comfort,")}<br /><em>{t("shop.titleSecond","for every room.")}</em></>}
+          </h1>
+          <p>{selectedDescription ?? t("shop.description","Explore textiles chosen for the everyday moments that make a home.")}</p>
+        </header>
+
+        <section className="shop-discovery" aria-label="Find pieces in the collection">
+          <div className="shop-filter-heading">
+            <div>
+              <p className="section-eyebrow">{t("shop.filterEyebrow","A MORE CONSIDERED SEARCH")}</p>
+              <h2>{t("shop.findPiece","Find your piece")}</h2>
+            </div>
+            <p>{t("shop.refineHint","Refine by collection, detail or price.")}</p>
+          </div>
+
+          <form className="shop-filter-form" action="/shop" method="get" role="search">
+            {selected && <input type="hidden" name="collection" value={selected.slug} />}
+
+            <div className="grid-2 gap-md">
+              <label htmlFor="shop-search" className="flex flex-col gap-sm">
+                <span>{t("shop.searchLabel","Search the collection")}</span>
+                <input
+                  id="shop-search"
+                  type="search"
+                  name="q"
+                  defaultValue={params.q ?? ""}
+                  placeholder={t("shop.searchPlaceholder","Product name, detail or SKU")}
+                  maxLength={120}
+                  className="form-input"
+                />
+              </label>
+
+              <label htmlFor="shop-category" className="flex flex-col gap-sm">
+                <span>{"Product"}</span>
+                <select id="shop-category" name="category" defaultValue={params.category ?? ""} className="form-select">
+                  <option value="">{"All products"}</option>
+                  {categoryOptions.map((category) => (
+                    <option key={category.id} value={category.slug}>{category.parentId ? "— " : ""}{category.name}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label htmlFor="shop-min-price" className="flex flex-col gap-sm">
+                <span>{t("shop.minimumPrice","Minimum price")} <em>(₹)</em></span>
+                <input
+                  id="shop-min-price"
+                  type="number"
+                  min="0"
+                  step="1"
+                  name="minPrice"
+                  inputMode="numeric"
+                  defaultValue={params.minPrice ?? ""}
+                  placeholder={t("shop.noMinimum","No minimum")}
+                  className="form-input"
+                />
+              </label>
+
+              <label htmlFor="shop-max-price" className="flex flex-col gap-sm">
+                <span>{t("shop.maximumPrice","Maximum price")} <em>(₹)</em></span>
+                <input
+                  id="shop-max-price"
+                  type="number"
+                  min="0"
+                  step="1"
+                  name="maxPrice"
+                  inputMode="numeric"
+                  defaultValue={params.maxPrice ?? ""}
+                  placeholder={t("shop.noMaximum","No maximum")}
+                  className="form-input"
+                />
+              </label>
+
+              <label htmlFor="shop-sort" className="flex flex-col gap-sm">
+                <span>{t("shop.sortBy","Sort by")}</span>
+                <select id="shop-sort" name="sort" defaultValue={params.sort ?? "newest"} className="form-select">
+                  <option value="newest">{t("shop.newest","Newest arrivals")}</option>
+                  <option value="price-asc">{t("shop.priceLow","Price: low to high")}</option>
+                  <option value="price-desc">{t("shop.priceHigh","Price: high to low")}</option>
+                  <option value="name">{t("shop.nameSort","Name A–Z")}</option>
+                </select>
+              </label>
+            </div>
+
+            <div className="shop-filter-actions flex gap-md mt-lg">
+              <button type="submit" className="btn btn-primary">{t("shop.applyFilters","Apply filters")}</button>
+              <Link href={clearHref} className="btn btn-secondary">{t("shop.clearAll","Clear all")}</Link>
+            </div>
+          </form>
+        </section>
+
+        <div className="shop-results-bar flex justify-between items-center mt-xl mb-lg" role="status" aria-live="polite">
+          <p><strong>{products.length}</strong> {products.length === 1 ? t("shop.piece","piece") : t("shop.pieces","pieces")} {t("shop.toDiscover","to discover")}</p>
+          {query && <p>{t("shop.showingResults","Showing results for")} <strong>"{params.q?.trim()}"</strong></p>}
+        </div>
+
         {products.length ? (
-          <section className="product-grid catalogue-product-grid" aria-label={t("shop.products", "Products")}>
+          <section className="product-grid shop-product-grid" aria-label="Available products">
             {products.map((product) => {
               const available = product.hasVariants
                 ? product.variants.some((variant) => variant.inventoryQty > 0)
@@ -156,14 +313,22 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
                 >
                   <div className="product-card-image">
                     {product.images[0] ? (
-                      <img src={product.images[0].url} alt={product.images[0].alt || product.name} loading="lazy" decoding="async" />
-                    ) : <span>YOI KIJI</span>}
-                    {!available && <span className="product-card-stock-badge">Currently unavailable</span>}
+                      <img
+                        src={product.images[0].url}
+                        alt={product.images[0].alt || product.name}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <span>YOI KIJI</span>
+                    )}
+                    {!available && <span className="product-card-badge sale">Currently unavailable</span>}
                   </div>
-                  <div className="catalogue-product-card-info">
-                    <h2>{product.name}</h2>
+                  <div className="product-card-info">
+                    <p className="product-card-category">{product.category?.name ?? "YOI KIJI"}</p>
+                    <h2 className="product-card-title">{product.name}</h2>
                     <p className="product-card-price">
-                      {product.hasVariants ? <span className="product-card-price-prefix">From </span> : null}
+                      {product.hasVariants ? <span className="from">From </span> : null}
                       {formatINR(startingPrice)}
                     </p>
                   </div>
@@ -172,163 +337,15 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
             })}
           </section>
         ) : (
-          <section className="catalogue-empty shop-empty-state" aria-labelledby="shop-category-empty-title">
-            <h2 id="shop-category-empty-title">{t("category.noFilterMatches", "No products found in this collection.")}</h2>
-            <Link className="primary-link" href={categoryHref}>{t("category.clearFilters", "Clear filters")}</Link>
+          <section className="empty-state" aria-labelledby="shop-empty-title">
+            <div className="empty-state-icon">✳</div>
+            <p className="section-eyebrow">A QUIETER MOMENT</p>
+            <h2 id="shop-empty-title">No pieces match those filters.</h2>
+            <p>Try a different search or clear a price range to explore the collection again.</p>
+            <Link className="btn btn-primary" href={clearHref}>Clear filters</Link>
           </section>
         )}
-      </main>
-    );
-  }
-
-  return (
-    <main className="commerce-page shop-page">
-      <div className="commerce-breadcrumb">
-        <Link href="/">Home</Link>
-        <span>/</span>
-        {selectedName ?? t("shop.all","Shop all")}
       </div>
-
-      <header className="commerce-heading shop-heading">
-        <p className="eyebrow">{selected ? "CURATED BY YOI KIJI" : "THE YOI KIJI COLLECTIONS"}</p>
-        <h1>
-          {selected ? selectedName : <>{t("shop.title","Considered comfort,")}<br /><em>{t("shop.titleSecond","for every room.")}</em></>}
-        </h1>
-        <p>{selectedDescription ?? t("shop.description","Explore textiles chosen for the everyday moments that make a home.")}</p>
-      </header>
-
-      <section className="shop-discovery" aria-label="Find pieces in the collection">
-        <div className="shop-filter-heading">
-          <div>
-            <p className="eyebrow">{t("shop.filterEyebrow","A MORE CONSIDERED SEARCH")}</p>
-            <h2>{t("shop.findPiece","Find your piece")}</h2>
-          </div>
-          <p>{t("shop.refineHint","Refine by collection, detail or price.")}</p>
-        </div>
-
-        <form className="shop-filter-form" action="/shop" method="get" role="search">
-          {selected && <input type="hidden" name="collection" value={selected.slug} />}
-
-          <label htmlFor="shop-search">
-            <span>{t("shop.searchLabel","Search the collection")}</span>
-            <input
-              id="shop-search"
-              type="search"
-              name="q"
-              defaultValue={params.q ?? ""}
-              placeholder={t("shop.searchPlaceholder","Product name, detail or SKU")}
-              maxLength={120}
-            />
-          </label>
-
-          <label htmlFor="shop-category">
-            <span>{"Product"}</span>
-            <select id="shop-category" name="category" defaultValue={params.category ?? ""}>
-              <option value="">{"All products"}</option>
-              {categoryOptions.map((category) => (
-                <option key={category.id} value={category.slug}>{category.parentId ? "— " : ""}{category.name}</option>
-              ))}
-            </select>
-          </label>
-
-          <label htmlFor="shop-min-price">
-            <span>{t("shop.minimumPrice","Minimum price")} <em>(₹)</em></span>
-            <input
-              id="shop-min-price"
-              type="number"
-              min="0"
-              step="1"
-              name="minPrice"
-              inputMode="numeric"
-              defaultValue={params.minPrice ?? ""}
-              placeholder={t("shop.noMinimum","No minimum")}
-            />
-          </label>
-
-          <label htmlFor="shop-max-price">
-            <span>{t("shop.maximumPrice","Maximum price")} <em>(₹)</em></span>
-            <input
-              id="shop-max-price"
-              type="number"
-              min="0"
-              step="1"
-              name="maxPrice"
-              inputMode="numeric"
-              defaultValue={params.maxPrice ?? ""}
-              placeholder={t("shop.noMaximum","No maximum")}
-            />
-          </label>
-
-          <label htmlFor="shop-sort">
-            <span>{t("shop.sortBy","Sort by")}</span>
-            <select id="shop-sort" name="sort" defaultValue={params.sort ?? "newest"}>
-              <option value="newest">{t("shop.newest","Newest arrivals")}</option>
-              <option value="price-asc">{t("shop.priceLow","Price: low to high")}</option>
-              <option value="price-desc">{t("shop.priceHigh","Price: high to low")}</option>
-              <option value="name">{t("shop.nameSort","Name A–Z")}</option>
-            </select>
-          </label>
-
-          <div className="shop-filter-actions">
-            <button type="submit">{t("shop.applyFilters","Apply filters")}</button>
-            <Link href={clearHref}>{t("shop.clearAll","Clear all")}</Link>
-          </div>
-        </form>
-      </section>
-
-      <div className="shop-results-bar" role="status" aria-live="polite">
-        <p><strong>{products.length}</strong> {products.length === 1 ? t("shop.piece","piece") : t("shop.pieces","pieces")} {t("shop.toDiscover","to discover")}</p>
-        {query && <p>{t("shop.showingResults","Showing results for")} <strong>“{params.q?.trim()}”</strong></p>}
-      </div>
-
-      {products.length ? (
-        <section className="product-grid shop-product-grid" aria-label="Available products">
-          {products.map((product) => {
-            const available = product.hasVariants
-              ? product.variants.some((variant) => variant.inventoryQty > 0)
-              : product.inventoryQty > 0;
-            const startingPrice = product.hasVariants && product.variants.length
-              ? Math.min(...product.variants.map((variant) => variant.pricePaise ?? product.pricePaise))
-              : product.pricePaise;
-            return (
-              <Link
-                className={available ? "product-card" : "product-card is-unavailable"}
-                href={"/products/" + product.slug}
-                key={product.id}
-                aria-label={`${product.name}, ${available ? "available" : "currently unavailable"}, ${formatINR(startingPrice)}`}
-              >
-                <div className="product-card-image">
-                  {product.images[0] ? (
-                    <img
-                      src={product.images[0].url}
-                      alt={product.images[0].alt || product.name}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  ) : (
-                    <span>YOI KIJI</span>
-                  )}
-                  {!available && <span className="product-card-stock-badge">Currently unavailable</span>}
-                </div>
-                <p className="product-card-category">{product.category?.name ?? "YOI KIJI"}</p>
-                <h2>{product.name}</h2>
-                <p className="product-card-price">
-                  {product.hasVariants ? <span className="product-card-price-prefix">From </span> : null}
-                  {formatINR(startingPrice)}
-                </p>
-              </Link>
-            );
-          })}
-        </section>
-      ) : (
-        <section className="catalogue-empty shop-empty-state" aria-labelledby="shop-empty-title">
-          <span className="empty-mark" aria-hidden="true">✳</span>
-          <p className="eyebrow">A QUIETER MOMENT</p>
-          <h2 id="shop-empty-title">No pieces match those filters.</h2>
-          <p>Try a different search or clear a price range to explore the collection again.</p>
-          <Link className="primary-link" href={clearHref}>Clear filters</Link>
-        </section>
-      )}
     </main>
   );
 }
