@@ -132,7 +132,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
         </fieldset>)}</div>
         <button className="catalogue-apply-button" type="submit">{t("shop.applyFilters", "Apply filters")}</button>
       </form>
-    </FilterDrawer>}}
+    </FilterDrawer>}
     {products.length ? <section className="product-grid catalogue-product-grid" aria-label={t("shop.products","Products")}>
       {products.map(p=><Link className="product-card" href={`/products/${p.slug}`} key={p.id} aria-label={`${localized.get(`product:${p.id}:name`) ?? p.name}, ${formatINR(p.pricePaise)}`}>
         <div className="product-card-image">{p.images[0] ? <img src={p.images[0].url} alt={p.images[0].alt} loading="lazy" decoding="async"/> : <span>YOI KIJI</span>}</div>
