@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { FilterDrawer } from "@/components/filter-drawer";
 import { notFound } from "next/navigation";
 import { getActiveCategoryBySlug, getActiveProducts } from "@/lib/catalog";
 import { formatINR } from "@/lib/money";
@@ -108,23 +109,18 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const activeFilterCount = Object.values(activeFilters).reduce((count, values) => count + values.length, 0);
 
   return <main className="commerce-page catalogue-products-first">
-    {facets.length > 0 && <details className="catalogue-filter-dropdown">
-      <summary aria-label="Open product filters">
-        <span className="catalogue-filter-icon" aria-hidden="true"><i/><i/><i/></span>
-        <span>{t("category.refine","Filter")}</span>
-        {activeFilterCount > 0 && <span className="catalogue-filter-count">{activeFilterCount}</span>}
-      </summary>
-      <form method="get" className="catalogue-filter-popover">
+    {facets.length > 0 && <FilterDrawer label={t("category.refine", "Filter")} closeLabel={t("common.close", "Close")} count={activeFilterCount}>
+      <form method="get" className="catalogue-filter-drawer-form">
         <div className="catalogue-filter-popover-top">
-          <strong>{t("category.refine","Filter products")}</strong>
-          <Link href={`/shop/${item.slug}`}>{t("category.clearFilters","Clear all")}</Link>
+          <strong>{t("category.refine", "Filter products")}</strong>
+          <Link href={`/shop/${item.slug}`}>{t("category.clearFilters", "Clear all")}</Link>
         </div>
-        <label className="catalogue-popover-sort">{t("shop.sortBy","Sort by")}
+        <label className="catalogue-popover-sort">{t("shop.sortBy", "Sort by")}
           <select name="sort" defaultValue={sort}>
-            <option value="newest">{t("shop.newest","Newest")}</option>
-            <option value="price-asc">{t("shop.priceLow","Price: low to high")}</option>
-            <option value="price-desc">{t("shop.priceHigh","Price: high to low")}</option>
-            <option value="name">{t("shop.nameSort","Name")}</option>
+            <option value="newest">{t("shop.newest", "Newest")}</option>
+            <option value="price-asc">{t("shop.priceLow", "Price: low to high")}</option>
+            <option value="price-desc">{t("shop.priceHigh", "Price: high to low")}</option>
+            <option value="name">{t("shop.nameSort", "Name")}</option>
           </select>
         </label>
         <div className="catalogue-filter-grid">{facets.map(facet => <fieldset key={facet.key}>
@@ -134,9 +130,9 @@ export default async function CategoryPage({ params, searchParams }: Props) {
             <span>{option}</span>
           </label>)}
         </fieldset>)}</div>
-        <button className="catalogue-apply-button" type="submit">{t("shop.applyFilters","Apply filters")}</button>
+        <button className="catalogue-apply-button" type="submit">{t("shop.applyFilters", "Apply filters")}</button>
       </form>
-    </details>}
+    </FilterDrawer>}}
     {products.length ? <section className="product-grid catalogue-product-grid" aria-label={t("shop.products","Products")}>
       {products.map(p=><Link className="product-card" href={`/products/${p.slug}`} key={p.id} aria-label={`${localized.get(`product:${p.id}:name`) ?? p.name}, ${formatINR(p.pricePaise)}`}>
         <div className="product-card-image">{p.images[0] ? <img src={p.images[0].url} alt={p.images[0].alt} loading="lazy" decoding="async"/> : <span>YOI KIJI</span>}</div>

@@ -73,7 +73,7 @@ export default async function ProductPage({ params }: Props) {
     return { name, value: entry.attribute.unit ? `${formatted} ${entry.attribute.unit}` : formatted };
   });
 
-  return <main className="commerce-page">
+  return <main className="commerce-page product-page-redesign">
     <div className="commerce-breadcrumb"><Link href="/">Home</Link><span>/</span><Link href="/shop">Shop</Link><span>/</span>{displayName}</div>
     <ProductDetailInteractive
       productId={product.id}
