@@ -2428,3 +2428,32 @@ html, body, main, .site-header, .site-footer, .home-redesign {
     font-size: 13px;
   }
 }
+
+
+/* Query-based collection routes (/shop?category=...) use the same product-first layout. */
+.shop-category-products-first .catalogue-shop-filter-fields {
+  display: grid;
+  gap: 12px;
+  margin: 15px 0;
+}
+.shop-category-products-first .catalogue-shop-filter-fields label {
+  display: grid;
+  gap: 6px;
+  color: #314b32;
+  font-size: 12px;
+  font-weight: 600;
+}
+.shop-category-products-first .catalogue-shop-filter-fields input,
+.shop-category-products-first .catalogue-shop-filter-fields select {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid rgba(14, 48, 14, .24);
+  border-radius: 3px;
+  background: #fffefa;
+  color: #0e300e;
+  font: inherit;
+}
+.shop-category-products-first .catalogue-product-grid .product-card.is-unavailable {
+  opacity: .88;
+}
