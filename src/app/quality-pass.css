@@ -2567,3 +2567,18 @@ html, body, main, .site-header, .site-footer, .home-redesign {
   .product-page-redesign .product-detail-copy h1 { font-size:clamp(30px,8vw,42px); }
   .product-page-redesign .product-gallery-thumbnails { grid-template-columns:repeat(5,minmax(0,1fr)); gap:7px; }
 }
+
+
+/* Keep the purchase decision above the longer product information. */
+.product-page-redesign .product-detail-copy { display:flex; flex-direction:column; }
+.product-page-redesign .product-detail-copy > .eyebrow { order:1; }
+.product-page-redesign .product-detail-copy > h1 { order:2; }
+.product-page-redesign .product-detail-copy > .wishlist-control { order:3; }
+.product-page-redesign .product-detail-copy > .product-detail-price { order:4; }
+.product-page-redesign .product-detail-copy > .stock-note { order:5; }
+.product-page-redesign .product-detail-copy > .back-in-stock-form { order:6; }
+.product-page-redesign .product-detail-copy > .purchase-variant { order:7; }
+.product-page-redesign .product-detail-copy > .add-to-bag { order:8; }
+.product-page-redesign .product-detail-copy > .product-description { order:9; }
+.product-page-redesign .product-detail-copy > .product-specs { order:10; }
+.product-page-redesign .product-detail-copy > .product-detail-note { order:11; }
