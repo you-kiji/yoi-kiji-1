@@ -3086,3 +3086,36 @@ html, body, main, .site-header, .site-footer, .home-redesign {
   .public-reviews-grid { gap:12px; }
   .contact-page__intro h1,.auth-panel h1 { font-size:clamp(36px,10vw,50px); }
 }
+
+
+/* Utility and transactional routes: compact decorative headers, retain all order data. */
+.password-recovery-panel h1 { font-size:clamp(36px,5vw,58px); line-height:1.05; }
+.password-recovery-panel>p:not(.eyebrow) { max-width:460px; font-size:12px; line-height:1.7; }
+.guest-order-card>h1 { font-size:clamp(36px,5vw,58px); line-height:1.05; }
+.guest-order-intro,.guest-order-security { max-width:540px; font-size:12px; line-height:1.65; }
+.guest-order-reference { gap:10px; }
+.guest-order-lines { font-size:12px; }
+.guest-order-address p,.guest-order-payment span { font-size:12px; line-height:1.6; }
+.order-tracking-layout { gap:clamp(20px,3vw,42px); }
+.order-tracking-summary h2 { font-size:clamp(22px,3vw,32px); }
+.order-tracking-timeline h3,.order-tracking-carrier h3,.order-tracking-side h3 { font-size:14px; }
+.order-tracking-timeline p,.order-tracking-side p { font-size:11px; line-height:1.6; }
+.order-tracking-item { font-size:12px; }
+.legal-page .commerce-heading h1 { font-size:clamp(32px,4vw,48px); }
+.legal-page-content {
+  max-width:860px;
+  margin-inline:auto;
+  font-size:13px;
+  line-height:1.85;
+}
+.legal-page-content p { margin-block:0 18px; }
+.invoice-sheet { font-size:12px; }
+.invoice-sheet header h1 { font-size:28px; }
+.invoice-sheet .invoice-notice { font-size:10px; line-height:1.6; }
+.invoice-sheet .invoice-address p { font-size:11px; line-height:1.6; }
+
+@media(max-width:760px) {
+  .guest-order-card { padding:22px 18px; }
+  .order-tracking-layout { grid-template-columns:minmax(0,1fr); }
+  .legal-page-content { font-size:12px; line-height:1.8; }
+}
