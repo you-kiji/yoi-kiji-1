@@ -208,7 +208,6 @@ export default async function HomePage() {
                 <h1>{title}</h1>
                 <p className="editorial-hero__description">{body}</p>
                 <a className="editorial-cta" href={ctaHref}>{ctaLabel}</a>
-                <div className="editorial-hero__search"><AdvancedSearch compact labels={locale.labels} /></div>
               </div>
               <div className="editorial-hero__bottom"><span>COMFORT, CONSIDERED.</span><span>SCROLL TO DISCOVER</span></div>
             </section>
