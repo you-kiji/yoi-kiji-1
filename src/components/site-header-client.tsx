@@ -117,7 +117,7 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
         <nav aria-label="Mobile navigation">
           <LocaleSwitcher locales={availableLocales} currentCode={currentLocale} />
           <Link href="/shop" onClick={closeAll}>{text("header.shopAll","Shop all")}</Link>
-          <p>{text("header.categories","Categories")}</p>
+          <p>Products</p>
           {categories.map(category => (
             <Link key={category.id} href={`/shop?category=${encodeURIComponent(category.slug)}`} onClick={closeAll}>
               {category.name}
