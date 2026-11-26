@@ -203,10 +203,10 @@ export default async function HomePage() {
               <div className="editorial-hero__shade" />
               <div className="editorial-hero__topline"><span>YOI KIJI — THE ART OF TEXTILE LIVING</span></div>
               <div className="editorial-hero__content">
-                <p className="editorial-eyebrow"><span />{eyebrow}</p>
+                <p className="editorial-eyebrow">{eyebrow}</p>
                 <h1>{title}</h1>
                 <p className="editorial-hero__description">{body}</p>
-                <a className="editorial-cta" href={ctaHref}>{ctaLabel}</a>
+                {ctaLabel.trim() && ctaHref.trim() && <a className="editorial-cta" href={ctaHref}>{ctaLabel}</a>}
               </div>
               <div className="editorial-hero__bottom"><span>COMFORT, CONSIDERED.</span><span>SCROLL TO DISCOVER</span></div>
             </section>
