@@ -129,7 +129,7 @@ export default async function HomePage() {
         }
 
         if (section.sectionType === "trust-bar" || section.sectionType === "trust-badges") {
-          const defaults=[{title:"1 Lakh+",body:"Happy Customers"},{title:"Easy Exchange and Return",body:""},{title:"Secure Payment",body:""},{title:"100% Cotton",body:""}];
+          const defaults=[{title:"1 Lakh+",body:"Happy Customers",imageUrl:""},{title:"Easy Exchange and Return",body:"",imageUrl:""},{title:"Secure Payment",body:"",imageUrl:""},{title:"100% Cotton",body:"",imageUrl:""}];
           const items=slides.length?defaults.map((fallback: typeof defaults[0], index: number)=>({title:slides[index]?.title||fallback.title,body:slides[index]?.body||fallback.body,imageUrl:slides[index]?.imageUrl||""})):defaults;
           const icons=[
             <><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/><path d="M9 12h6M12 9v6"/></>,
