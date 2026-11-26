@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import { prisma } from "@/lib/prisma";
 import "./globals.css";
+import "./homepage-intro-media.css";
 import "./ui-overhaul.css";
 import "./admin-operations.css";
 import "./admin-shopify.css";
