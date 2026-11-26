@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && if [ \"$VERCEL_ENV\" = \"production\" ] || [ \"$VERCEL_ENV\" = \"preview\" ]; then prisma migrate deploy; fi && next build",
+    "build": "prisma generate && if [ "$VERCEL_ENV" = "production" ]; then prisma migrate deploy; fi && next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
@@ -41,6 +41,6 @@
     "csstype": "3.2.3",
     "postcss": "8.5.23",
     "deepmerge-ts": "8.0.2",
-    "effect": "3.22.1"
+    "effect": "3.22.2"
   }
 }
