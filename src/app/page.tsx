@@ -88,7 +88,7 @@ export default async function HomePage() {
       })
     : [];
   const homepageItems = [...baselineItems, ...customItems.filter(item => item.key !== "intro-media")]
-    .filter((item) => !(introMediaSection?.isActive && item.key === "hero"))
+    .filter((item) => item.key !== "hero")
     .sort((a, b) => a.position - b.position);
 
   return (
