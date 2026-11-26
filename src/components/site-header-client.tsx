@@ -85,7 +85,7 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
               event.preventDefault();
               setDesktopOpen(value => !value);
             }}
-          >{text("header.categories","Categories")}</summary>
+          >Products</summary>
           <div className="header-collections-menu">
             <Link href="/shop" onClick={closeAll}>{text("header.shopAllCategories","Shop all categories")}</Link>
             {categories.map(category => (
