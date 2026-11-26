@@ -59,7 +59,7 @@ export async function sendWhatsAppOrderConfirmation(orderId:string){
 }
 
 
-export async function sendOrderStatusUpdate(orderId:string,status:"PROCESSING"|"SHIPPED"|"DELIVERED"|"CANCELLED"){
+export async function sendOrderStatusUpdate(orderId:string,status:"PROCESSING"|"SHIPPED"|"DELIVERED"|"CANCELLED"|"REFUNDED"){
  const apiKey=process.env.EMAIL_API_KEY,from=process.env.EMAIL_FROM;
  if(!apiKey||!from)return {sent:false,reason:"Email provider is not configured."};
  const order=await prisma.order.findUnique({where:{id:orderId},include:{user:true,items:true}});
@@ -84,6 +84,7 @@ export async function sendOrderStatusUpdate(orderId:string,status:"PROCESSING"|"
   SHIPPED:{subject:"Your YOI KIJI order is on its way",heading:"Your order is on its way.",message:"Your parcel has been handed over to the delivery partner."},
   DELIVERED:{subject:"Your YOI KIJI order has been delivered",heading:"A little more comfort, delivered.",message:"Your order has been marked as delivered. We hope you love your new pieces."},
   CANCELLED:{subject:"An update about your YOI KIJI order",heading:"Your order was cancelled.",message:"Your order has been cancelled. If you have questions about a payment or refund, please contact the store team."},
+  REFUNDED:{subject:"Your YOI KIJI refund has been processed",heading:"Your refund has been processed.",message:"Your payment refund has been processed by our payment provider. Please allow your bank or card issuer time to reflect the amount."},
  };
  const details=[
   "Order: "+order.orderNumber,

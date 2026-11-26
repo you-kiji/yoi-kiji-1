@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   requireAdmin: vi.fn(),
+  sendOrderStatusUpdate: vi.fn(),
   prisma: {
     order: { findUnique: vi.fn(), update: vi.fn() },
     payment: { updateMany: vi.fn(), update: vi.fn() },
@@ -10,6 +11,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/lib/admin", () => ({ requireAdmin: mocks.requireAdmin }));
+vi.mock("@/lib/notifications", () => ({ sendOrderStatusUpdate: mocks.sendOrderStatusUpdate }));
 vi.mock("@/lib/prisma", () => ({ prisma: mocks.prisma }));
 
 import { POST } from "./route";
@@ -37,6 +39,7 @@ describe("admin Razorpay refund", () => {
     vi.stubEnv("RAZORPAY_KEY_ID", "key_test");
     vi.stubEnv("RAZORPAY_KEY_SECRET", "secret_test");
     mocks.requireAdmin.mockResolvedValue({ id: "admin-1", role: "ADMIN" });
+    mocks.sendOrderStatusUpdate.mockResolvedValue({ sent: true });
     mocks.prisma.order.findUnique.mockResolvedValue(order);
     mocks.prisma.payment.updateMany.mockResolvedValue({ count: 1 });
     mocks.prisma.payment.update.mockResolvedValue({});
@@ -72,6 +75,7 @@ describe("admin Razorpay refund", () => {
     expect(mocks.prisma.order.update).toHaveBeenCalledWith({
       where: { id: "order-1" }, data: { status: "REFUNDED" },
     });
+    expect(mocks.sendOrderStatusUpdate).toHaveBeenCalledWith("order-1", "REFUNDED");
   });
 
   it("does not call Razorpay when another admin already claimed the refund", async () => {

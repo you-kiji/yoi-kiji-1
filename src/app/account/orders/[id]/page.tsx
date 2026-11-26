@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { formatINR } from "@/lib/money";
 import { CancelOrderButton } from "@/components/cancel-order-button";
+import { ReturnRequestForm } from "@/components/return-request-form";
 import { getLocaleData } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
@@ -158,6 +159,8 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
             </section>
           </aside>
         </section>
+
+        {order.status === "DELIVERED" && <div style={{ marginBottom: 'var(--space-xl)' }}><ReturnRequestForm orderId={order.id} initialRequest={order.returnRequest as { status: string; reason: string; details?: string; requestedAt?: string } | null} /></div>}
 
         <div className="flex flex-wrap gap-md justify-center" style={{ paddingTop: 'var(--space-xl)', borderTop: '1px solid var(--color-line)' }}>
           <Link href="/account/orders" className="btn btn-secondary">← Back to all orders</Link>

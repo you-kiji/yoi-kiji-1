@@ -1,7 +1,7 @@
 import { createHmac,timingSafeEqual } from "node:crypto";
 import { NextRequest,NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { sendOrderConfirmation,sendWhatsAppOrderConfirmation } from "@/lib/notifications";
+import { sendOrderConfirmation,sendWhatsAppOrderConfirmation,sendOrderStatusUpdate } from "@/lib/notifications";
 export const runtime="nodejs";
 export async function POST(request:NextRequest){
  const secret=process.env.RAZORPAY_WEBHOOK_SECRET;if(!secret)return NextResponse.json({error:"Webhook is not configured."},{status:503});
@@ -28,6 +28,7 @@ export async function POST(request:NextRequest){
    prisma.payment.update({where:{id:matched.id},data:{refundId:refund.id,refundStatus:processed?"processed":"failed",status:processed?"REFUNDED":matched.status,webhookEventId:eventId??undefined}}),
    ...(processed?[prisma.order.update({where:{id:matched.orderId},data:{status:"REFUNDED"}})]:[])
   ]);
+  if(processed)await sendOrderStatusUpdate(matched.orderId,"REFUNDED").catch(()=>undefined);
   return NextResponse.json({received:true});
  }
  const providerPayment=event?.payload?.payment?.entity;

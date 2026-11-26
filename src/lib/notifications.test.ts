@@ -9,7 +9,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@/lib/prisma", () => ({ prisma: mocks.prisma }));
 
-import { sendOrderStatusUpdate } from "@/lib/notifications";
+import { sendOrderConfirmation, sendOrderStatusUpdate } from "@/lib/notifications";
 
 const order = {
  id: "order-1",
@@ -64,6 +64,30 @@ describe("order status email notifications", () => {
   const payload = JSON.parse(String(vi.mocked(fetch).mock.calls[0][1]?.body));
   expect(payload.text).not.toContain("unsafe.example");
   expect(payload.html).not.toContain("unsafe.example");
+ });
+
+ it("sends an idempotent order confirmation email", async () => {
+  const result = await sendOrderConfirmation("order-1");
+  expect(result).toEqual({ sent: true });
+  const payload = JSON.parse(String(vi.mocked(fetch).mock.calls[0][1]?.body));
+  expect(payload.to).toEqual(["customer@example.com"]);
+  expect(payload.subject).toContain("YK-1001");
+  expect(payload.text).toContain("Order total: INR 2599.00");
+  expect(mocks.prisma.notificationLog.update).toHaveBeenCalledWith(expect.objectContaining({ data: { status: "SENT", providerId: "email-1", error: null } }));
+ });
+
+ it("does not resend an order confirmation already marked SENT", async () => {
+  mocks.prisma.notificationLog.upsert.mockResolvedValue({ id: "log-1", status: "SENT" });
+  const result = await sendOrderConfirmation("order-1");
+  expect(result.sent).toBe(true);
+  expect(fetch).not.toHaveBeenCalled();
+ });
+
+ it("sends a refund notification after a processed refund", async () => {
+  await sendOrderStatusUpdate("order-1", "REFUNDED");
+  const payload = JSON.parse(String(vi.mocked(fetch).mock.calls[0][1]?.body));
+  expect(payload.subject).toContain("refund has been processed");
+  expect(payload.text).toContain("bank or card issuer");
  });
 
  it("records provider delivery failures for operational retry", async () => {

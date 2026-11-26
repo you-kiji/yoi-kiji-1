@@ -19,6 +19,7 @@ const mocks = vi.hoisted(() => {
   },
   sendOrderConfirmation: vi.fn(),
   sendWhatsAppOrderConfirmation: vi.fn(),
+  sendOrderStatusUpdate: vi.fn(),
  };
 });
 
@@ -80,6 +81,7 @@ describe("Razorpay webhook payment integrity", () => {
   mocks.tx.payment.update.mockResolvedValue({});
   mocks.sendOrderConfirmation.mockResolvedValue({ sent: true });
   mocks.sendWhatsAppOrderConfirmation.mockResolvedValue({ sent: true });
+  mocks.sendOrderStatusUpdate.mockResolvedValue({ sent: true });
  });
 
  it("rejects a correctly signed capture with a mismatched amount", async () => {

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { sendOrderStatusUpdate } from "@/lib/notifications";
 
 export async function POST(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const admin = await requireAdmin();
@@ -92,6 +93,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ id
       ...(processed ? [prisma.order.update({ where: { id }, data: { status: "REFUNDED" } })] : []),
     ]);
 
+    if (processed) await sendOrderStatusUpdate(id, "REFUNDED").catch(() => undefined);
     return NextResponse.json({ refundInitiated: true, processed, refundId: data.id, status: data.status });
   } catch {
     // Mark the claim failed so an administrator can retry after checking the

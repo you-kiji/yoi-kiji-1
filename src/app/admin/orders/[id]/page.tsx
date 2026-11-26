@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { formatINR } from "@/lib/money";
 import { AdminOrderActions } from "@/components/admin-order-actions";
 import { AdminFulfillmentForm } from "@/components/admin-fulfillment-form";
+import { AdminReturnRequestActions } from "@/components/admin-return-request-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +34,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   const customerEmail = order.user?.email ?? order.guestEmail ?? "No email supplied";
   const paymentStatus = order.payment?.status.toLowerCase() ?? "none";
   const paymentProvider = order.payment?.provider ?? "none";
+  const returnRequest = order.returnRequest && typeof order.returnRequest === "object" && !Array.isArray(order.returnRequest) ? order.returnRequest as Record<string, unknown> : null;
 
   return (
     <main className="commerce-page admin-order-detail">
@@ -109,6 +111,14 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
               <div><dt>Refund amount</dt><dd>{order.payment.refundAmountPaise != null ? formatINR(order.payment.refundAmountPaise) : "—"}</dd></div>
             </dl> : <p className="admin-detail-empty">No payment record exists for this order.</p>}
           </section>
+
+          {returnRequest && <section className="admin-detail-card">
+            <div className="admin-detail-card-heading"><div><p className="eyebrow">AFTER-SALES</p><h2>Return request</h2></div><span>{String(returnRequest.status ?? "REQUESTED")}</span></div>
+            <p><strong>Reason:</strong> {String(returnRequest.reason ?? "—").replaceAll("_", " ").toLowerCase()}</p>
+            {typeof returnRequest.details === "string" && returnRequest.details && <p>{returnRequest.details}</p>}
+            {typeof returnRequest.adminNote === "string" && returnRequest.adminNote && <p><strong>Admin note:</strong> {returnRequest.adminNote}</p>}
+            <AdminReturnRequestActions orderId={order.id} status={String(returnRequest.status ?? "REQUESTED")} />
+          </section>}
         </aside>
       </div>
     </main>

@@ -1,0 +1,12 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+const mocks = vi.hoisted(() => ({ requireAdmin: vi.fn(), tx: { product: { findUnique: vi.fn(), updateMany: vi.fn() }, productVariant: { findFirst: vi.fn(), updateMany: vi.fn() }, inventoryMovement: { create: vi.fn() } }, prisma: { $transaction: vi.fn() } }));
+vi.mock("@/lib/admin", () => ({ requireAdmin: mocks.requireAdmin }));
+vi.mock("@/lib/prisma", () => ({ prisma: mocks.prisma }));
+import { POST } from "./route";
+function request(body: unknown) { return new Request("http://localhost/api/admin/inventory/adjust", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }) as never; }
+describe("admin inventory adjustments", () => {
+ beforeEach(() => { vi.clearAllMocks(); mocks.requireAdmin.mockResolvedValue({ id: "admin-1", role: "ADMIN" }); mocks.tx.product.findUnique.mockResolvedValue({ id: "p1", name: "Bedsheet" }); mocks.tx.product.updateMany.mockResolvedValue({ count: 1 }); mocks.tx.productVariant.findFirst.mockResolvedValue({ id: "v1" }); mocks.tx.productVariant.updateMany.mockResolvedValue({ count: 1 }); mocks.tx.inventoryMovement.create.mockResolvedValue({ id: "move-1" }); mocks.prisma.$transaction.mockImplementation(async (fn: (tx: typeof mocks.tx) => unknown) => fn(mocks.tx)); });
+ it("records a stock receipt and its inventory movement atomically", async () => { const response = await POST(request({ productId: "p1", quantityDelta: 5, reason: "PURCHASE_RECEIVED" })); expect(response.status).toBe(201); expect(mocks.tx.product.updateMany).toHaveBeenCalledWith({ where: { id: "p1" }, data: { inventoryQty: { increment: 5 } } }); expect(mocks.tx.inventoryMovement.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ productId: "p1", quantityDelta: 5, reason: "ADMIN_PURCHASE_RECEIVED", createdBy: "admin-1" }) })); });
+ it("prevents adjustments that would make stock negative", async () => { mocks.tx.product.updateMany.mockResolvedValue({ count: 0 }); const response = await POST(request({ productId: "p1", quantityDelta: -9, reason: "DAMAGED" })); expect(response.status).toBe(409); expect(mocks.tx.inventoryMovement.create).not.toHaveBeenCalled(); });
+ it("requires the administrator role", async () => { mocks.requireAdmin.mockResolvedValue({ id: "staff-1", role: "STAFF" }); const response = await POST(request({ productId: "p1", quantityDelta: 1, reason: "CORRECTION" })); expect(response.status).toBe(403); expect(mocks.prisma.$transaction).not.toHaveBeenCalled(); });
+});
