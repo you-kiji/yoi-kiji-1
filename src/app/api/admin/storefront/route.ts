@@ -33,6 +33,19 @@ const sectionSchema = z.object({
   position: z.number().int().min(0).max(10000).default(0),
   isActive: z.boolean().default(true),
 });
+function hasSixteenDistinctImages(slides: Array<{ imageUrl?: string }> | undefined) {
+  if (!slides || slides.length !== 16 || slides.some((slide) => !slide.imageUrl)) return false;
+  const canonicalImages = slides.map((slide) => {
+    try {
+      const url = new URL(slide.imageUrl ?? "");
+      return `${url.origin}${url.pathname}`;
+    } catch {
+      return "";
+    }
+  });
+  return canonicalImages.every(Boolean) && new Set(canonicalImages).size === 16;
+}
+
 const collectionSchema = z.object({
   name: z.string().trim().min(2).max(100),
   slug: z.string().trim().min(2).max(120).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
@@ -68,7 +81,7 @@ export async function POST(request: NextRequest) {
   if (body.resource === "section") {
     const parsed = sectionSchema.safeParse(body.data);
     if (!parsed.success) return NextResponse.json({ error: "Invalid homepage section.", details: parsed.error.flatten() }, { status: 400 });
-    if (parsed.data.sectionType === "image-grid" && (parsed.data.slides?.length !== 16 || parsed.data.slides.some((slide) => !slide.imageUrl))) return NextResponse.json({ error: "The gallery must contain exactly 16 images." }, { status: 400 });
+    if (parsed.data.sectionType === "image-grid" && !hasSixteenDistinctImages(parsed.data.slides)) return NextResponse.json({ error: "The gallery must contain exactly 16 images." }, { status: 400 });
     if (parsed.data.sectionType === "product-grid" && (!parsed.data.slides?.length || parsed.data.slides.length > 8 || parsed.data.slides.some((slide) => !slide.title))) return NextResponse.json({ error: "Choose between 1 and 8 products." }, { status: 400 });
     try {
       if (parsed.data.sectionType === "product-grid") {
@@ -113,7 +126,7 @@ export async function PATCH(request: NextRequest) {
   if (body.resource === "section") {
     const parsed = sectionSchema.partial().safeParse(body.data);
     if (!parsed.success) return NextResponse.json({ error: "Invalid homepage section.", details: parsed.error.flatten() }, { status: 400 });
-    if (parsed.data.sectionType === "image-grid" && (parsed.data.slides?.length !== 16 || parsed.data.slides.some((slide) => !slide.imageUrl))) return NextResponse.json({ error: "The gallery must contain exactly 16 images." }, { status: 400 });
+    if (parsed.data.sectionType === "image-grid" && !hasSixteenDistinctImages(parsed.data.slides)) return NextResponse.json({ error: "The gallery must contain exactly 16 images." }, { status: 400 });
     if (parsed.data.sectionType === "product-grid" && (!parsed.data.slides?.length || parsed.data.slides.length > 8 || parsed.data.slides.some((slide) => !slide.title))) return NextResponse.json({ error: "Choose between 1 and 8 products." }, { status: 400 });
     try {
       if (parsed.data.sectionType === "product-grid") {
