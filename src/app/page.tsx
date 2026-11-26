@@ -88,7 +88,6 @@ export default async function HomePage() {
       })
     : [];
   const homepageItems = [...baselineItems, ...customItems.filter(item => item.key !== "intro-media")]
-    .filter((item) => item.key !== "hero")
     .sort((a, b) => a.position - b.position);
 
   return (
@@ -160,7 +159,7 @@ export default async function HomePage() {
             <section className="storefront-image-banner" aria-label={imageAlt} key={section.id}
               style={imageUrl ? { backgroundImage: `linear-gradient(90deg, rgba(8, 25, 13, .68), rgba(8, 25, 13, .12)), url("${imageUrl}")` } : undefined}>
               <div className="storefront-image-banner__content">
-                {eyebrow && <p className="editorial-eyebrow"><span />{eyebrow}</p>}
+                {eyebrow && <p className="editorial-eyebrow">{eyebrow}</p>}
                 {title && <h2>{title}</h2>}
                 {body && <p>{body}</p>}
                 {ctaLabel && ctaHref && <a className="editorial-cta" href={ctaHref}>{ctaLabel}</a>}
@@ -200,7 +199,7 @@ export default async function HomePage() {
           const ctaHref = getValue(section, "ctaHref", "/shop");
           return (
             <section className="editorial-hero" aria-label={imageAlt || title} key={key}>
-              {imageUrl && <div className="editorial-hero__image" style={{ backgroundImage: "url(\"" + imageUrl + "\")" }} />}
+              <div className="editorial-hero__image" style={{ backgroundImage: "url(\"" + (imageUrl || "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=2400&q=92") + "\")" }} />
               <div className="editorial-hero__shade" />
               <div className="editorial-hero__topline"><span>YOI KIJI — THE ART OF TEXTILE LIVING</span></div>
               <div className="editorial-hero__content">
