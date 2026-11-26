@@ -21,7 +21,7 @@ const slideSchema = z.object({
 }).refine(value => Boolean(value.url || value.imageUrl), { message: "Each slide needs a media URL." });
 const sectionSchema = z.object({
   key: z.string().trim().min(2).max(60).regex(/^[a-z0-9-]+$/),
-  sectionType: z.enum(["slideshow","image-banner","rich-text","image-with-text","featured-collections","product-grid","testimonial","blog-grid","spacer"]).default("rich-text"),
+  sectionType: z.enum(["slideshow","media-carousel","image-banner","rich-text","image-with-text","featured-collections","product-grid","testimonial","blog-grid","spacer"]).default("rich-text"),
   slides: z.array(slideSchema).max(30).optional(),
   eyebrow: z.string().max(120).optional().nullable(),
   title: z.string().max(180).optional().nullable(),
