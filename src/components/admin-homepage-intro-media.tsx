@@ -15,7 +15,7 @@ export function AdminHomepageIntroMedia({ sectionId, initialSlides }: { sectionI
 
   useEffect(() => {
     Promise.all(["IMAGE", "VIDEO"].map(type => fetch("/api/admin/media?type=" + type + "&page=1").then(r => r.json())))
-      .then(results => setAssets(results.flatMap(result => result.assets || []).filter((asset: Asset) => asset.resourceType === "IMAGE" || asset.resourceType === "VIDEO")))
+      .then(results => setAssets(results.flatMap(result => result.assets || []).filter((asset: Asset) => asset.resourceType === "IMAGE" || (asset.resourceType === "VIDEO" && ["mp4", "webm", "mov", "m4v"].includes(asset.format.toLowerCase())))))
       .catch(() => setError("Could not load the media library."));
   }, []);
 
