@@ -97,10 +97,10 @@ export default async function HomePage() {
         if (section.sectionType === "product-grid") {
           return (
             <section className="storefront-dynamic-grid" key={section.id}>
-              <div className="editorial-section-heading"><div><p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow || "THE EDIT"}</p><h2>{section.title || "Considered essentials"}</h2></div>{section.ctaHref && <a className="editorial-text-link" href={section.ctaHref}>{section.ctaLabel || "Shop all"}</a>}</div>
+              <div className="editorial-section-heading storefront-product-heading"><div><h2>{section.title || "Shop the Collection"}</h2></div>{section.ctaHref && <a className="editorial-text-link" href={section.ctaHref}>{section.ctaLabel || "Shop all"}</a>}</div>
               <div className="storefront-product-grid">{featuredProducts.slice(0,8).map(product=><a className="storefront-product-card" href={"/shop?search="+encodeURIComponent(product.name)} key={product.id}>
-                {product.images[0]?.url ? <img src={product.images[0].url} alt={product.images[0].alt || product.name} loading="lazy"/> : <span className="storefront-product-card__placeholder"/>}
-                <span className="storefront-product-card__name">{product.name}</span><span className="storefront-product-card__price">{new Intl.NumberFormat(localeCode==="ja"?"ja-JP":"en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(product.pricePaise/100)}</span>
+                <span className="storefront-product-card__media">{product.images[0]?.url ? <img src={product.images[0].url} alt={product.images[0].alt || product.name} loading="lazy"/> : <span className="storefront-product-card__placeholder"/>}</span>
+                <span className="storefront-product-card__details"><span className="storefront-product-card__name">{product.name}</span><span className="storefront-product-card__price">{new Intl.NumberFormat(localeCode==="ja"?"ja-JP":"en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(product.pricePaise/100)}</span></span>
               </a>)}</div>
             </section>
           );
