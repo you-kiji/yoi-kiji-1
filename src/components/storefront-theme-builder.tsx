@@ -2,18 +2,22 @@
 
 import { useEffect, useState } from "react";
 
-type Slide = { imageUrl: string; imageAlt: string; eyebrow: string; title: string; body: string; ctaLabel: string; ctaHref: string };
+type Slide = { imageUrl: string; videoUrl: string; imageAlt: string; eyebrow: string; title: string; body: string; ctaLabel: string; ctaHref: string };
+type ProductOption = { id: string; name: string; sku: string | null };
 type MediaAsset = { id: string; secureUrl: string; title: string | null; originalFilename: string | null; altText: string | null; width: number | null; height: number | null; format: string };
 type Section = { id: string; key: string; sectionType: string; eyebrow?: string | null; title: string | null; body?: string | null; imageUrl?: string | null; imageAlt?: string | null; ctaLabel?: string | null; ctaHref?: string | null; position: number; isActive: boolean; slides: Slide[] | null };
 const kinds = [
-  ["slideshow", "Slideshow"], ["image-banner", "Image banner"], ["rich-text", "Rich text"],
+  ["slideshow", "Slideshow"], ["image-banner", "Image banner"], ["announcement-strip", "Announcement strip"], ["trust-badges", "Trust badges"], ["rich-text", "Rich text"],
   ["image-with-text", "Image with text"], ["featured-collections", "Featured collections"],
-  ["product-grid", "Product grid"], ["testimonial", "Testimonials"], ["blog-grid", "Blog articles"], ["spacer", "Spacer"],
+  ["product-grid", "Product grid"], ["image-grid", "16-image gallery"], ["testimonial", "Testimonials"], ["blog-grid", "Blog articles"], ["spacer", "Spacer"],
 ] as const;
-const emptySlide: Slide = { imageUrl: "", imageAlt: "", eyebrow: "", title: "", body: "", ctaLabel: "", ctaHref: "" };
+const emptySlide: Slide = { imageUrl: "", videoUrl: "", imageAlt: "", eyebrow: "", title: "", body: "", ctaLabel: "", ctaHref: "" };
 
 export function StorefrontThemeBuilder() {
   const [sections, setSections] = useState<Section[]>([]);
+  const [products, setProducts] = useState<ProductOption[]>([]);
+  const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
+  const [productSearch, setProductSearch] = useState("");
   const [kind, setKind] = useState("slideshow");
   const [title, setTitle] = useState("");
   const [eyebrow, setEyebrow] = useState("");
@@ -37,6 +41,7 @@ export function StorefrontThemeBuilder() {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Unable to load sections");
     setSections(data.sections.map((section: Section) => ({ ...section, slides: Array.isArray(section.slides) ? section.slides : [] })));
+    setProducts(Array.isArray(data.products) ? data.products : []);
     setMessage("");
   }
   useEffect(() => { void refresh().catch(error => setMessage(error.message)); }, []);
@@ -52,6 +57,8 @@ export function StorefrontThemeBuilder() {
     setCtaLabel("");
     setCtaHref("");
     setSlides([{ ...emptySlide }]);
+    setSelectedProductIds([]);
+    setProductSearch("");
   }
   function updateSlide(index: number, patch: Partial<Slide>) {
     setSlides(current => current.map((slide, i) => i === index ? { ...slide, ...patch } : slide));
@@ -87,17 +94,20 @@ export function StorefrontThemeBuilder() {
     setCtaLabel(section.ctaLabel || "");
     setCtaHref(section.ctaHref || "");
     setSlides(section.slides?.length ? section.slides.map(slide => ({ ...emptySlide, ...slide })) : [{ ...emptySlide }]);
+    setSelectedProductIds(section.sectionType === "product-grid" ? (section.slides || []).map(slide => slide.title).filter((value): value is string => Boolean(value)) : []);
     setMessage("Editing section. Save changes to update the homepage content.");
     document.getElementById("storefront-section-editor")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
   async function saveSection(event: React.FormEvent) {
     event.preventDefault();
-    if ((kind === "slideshow" || kind === "testimonial") && slides.length > 30) {
-      setMessage("A section can contain a maximum of 30 slides.");
+    if (kind === "product-grid" && selectedProductIds.length === 0) { setMessage("Select at least one product for this featured section."); return; }
+    if ((kind === "slideshow" || kind === "testimonial" || kind === "image-grid" || kind === "trust-badges") && slides.length > (kind === "image-grid" ? 16 : 30)) {
+      setMessage(kind === "image-grid" ? "The homepage gallery can contain exactly 16 images." : "A section can contain a maximum of 30 slides.");
       return;
     }
-    if (kind === "slideshow" && slides.some(slide => !slide.imageUrl.trim())) {
-      setMessage("Every slideshow slide needs an image. Remove empty slides or select an image.");
+    if (kind === "image-grid" && slides.length !== 16) { setMessage("The homepage gallery must contain exactly 16 images."); return; }
+    if ((kind === "slideshow" || kind === "image-grid" || kind === "trust-badges") && slides.some(slide => !slide.imageUrl.trim() && !(kind === "slideshow" && (slide.videoUrl || "").trim()))) {
+      setMessage(kind === "trust-badges" ? "Every trust badge needs an image." : kind === "image-grid" ? "Every gallery tile needs an image." : "Every slideshow slide needs an image. Add an image or video.");
       return;
     }
     setBusy(true);
@@ -114,7 +124,7 @@ export function StorefrontThemeBuilder() {
         imageAlt: imageAlt || null,
         ctaLabel: ctaLabel || null,
         ctaHref: ctaHref || null,
-        slides: kind === "slideshow" ? slides : kind === "testimonial" ? slides.filter(slide => slide.body || slide.title) : [],
+        slides: kind === "product-grid" ? selectedProductIds.slice(0,8).map(productId => ({ ...emptySlide, title: productId })) : kind === "slideshow" || kind === "image-grid" || kind === "trust-badges" ? slides.slice(0, kind === "image-grid" ? 16 : 30) : kind === "testimonial" ? slides.filter(slide => slide.body || slide.title) : [],
       };
       const response = await fetch("/api/admin/storefront", {
         method: editingId ? "PATCH" : "POST",
@@ -201,42 +211,47 @@ export function StorefrontThemeBuilder() {
 
   return (
     <section className="admin-content-panel storefront-theme-builder">
-      <div className="admin-section-heading"><h2>Homepage theme builder</h2><span>Shopify-style sections · drag to reorder</span></div>
-      <p>Add, edit, duplicate, hide and reorder homepage sections. Each slideshow supports up to 30 slides; changes are saved to the homepage content database.</p>
+      <div className="admin-section-heading"><h2>Homepage theme builder</h2><span>Editorial sections · drag to reorder</span></div>
+      <p>Build the homepage with editorial sections, a 16-image gallery, curated product edits, video or image slideshows, customer stories and journal features. Reorder, preview and publish each section from one place.</p>
       <form id="storefront-section-editor" className="admin-content-form" onSubmit={saveSection}>
         <label>Section type<select value={kind} onChange={event => setKind(event.target.value)}>{kinds.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
         <label>Section heading<input value={title} onChange={event => setTitle(event.target.value)} placeholder="Optional section heading" /></label>
         <label>Eyebrow / overline<input value={eyebrow} onChange={event => setEyebrow(event.target.value)} placeholder="Optional short label" /></label>
         <label className="wide">Description / content<textarea rows={3} value={body} onChange={event => setBody(event.target.value)} placeholder="Write the section content…" /></label>
-        {kind !== "slideshow" && kind !== "testimonial" && kind !== "spacer" && <>
+        {kind !== "slideshow" && kind !== "testimonial" && kind !== "image-grid" && kind !== "trust-badges" && kind !== "product-grid" && kind !== "announcement-strip" && kind !== "spacer" && <>
           <label className="wide">Image URL<input type="url" value={imageUrl} onChange={event => setImageUrl(event.target.value)} placeholder="https://…" /></label>
           <label>Image alt text<input value={imageAlt} onChange={event => setImageAlt(event.target.value)} /></label>
           <label>Button label<input value={ctaLabel} onChange={event => setCtaLabel(event.target.value)} /></label>
           <label>Button link<input value={ctaHref} onChange={event => setCtaHref(event.target.value)} placeholder="/shop" /></label>
         </>}
-        {(kind === "slideshow" || kind === "testimonial") && <div className="wide storefront-slide-editor">
+        {kind === "product-grid" && <div className="wide storefront-product-selector"><div className="admin-section-heading"><h3>Featured products ({selectedProductIds.length}/8)</h3><span>Choose products and arrange their order.</span></div><label className="storefront-product-search">Find a product<input type="search" value={productSearch} onChange={event => setProductSearch(event.target.value)} placeholder="Search by product name or SKU" /></label><div className="storefront-product-selector__grid">{products.filter(product => (product.name+" "+(product.sku||"")).toLowerCase().includes(productSearch.trim().toLowerCase())).map(product => <label className="storefront-product-option" key={product.id}><input type="checkbox" checked={selectedProductIds.includes(product.id)} onChange={event => setSelectedProductIds(current => event.target.checked ? (current.length < 8 ? [...current, product.id] : current) : current.filter(id => id !== product.id))} /><span><strong>{product.name}</strong><small>{product.sku || "No SKU"}</small></span></label>)}</div><ol className="storefront-product-order">{selectedProductIds.map((id,index)=><li key={id}><span>{products.find(product=>product.id===id)?.name || id}</span><button type="button" disabled={index===0} onClick={()=>setSelectedProductIds(current=>{const next=[...current];[next[index-1],next[index]]=[next[index],next[index-1]];return next;})}>↑</button><button type="button" disabled={index===selectedProductIds.length-1} onClick={()=>setSelectedProductIds(current=>{const next=[...current];[next[index+1],next[index]]=[next[index],next[index+1]];return next;})}>↓</button></li>)}</ol></div>}
+        {(kind === "slideshow" || kind === "testimonial" || kind === "image-grid" || kind === "trust-badges") && <div className="wide storefront-slide-editor">
           <div className="admin-section-heading">
-            <h3>{kind === "testimonial" ? "Testimonials" : "Slides"} ({slides.length}/30)</h3>
-            <button type="button" disabled={slides.length >= 30} onClick={() => setSlides(old => [...old, { ...emptySlide }])}>Add slide</button>
+            <h3>{kind === "testimonial" ? "Testimonials" : kind === "image-grid" ? "Gallery images" : kind === "trust-badges" ? "Trust badges" : "Slides"} ({slides.length}/{kind === "image-grid" ? 16 : 30})</h3>
+            <button type="button" disabled={slides.length >= (kind === "image-grid" ? 16 : 30)} onClick={() => setSlides(old => [...old, { ...emptySlide }])}>Add {kind === "image-grid" ? "image" : "slide"}</button>
           </div>
+          {kind === "image-grid" && <p className="admin-helper">Add exactly 16 images for the four-by-four homepage gallery. Select each image from the Media Library.</p>}
           {slides.map((slide, index) => <fieldset key={index} className="storefront-slide-card">
-            <legend>{kind === "testimonial" ? "Testimonial" : "Slide"} {index + 1}</legend>
-            {kind === "slideshow" && <>
-              <label>Image URL<input type="url" required value={slide.imageUrl} onChange={event => updateSlide(index, { imageUrl: event.target.value })} placeholder="https://…" /><button type="button" className="storefront-media-picker-trigger" onClick={() => void openMediaPicker(index)}>Choose from media library</button></label>
+            <legend>{kind === "testimonial" ? "Testimonial" : kind === "image-grid" ? "Gallery image" : kind === "trust-badges" ? "Trust badge" : "Slide"} {index + 1}</legend>
+            {(kind === "slideshow" || kind === "image-grid" || kind === "trust-badges") && <>
+              <label>Image URL<input type="url" value={slide.imageUrl} onChange={event => updateSlide(index, { imageUrl: event.target.value })} placeholder="https://…" /><button type="button" className="storefront-media-picker-trigger" onClick={() => void openMediaPicker(index)}>Choose from media library</button></label>
               <label>Image alt text<input value={slide.imageAlt} onChange={event => updateSlide(index, { imageAlt: event.target.value })} /></label>
+              {kind === "slideshow" && <label>Optional video URL<input type="url" value={slide.videoUrl || ""} onChange={event => updateSlide(index, { videoUrl: event.target.value })} placeholder="https://… .mp4" /></label>}
             </>}
-            <label>Eyebrow / customer name<input value={slide.eyebrow} onChange={event => updateSlide(index, { eyebrow: event.target.value })} /></label>
-            <label>Headline / attribution<input value={slide.title} onChange={event => updateSlide(index, { title: event.target.value })} /></label>
-            <label className="wide">Description / quote<textarea rows={2} value={slide.body} onChange={event => updateSlide(index, { body: event.target.value })} /></label>
-            {kind === "slideshow" && <>
-              <label>Button label<input value={slide.ctaLabel} onChange={event => updateSlide(index, { ctaLabel: event.target.value })} /></label>
-              <label>Button link<input value={slide.ctaHref} onChange={event => updateSlide(index, { ctaHref: event.target.value })} placeholder="/shop" /></label>
+            {kind !== "image-grid" && <>
+              <label>Eyebrow / customer name<input value={slide.eyebrow} onChange={event => updateSlide(index, { eyebrow: event.target.value })} /></label>
+              <label>Headline / attribution<input value={slide.title} onChange={event => updateSlide(index, { title: event.target.value })} /></label>
+              <label className="wide">Description / quote<textarea rows={2} value={slide.body} onChange={event => updateSlide(index, { body: event.target.value })} /></label>
+              {kind === "slideshow" && <>
+                <label>Button label<input value={slide.ctaLabel} onChange={event => updateSlide(index, { ctaLabel: event.target.value })} /></label>
+                <label>Button link<input value={slide.ctaHref} onChange={event => updateSlide(index, { ctaHref: event.target.value })} placeholder="/shop" /></label>
+              </>}
             </>}
-            {slides.length > 1 && <button type="button" onClick={() => setSlides(old => old.filter((_, itemIndex) => itemIndex !== index))}>Remove {kind === "testimonial" ? "testimonial" : "slide"}</button>}
+            {slides.length > 1 && <button type="button" onClick={() => setSlides(old => old.filter((_, itemIndex) => itemIndex !== index))}>Remove {kind === "testimonial" ? "testimonial" : kind === "image-grid" ? "image" : kind === "trust-badges" ? "badge" : "slide"}</button>}
           </fieldset>)}
         </div>}
         <div className="wide admin-inline-actions">
-          <button type="submit" disabled={busy || ((kind === "slideshow" || kind === "testimonial") && slides.length > 30)}>{busy ? "Saving…" : editingId ? "Save section changes" : "Add section to homepage"}</button>
+          <button type="submit" disabled={busy || ((kind === "slideshow" || kind === "testimonial") && slides.length > 30) || (kind === "product-grid" && selectedProductIds.length === 0) || (kind === "image-grid" && slides.length > 16)}>{busy ? "Saving…" : editingId ? "Save section changes" : "Add section to homepage"}</button>
           {editingId && <button type="button" disabled={busy} onClick={resetEditor}>Cancel editing</button>}
         </div>
       </form>

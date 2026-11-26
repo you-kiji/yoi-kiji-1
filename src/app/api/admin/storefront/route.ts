@@ -10,6 +10,7 @@ async function authorised() {
 }
 const slideSchema = z.object({
   imageUrl: z.union([z.string().url(), z.literal("")]).optional().default(""),
+  videoUrl: z.union([z.string().url(), z.literal("")]).optional().default(""),
   imageAlt: z.string().max(200).optional().default(""),
   eyebrow: z.string().max(120).optional().default(""),
   title: z.string().max(180).optional().default(""),
@@ -19,7 +20,7 @@ const slideSchema = z.object({
 });
 const sectionSchema = z.object({
   key: z.string().trim().min(2).max(60).regex(/^[a-z0-9-]+$/),
-  sectionType: z.enum(["slideshow","image-banner","rich-text","image-with-text","featured-collections","product-grid","testimonial","blog-grid","spacer","hero-video","media-only","photo-collage","text-strip","trust-bar"]).default("rich-text"),
+  sectionType: z.enum(["slideshow","image-banner","rich-text","image-with-text","featured-collections","product-grid","testimonial","blog-grid","spacer","hero-video","media-only","photo-collage","text-strip","trust-bar","image-grid","announcement-strip","trust-badges"]).default("rich-text"),
   settings: z.record(z.string(), z.unknown()).optional(),
   slides: z.array(slideSchema).max(30).optional(),
   eyebrow: z.string().max(120).optional().nullable(),
@@ -54,7 +55,7 @@ export async function GET() {
       },
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
     }),
-    prisma.product.findMany({ where: { isActive: true }, select: { id: true, name: true, sku: true }, orderBy: { name: "asc" }, take: 300 }),
+    prisma.product.findMany({ where: { isActive: true }, select: { id: true, name: true, sku: true }, orderBy: { name: "asc" }, take: 1000 }),
   ]);
   return NextResponse.json({ sections, collections, products });
 }
@@ -67,7 +68,14 @@ export async function POST(request: NextRequest) {
   if (body.resource === "section") {
     const parsed = sectionSchema.safeParse(body.data);
     if (!parsed.success) return NextResponse.json({ error: "Invalid homepage section.", details: parsed.error.flatten() }, { status: 400 });
+    if (parsed.data.sectionType === "image-grid" && (parsed.data.slides?.length !== 16 || parsed.data.slides.some((slide) => !slide.imageUrl))) return NextResponse.json({ error: "The gallery must contain exactly 16 images." }, { status: 400 });
+    if (parsed.data.sectionType === "product-grid" && (!parsed.data.slides?.length || parsed.data.slides.length > 8 || parsed.data.slides.some((slide) => !slide.title))) return NextResponse.json({ error: "Choose between 1 and 8 products." }, { status: 400 });
     try {
+      if (parsed.data.sectionType === "product-grid") {
+        const ids = parsed.data.slides?.map((slide) => slide.title).filter((id): id is string => Boolean(id)) ?? [];
+        const activeCount = await prisma.product.count({ where: { id: { in: ids }, isActive: true } });
+        if (activeCount !== ids.length) return NextResponse.json({ error: "Every selected product must be active and available." }, { status: 400 });
+      }
       const { settings, ...sectionFields } = parsed.data;
       const data: Prisma.HomepageSectionUncheckedCreateInput = {
         ...sectionFields,
@@ -105,7 +113,14 @@ export async function PATCH(request: NextRequest) {
   if (body.resource === "section") {
     const parsed = sectionSchema.partial().safeParse(body.data);
     if (!parsed.success) return NextResponse.json({ error: "Invalid homepage section.", details: parsed.error.flatten() }, { status: 400 });
+    if (parsed.data.sectionType === "image-grid" && (parsed.data.slides?.length !== 16 || parsed.data.slides.some((slide) => !slide.imageUrl))) return NextResponse.json({ error: "The gallery must contain exactly 16 images." }, { status: 400 });
+    if (parsed.data.sectionType === "product-grid" && (!parsed.data.slides?.length || parsed.data.slides.length > 8 || parsed.data.slides.some((slide) => !slide.title))) return NextResponse.json({ error: "Choose between 1 and 8 products." }, { status: 400 });
     try {
+      if (parsed.data.sectionType === "product-grid") {
+        const ids = (parsed.data.slides || []).map((slide) => slide.title).filter((id): id is string => Boolean(id));
+        const activeCount = await prisma.product.count({ where: { id: { in: ids }, isActive: true } });
+        if (activeCount !== ids.length) return NextResponse.json({ error: "Every selected product must be active and available." }, { status: 400 });
+      }
       const { settings, ...sectionFields } = parsed.data;
       const data: Prisma.HomepageSectionUncheckedUpdateInput = {
         ...sectionFields,

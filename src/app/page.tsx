@@ -3,6 +3,7 @@ import { AdvancedSearch } from "@/components/advanced-search";
 import { getActiveCategories } from "@/lib/catalog";
 import { prisma } from "@/lib/prisma";
 import { LazyBackground } from "@/components/lazy-background";
+import { HomepageSlideshow } from "@/components/homepage-slideshow";
 
 export const dynamic = "force-dynamic";
 
@@ -15,16 +16,19 @@ function paragraphs(value: string) {
 export default async function HomePage() {
   const locale = await getLocaleData();
   const localeCode = locale.code;
-  const [allSections, collectionRecords, categoryRecords, featuredProducts, recentArticles, approvedReviews, approvedReviewCount] = await Promise.all([
+  const [allSections, collectionRecords, categoryRecords, featuredProducts, recentArticles, publishedArticleCount, approvedReviews, approvedReviewCount] = await Promise.all([
     prisma.homepageSection.findMany({ orderBy: [{ position: "asc" }, { key: "asc" }] }).catch(() => []),
     prisma.storeCollection.findMany({ where: { isActive: true }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] }).catch(() => []),
     getActiveCategories(),
     prisma.product.findMany({where:{isActive:true},select:{id:true,name:true,slug:true,pricePaise:true,images:{where:{isPrimary:true},take:1,select:{url:true,alt:true}}},orderBy:{updatedAt:"desc"},take:8}).catch(()=>[]),
-    prisma.blogPost.findMany({where:{status:"PUBLISHED",noIndex:false},select:{id:true,title:true,slug:true,excerpt:true,coverImageUrl:true,coverImageAlt:true,publishedAt:true},orderBy:{publishedAt:"desc"},take:3}).catch(()=>[]),
+    prisma.blogPost.findMany({where:{status:"PUBLISHED",noIndex:false},select:{id:true,title:true,slug:true,excerpt:true,coverImageUrl:true,coverImageAlt:true,publishedAt:true},orderBy:{publishedAt:"desc"},take:6}).catch(()=>[]),
+    prisma.blogPost.count({where:{status:"PUBLISHED",noIndex:false}}).catch(()=>0),
     prisma.review.findMany({where:{status:"APPROVED"},select:{id:true,rating:true,title:true,body:true,verifiedPurchase:true,user:{select:{name:true}}},orderBy:{createdAt:"desc"},take:6}).catch(()=>[]),
     prisma.review.count({ where: { status: "APPROVED" } }).catch(() => 0),
   ]);
 
+  const curatedProductIds = [...new Set(allSections.filter((section) => section.isActive && section.sectionType === "product-grid").flatMap((section) => Array.isArray(section.slides) ? (section.slides as Array<{title?: string | null}>).map((slide) => slide.title).filter((id): id is string => Boolean(id)) : []))];
+  const curatedProducts = curatedProductIds.length ? await prisma.product.findMany({ where: { id: { in: curatedProductIds }, isActive: true }, select: { id: true, name: true, slug: true, pricePaise: true, images: { where: { isPrimary: true }, take: 1, select: { url: true, alt: true } } } }).catch(() => []) : featuredProducts;
   const rootCategories = categoryRecords.filter((category) => category.parentId === null);
   const translationTargets = [
     ...allSections.map((item: typeof allSections[0]) => ({ entityType: "homepageSection", entityId: item.id })),
@@ -90,7 +94,7 @@ export default async function HomePage() {
         const settings = section.settings && typeof section.settings === "object" && !Array.isArray(section.settings)
           ? section.settings as Record<string, unknown>
           : {};
-        const slides = Array.isArray(section.slides) ? section.slides as Array<{imageUrl?:string;imageAlt?:string;title?:string;body?:string;eyebrow?:string;ctaHref?:string}> : [];
+        const slides = Array.isArray(section.slides) ? section.slides as Array<{imageUrl?:string;videoUrl?:string;imageAlt?:string;title?:string;body?:string;eyebrow?:string;ctaHref?:string;ctaLabel?:string}> : [];
 
         if (section.sectionType === "media-only" || section.sectionType === "hero-video" || key === "hero") {
           const mediaType = settings.mediaType === "video" || (section.sectionType === "hero-video" && typeof settings.videoUrl === "string" && settings.videoUrl)
@@ -109,37 +113,39 @@ export default async function HomePage() {
           );
         }
 
-        if (section.sectionType === "photo-collage") {
+        if (section.sectionType === "photo-collage" || section.sectionType === "image-grid") {
           return <section className="storefront-gallery-section" aria-label={section.title || "YOI KIJI Gallery"} key={section.id}>
             <div className="storefront-gallery-heading"><h2>{section.title || "Gallery"}</h2></div>
             <div className="storefront-photo-collage">
-              {slides.filter((slide: typeof slides[0])=>Boolean(slide.imageUrl)).slice(0,8).map((slide: typeof slides[0], index: number)=><a href={slide.ctaHref || "/shop"} key={slide.imageUrl} aria-label={slide.imageAlt || slide.title || `YOI KIJI image ${index+1}`}>
+              {slides.filter((slide: typeof slides[0])=>Boolean(slide.imageUrl)).slice(0,16).map((slide: typeof slides[0], index: number)=><a href={slide.ctaHref || "/shop"} key={slide.imageUrl} aria-label={slide.imageAlt || slide.title || `YOI KIJI image ${index+1}`}>
                 <img src={slide.imageUrl} alt={slide.imageAlt || slide.title || "YOI KIJI home textiles"} loading="lazy" decoding="async" />
               </a>)}
             </div>
           </section>;
         }
 
-        if (section.sectionType === "text-strip") {
+        if (section.sectionType === "text-strip" || section.sectionType === "announcement-strip") {
           return <section className="storefront-text-strip" key={section.id}><h2>{section.title || section.body || "Feel the warmth of Home"}</h2></section>;
         }
 
-        if (section.sectionType === "trust-bar") {
+        if (section.sectionType === "trust-bar" || section.sectionType === "trust-badges") {
           const defaults=[{title:"1 Lakh+",body:"Happy Customers"},{title:"Easy Exchange and Return",body:""},{title:"Secure Payment",body:""},{title:"100% Cotton",body:""}];
-          const items=slides.length?defaults.map((fallback: typeof defaults[0], index: number)=>({title:slides[index]?.title||fallback.title,body:slides[index]?.body||fallback.body})):defaults;
+          const items=slides.length?defaults.map((fallback: typeof defaults[0], index: number)=>({title:slides[index]?.title||fallback.title,body:slides[index]?.body||fallback.body,imageUrl:slides[index]?.imageUrl||""})):defaults;
           const icons=[
             <><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/><path d="M9 12h6M12 9v6"/></>,
             <><path d="M3 7h13v11H3zM16 11h3l2 3v4h-5"/><circle cx="7.5" cy="18" r="1.8"/><circle cx="18.5" cy="18" r="1.8"/><path d="m7 11 2 2 4-4"/></>,
             <><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></>,
             <><path d="M12 3 19 6v5c0 4.5-3 7.8-7 10-4-2.2-7-5.5-7-10V6z"/><path d="m8.5 12 2.2 2.2 4.8-4.8"/></>
           ];
-          return <section className="storefront-trust-bar" aria-label="YOI KIJI promises" key={section.id}>{items.map((item: typeof items[0], index: number)=><div key={index}><svg className="storefront-trust-icon" viewBox="0 0 24 24" aria-hidden="true">{icons[index]}</svg><strong>{item.title}</strong>{item.body&&<span>{item.body}</span>}</div>)}</section>;
+          return <section className="storefront-trust-bar" aria-label="YOI KIJI promises" key={section.id}>{items.map((item: typeof items[0], index: number)=><div key={index}>{item.imageUrl ? <img className="storefront-trust-icon" src={item.imageUrl} alt="" loading="lazy"/> : <svg className="storefront-trust-icon" viewBox="0 0 24 24" aria-hidden="true">{icons[index]}</svg>}<strong>{item.title}</strong>{item.body&&<span>{item.body}</span>}</div>)}</section>;
         }
 
         if (section.sectionType === "product-grid") {
           const productLimit = 2; // Homepage product-pair sections always render exactly two cards.
           const productOffset = typeof settings.offset === "number" ? Math.max(0, settings.offset) : 0;
-          const visibleProducts = featuredProducts.slice(productOffset, productOffset + productLimit);
+          const selectedIds = slides.map((slide: typeof slides[0]) => slide.title).filter(Boolean) as string[];
+          const orderedProducts = selectedIds.length ? selectedIds.map((id) => curatedProducts.find((product: typeof curatedProducts[number]) => product.id === id)).filter(Boolean) as typeof curatedProducts : curatedProducts;
+          const visibleProducts = orderedProducts.slice(productOffset, productOffset + (selectedIds.length ? 8 : productLimit));
           return (
             <section className="storefront-dynamic-grid storefront-product-pair" key={section.id}>
               <div className="editorial-section-heading">
@@ -181,15 +187,13 @@ export default async function HomePage() {
               <div className="editorial-section-heading">
                 <div><h2>{section.title || "IDEAS of YOI KIJI"}</h2></div>
               </div>
-              <div className="storefront-article-grid">
-                {recentArticles.slice(0,3).map((article: typeof recentArticles[0], index: number)=><a className="storefront-article-card" href={"/journal/"+article.slug} key={article.id}>
-                  <div className="storefront-article-card__image">{article.coverImageUrl&&<img src={article.coverImageUrl} alt={article.coverImageAlt||article.title} loading="lazy"/>}<span>0{index+1}</span></div>
+              <div className="yk-marquee"><div className="yk-marquee__track">
+                {[...recentArticles.slice(0,6), ...recentArticles.slice(0,6)].map((article: typeof recentArticles[0], index: number)=><a className="storefront-article-card" href={"/journal/"+article.slug} key={article.id+"-"+index} aria-hidden={index >= Math.min(recentArticles.length,6)} tabIndex={index >= Math.min(recentArticles.length,6) ? -1 : 0}>
+                  <div className="storefront-article-card__image">{article.coverImageUrl&&<img src={article.coverImageUrl} alt={article.coverImageAlt||article.title} loading="lazy"/>}<span>0{(index%6)+1}</span></div>
                   <div className="storefront-article-card__copy"><h3>{article.title}</h3>{article.excerpt&&<p>{article.excerpt}</p>}<span className="storefront-article-card__read">READ STORY</span></div>
                 </a>)}
-              </div>
-              <div className="storefront-living-reviews__actions storefront-journal__actions">
-                <a href={section.ctaHref || "/journal"} className="storefront-living-reviews__view-all">{section.ctaLabel || "VIEW ALL STORIES"}</a>
-              </div>
+              </div></div>
+              {publishedArticleCount > 6 ? <div className="storefront-living-reviews__actions storefront-journal__actions"><a href={section.ctaHref || "/journal"} className="storefront-living-reviews__view-all">{section.ctaLabel || "VIEW ALL STORIES"}</a></div> : null}
             </section>
           );
         }
@@ -202,42 +206,22 @@ export default async function HomePage() {
                 <h2>{section.title || "LIVING WITH YOIKIJI"}</h2>
               </header>
               {quotes.length ? (
-                <div className="storefront-living-reviews__grid">
-                  {quotes.slice(0,6).map((quote: typeof quotes[0], index: number)=>(
-                    <article className="storefront-living-review" key={index}>
-                      <div className="storefront-living-review__photo">
-                        {reviewPhotos[index]?.imageUrl ? <img src={reviewPhotos[index].imageUrl} alt={reviewPhotos[index].imageAlt || "YOI KIJI customer home"} loading="lazy"/> : <div aria-hidden="true"/>}
-                        <span aria-label={quote.rating + " out of 5 stars"}>{"★".repeat(quote.rating)}</span>
-                      </div>
-                      <div className="storefront-living-review__copy">
-                        <p>“{quote.body || quote.title}”</p>
-                        <footer><strong>{quote.name}</strong><small>{quote.title || "Customer story"} · Sample review</small></footer>
-                      </div>
+                <div className="yk-marquee"><div className="yk-marquee__track">
+                  {[...quotes.slice(0,6), ...quotes.slice(0,6)].map((quote: typeof quotes[0], index: number)=>(
+                    <article className="storefront-living-review" key={quote.name+"-"+index} aria-hidden={index >= Math.min(quotes.length,6)}>
+                      <div className="storefront-living-review__photo">{reviewPhotos[index%6]?.imageUrl ? <img src={reviewPhotos[index%6].imageUrl} alt={reviewPhotos[index%6].imageAlt || "YOI KIJI customer home"} loading="lazy"/> : <div aria-hidden="true"/>}<span aria-label={quote.rating + " out of 5 stars"}>{"★".repeat(quote.rating)}</span></div>
+                      <div className="storefront-living-review__copy"><p>“{quote.body || quote.title}”</p><footer><strong>{quote.name}</strong><small>{quote.title || "Customer story"}</small></footer></div>
                     </article>
                   ))}
-                </div>
+                </div></div>
               ) : <p className="storefront-living-reviews__empty">Customer stories will appear here as reviews are approved.</p>}
-              {approvedReviewCount > 0 ? <div className="storefront-living-reviews__actions"><a href="/reviews" className="storefront-living-reviews__view-all">VIEW ALL REVIEWS</a></div> : null}
+              {approvedReviewCount > 6 ? <div className="storefront-living-reviews__actions"><a href="/reviews" className="storefront-living-reviews__view-all">VIEW ALL REVIEWS</a></div> : null}
             </section>
           );
         }
         if (section.sectionType === "slideshow") {
-          const slides = Array.isArray(section.slides) ? section.slides as Array<{imageUrl:string;imageAlt?:string;eyebrow?:string;title?:string;body?:string;ctaLabel?:string;ctaHref?:string}> : [];
           if (!slides.length) return null;
-          return (
-            <section className="storefront-slideshow" aria-label={section.title || "Featured stories"} key={section.id}>
-              {slides.map((slide: typeof slides[0], index: number)=><article className="storefront-slideshow__slide" key={index}>
-                {slide.imageUrl && <LazyBackground className="storefront-slideshow__image" role="img" ariaLabel={slide.imageAlt || slide.title || "YOI KIJI collection"} backgroundImage={`url("${slide.imageUrl}")`} /> }
-                <div className="storefront-slideshow__shade"/>
-                <div className="storefront-slideshow__content">
-                  {slide.eyebrow && <p className="editorial-eyebrow"><span/>{slide.eyebrow}</p>}
-                  {slide.title && <h2>{slide.title}</h2>}
-                  {slide.body && <p>{slide.body}</p>}
-                  {slide.ctaLabel && slide.ctaHref && <a className="editorial-cta" href={slide.ctaHref}>{slide.ctaLabel}</a>}
-                </div>
-              </article>)}
-            </section>
-          );
+          return <HomepageSlideshow key={section.id} title={section.title || "Featured stories"} slides={slides} />;
         }
         if (section.sectionType === "spacer") {
           return <div className="storefront-spacer" aria-hidden="true" key={section.id} />;
