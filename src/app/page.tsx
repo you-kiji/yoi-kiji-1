@@ -1,5 +1,4 @@
 import { getLocaleData } from "@/lib/i18n";
-import { AdvancedSearch } from "@/components/advanced-search";
 import { getActiveCategories } from "@/lib/catalog";
 import { prisma } from "@/lib/prisma";
 import { HomepageIntroMedia } from "@/components/homepage-intro-media";
@@ -88,7 +87,9 @@ export default async function HomePage() {
         return url && (type === "IMAGE" || type === "VIDEO") ? [{ type, url, alt: slide.alt || slide.imageAlt || "", assetId: slide.assetId }] : [];
       })
     : [];
-  const homepageItems = [...baselineItems, ...customItems.filter(item => item.key !== "intro-media")].sort((a, b) => a.position - b.position);
+  const homepageItems = [...baselineItems, ...customItems.filter(item => item.key !== "intro-media")]
+    .filter((item) => !(introMediaSection?.isActive && introMediaSlides.length > 0 && item.key === "hero"))
+    .sort((a, b) => a.position - b.position);
 
   return (
     <main className="home-redesign">
