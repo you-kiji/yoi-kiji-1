@@ -2,6 +2,7 @@ import { getLocaleData } from "@/lib/i18n";
 import { AdvancedSearch } from "@/components/advanced-search";
 import { getActiveCategories } from "@/lib/catalog";
 import { prisma } from "@/lib/prisma";
+import { HomepageIntroMedia } from "@/components/homepage-intro-media";
 
 export const dynamic = "force-dynamic";
 
@@ -79,10 +80,19 @@ export default async function HomePage() {
     .filter((section) => section.isActive && !defaultSectionOrder.includes(section.key as (typeof defaultSectionOrder)[number]))
     .filter((section) => section.key !== "announcement" && section.key !== "search" && !section.key.startsWith("demo-"))
     .map((section) => ({ key: section.key, section, position: section.position }));
-  const homepageItems = [...baselineItems, ...customItems].sort((a, b) => a.position - b.position);
+  const introMediaSection = sectionByKey.get("intro-media");
+  const introMediaSlides = Array.isArray(introMediaSection?.slides)
+    ? (introMediaSection.slides as Array<{ type?: "IMAGE" | "VIDEO"; url?: string; imageUrl?: string; imageAlt?: string; alt?: string; assetId?: string }>).flatMap((slide) => {
+        const url = slide.url || slide.imageUrl || "";
+        const type = slide.type || "IMAGE";
+        return url && (type === "IMAGE" || type === "VIDEO") ? [{ type, url, alt: slide.alt || slide.imageAlt || "", assetId: slide.assetId }] : [];
+      })
+    : [];
+  const homepageItems = [...baselineItems, ...customItems.filter(item => item.key !== "intro-media")].sort((a, b) => a.position - b.position);
 
   return (
     <main className="home-redesign">
+      {introMediaSection?.isActive && <HomepageIntroMedia slides={introMediaSlides} />}
       {homepageItems.map(({ key, section }) => {
         if (section.sectionType === "product-grid") {
           return (
