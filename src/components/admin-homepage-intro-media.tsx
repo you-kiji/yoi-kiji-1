@@ -20,11 +20,16 @@ export function AdminHomepageIntroMedia({ sectionId, initialSlides }: { sectionI
   }, []);
 
   function add(asset: Asset) {
-    if (asset.resourceType !== "IMAGE" && asset.resourceType !== "VIDEO") return;
-    setSlides(current => current.some(item => item.assetId === asset.id) ? current : [...current, {
-      type: asset.resourceType, url: asset.secureUrl, alt: asset.title || asset.originalFilename || "", assetId: asset.id
-    }]);
+    if (asset.resourceType === "RAW") return;
+    const slide: Slide = {
+      type: asset.resourceType,
+      url: asset.secureUrl,
+      alt: asset.title || asset.originalFilename || "",
+      assetId: asset.id,
+    };
+    setSlides(current => current.some(item => item.assetId === asset.id) ? current : [...current, slide]);
   }
+
   function move(index: number, direction: -1 | 1) {
     setSlides(current => {
       const next = [...current], target = index + direction;
