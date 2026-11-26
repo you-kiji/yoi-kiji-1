@@ -13,6 +13,19 @@ const kinds = [
 ] as const;
 const emptySlide: Slide = { imageUrl: "", videoUrl: "", imageAlt: "", eyebrow: "", title: "", body: "", ctaLabel: "", ctaHref: "" };
 
+function hasSixteenDistinctImages(items: Slide[]) {
+  if (items.length !== 16 || items.some((slide) => !slide.imageUrl.trim())) return false;
+  const canonicalImages = items.map((slide) => {
+    try {
+      const url = new URL(slide.imageUrl);
+      return `${url.origin}${url.pathname}`;
+    } catch {
+      return "";
+    }
+  });
+  return canonicalImages.every(Boolean) && new Set(canonicalImages).size === 16;
+}
+
 export function StorefrontThemeBuilder() {
   const [sections, setSections] = useState<Section[]>([]);
   const [products, setProducts] = useState<ProductOption[]>([]);
@@ -105,7 +118,7 @@ export function StorefrontThemeBuilder() {
       setMessage(kind === "image-grid" ? "The homepage gallery can contain exactly 16 images." : "A section can contain a maximum of 30 slides.");
       return;
     }
-    if (kind === "image-grid" && slides.length !== 16) { setMessage("The homepage gallery must contain exactly 16 images."); return; }
+    if (kind === "image-grid" && !hasSixteenDistinctImages(slides)) { setMessage("The homepage gallery must contain exactly 16 distinct images. Reusing the same image is not allowed."); return; }
     if ((kind === "slideshow" || kind === "image-grid" || kind === "trust-badges") && slides.some(slide => !slide.imageUrl.trim() && !(kind === "slideshow" && (slide.videoUrl || "").trim()))) {
       setMessage(kind === "trust-badges" ? "Every trust badge needs an image." : kind === "image-grid" ? "Every gallery tile needs an image." : "Every slideshow slide needs an image. Add an image or video.");
       return;
