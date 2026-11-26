@@ -20,6 +20,7 @@ export function AdminHomepageIntroMedia({ sectionId, initialSlides }: { sectionI
   }, []);
 
   function add(asset: Asset) {
+    if (asset.resourceType !== "IMAGE" && asset.resourceType !== "VIDEO") return;
     setSlides(current => current.some(item => item.assetId === asset.id) ? current : [...current, {
       type: asset.resourceType, url: asset.secureUrl, alt: asset.title || asset.originalFilename || "", assetId: asset.id
     }]);
