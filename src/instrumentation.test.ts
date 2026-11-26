@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { onRequestError } from "./instrumentation";
+import { onRequestError } from "../instrumentation";
 
 describe("request error instrumentation", () => {
   afterEach(() => vi.restoreAllMocks());
