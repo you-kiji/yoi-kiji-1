@@ -9,6 +9,9 @@ async function authorised() {
   return admin?.role === "ADMIN" ? admin : null;
 }
 const slideSchema = z.object({
+  type: z.enum(["IMAGE", "VIDEO"]).optional(),
+  url: z.string().url().optional(),
+  assetId: z.string().min(1).optional(),
   imageUrl: z.union([z.string().url(), z.literal("")]).optional().default(""),
   imageAlt: z.string().max(200).optional().default(""),
   eyebrow: z.string().max(120).optional().default(""),
@@ -19,7 +22,7 @@ const slideSchema = z.object({
 });
 const sectionSchema = z.object({
   key: z.string().trim().min(2).max(60).regex(/^[a-z0-9-]+$/),
-  sectionType: z.enum(["slideshow","image-banner","rich-text","image-with-text","featured-collections","product-grid","testimonial","blog-grid","spacer","hero-video","media-only","photo-collage","text-strip","trust-bar"]).default("rich-text"),
+  sectionType: z.enum(["slideshow","media-carousel","image-banner","rich-text","image-with-text","featured-collections","product-grid","testimonial","blog-grid","spacer","hero-video","media-only","photo-collage","text-strip","trust-bar"]).default("rich-text"),
   settings: z.record(z.string(), z.unknown()).optional(),
   slides: z.array(slideSchema).max(30).optional(),
   eyebrow: z.string().max(120).optional().nullable(),

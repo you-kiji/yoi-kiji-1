@@ -3,6 +3,7 @@ import { AdvancedSearch } from "@/components/advanced-search";
 import { getActiveCategories } from "@/lib/catalog";
 import { prisma } from "@/lib/prisma";
 import { LazyBackground } from "@/components/lazy-background";
+import { HomepageIntroMedia } from "@/components/homepage-intro-media";
 
 export const dynamic = "force-dynamic";
 
@@ -82,10 +83,19 @@ export default async function HomePage() {
     .filter((section: typeof allSections[0]) => section.isActive && !defaultSectionOrder.includes(section.key as (typeof defaultSectionOrder)[number]))
     .filter((section: typeof allSections[0]) => section.key !== "announcement" && section.key !== "search" && !section.key.startsWith("demo-"))
     .map((section: typeof allSections[0]) => ({ key: section.key, section, position: section.position }));
-  const homepageItems = [...baselineItems, ...customItems].sort((a, b) => a.position - b.position);
+  const introMediaSection = sectionByKey.get("intro-media");
+  const introMediaSlides = Array.isArray(introMediaSection?.slides)
+    ? (introMediaSection.slides as Array<{ type?: "IMAGE" | "VIDEO"; url?: string; imageUrl?: string; imageAlt?: string; alt?: string; assetId?: string }>).flatMap((slide) => {
+        const url = slide.url || slide.imageUrl || "";
+        const type = slide.type || "IMAGE";
+        return url && (type === "IMAGE" || type === "VIDEO") ? [{ type, url, alt: slide.alt || slide.imageAlt || "", assetId: slide.assetId }] : [];
+      })
+    : [];
+  const homepageItems = [...baselineItems, ...customItems.filter((item) => item.key !== "intro-media")].sort((a, b) => a.position - b.position);
 
   return (
     <main className="home-redesign">
+      {introMediaSection?.isActive && <HomepageIntroMedia slides={introMediaSlides} />}
       {homepageItems.map(({ key, section }: typeof homepageItems[0]) => {
         const settings = section.settings && typeof section.settings === "object" && !Array.isArray(section.settings)
           ? section.settings as Record<string, unknown>
@@ -144,24 +154,27 @@ export default async function HomePage() {
             <section className="storefront-dynamic-grid storefront-product-pair" key={section.id}>
               <div className="editorial-section-heading">
                 <div>
-                  {section.eyebrow ? <p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow}</p> : null}
-                  <h2>{section.title || "Considered essentials"}</h2>
+                  
+                  <h2>{section.title || "Shop the Collection"}</h2>
                 </div>
                 {section.ctaHref ? <a className="editorial-text-link" href={section.ctaHref}>{section.ctaLabel || "Discover"}</a> : null}
               </div>
               <div className="storefront-product-grid">
                 {visibleProducts.map((product: typeof visibleProducts[0]) => (
                   <a className="storefront-product-card" href={`/products/${product.slug}`} key={product.id}>
-                    {product.images[0]?.url ? (
+                    <span className="storefront-product-card__media">
+{product.images[0]?.url ? (
                       <img src={product.images[0].url} alt={product.images[0].alt || product.name} loading="lazy" />
                     ) : (
                       <span className="storefront-product-card__placeholder" />
                     )}
-                    <span className="storefront-product-card__name">{product.name}</span>
-                    <span className="storefront-product-card__price">
-                      {new Intl.NumberFormat(localeCode === "ja" ? "ja-JP" : "en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(product.pricePaise / 100)}
                     </span>
-                  </a>
+                    <span className="storefront-product-card__details">
+                      <span className="storefront-product-card__name">{product.name}</span>
+                                          <span className="storefront-product-card__price">
+                                            {new Intl.NumberFormat(localeCode === "ja" ? "ja-JP" : "en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(product.pricePaise / 100)}
+                                          </span>
+                    </span></a>
                 ))}
               </div>
             </section>
