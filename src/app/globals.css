@@ -583,7 +583,7 @@ footer{font-size:14px}
 /* Homepage product collection cards */
 .storefront-dynamic-grid{padding:clamp(64px,8vw,108px) 5.5%;background:var(--cream);color:var(--green)}
 .storefront-product-heading{margin-bottom:clamp(26px,3.5vw,42px)}
-.storefront-product-heading h2{font-size:clamp(22px,2.5vw,30px);line-height:1.15;letter-spacing:-.035em;margin:0}
+.storefront-product-heading h2{font-size:24px;line-height:1.15;letter-spacing:-.035em;margin:0}
 .storefront-product-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(14px,2vw,24px)}
 .storefront-product-card{display:flex;min-width:0;flex-direction:column;overflow:hidden;background:#fff;color:var(--green);border:1px solid rgba(16,47,32,.09);border-radius:4px;text-decoration:none;transition:transform .25s ease,box-shadow .25s ease}
 .storefront-product-card:hover{transform:translateY(-4px);box-shadow:0 16px 34px rgba(16,47,32,.09)}
@@ -595,4 +595,4 @@ footer{font-size:14px}
 .storefront-product-card__name{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;min-height:2.8em;font-family:var(--sans);font-size:14px;font-weight:500;line-height:1.4;letter-spacing:.005em}
 .storefront-product-card__price{font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:.01em;color:#294b35}
 @media(max-width:900px){.storefront-product-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:640px){.storefront-dynamic-grid{padding:62px 6% 72px}.storefront-product-heading h2{font-size:clamp(20px,5.2vw,26px)}.storefront-product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.storefront-product-card__details{padding:12px 11px 14px}.storefront-product-card__name{font-size:13px}.storefront-product-card__price{font-size:13px}}
+@media(max-width:640px){.storefront-dynamic-grid{padding:62px 6% 72px}.storefront-product-heading h2{font-size:24px}.storefront-product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.storefront-product-card__details{padding:12px 11px 14px}.storefront-product-card__name{font-size:13px}.storefront-product-card__price{font-size:13px}}
