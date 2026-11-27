@@ -86,7 +86,6 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
             }}
           >{text("header.product","Product")}</summary>
           <div className="header-collections-menu">
-            <Link href="/shop" onClick={closeAll}>{text("header.product","Product")}</Link>
             {categories.map(category => (
               <Link key={category.id} href={`/shop?category=${encodeURIComponent(category.slug)}`} onClick={closeAll}>
                 {category.name}
@@ -115,7 +114,6 @@ export function SiteHeaderClient({ categories, labels = {}, availableLocales = [
         >{mobileOpen ? text("header.close","Close") : text("header.menu","Menu")}</summary>
         <nav aria-label="Mobile navigation">
           <LocaleSwitcher locales={availableLocales} currentCode={currentLocale} />
-          <p>Product</p>
           {categories.map(category => (
             <Link key={category.id} href={`/shop?category=${encodeURIComponent(category.slug)}`} onClick={closeAll}>
               {category.name}
