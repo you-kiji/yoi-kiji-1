@@ -137,36 +137,82 @@ export default async function HomePage() {
         }
 
         if (section.sectionType === "product-grid") {
-          const productLimit = 2; // Homepage product-pair sections always render exactly two cards.
-          const productOffset = typeof settings.offset === "number" ? Math.max(0, settings.offset) : 0;
-          const visibleProducts = featuredProducts.slice(productOffset, productOffset + productLimit);
-          return (
-            <section className="storefront-dynamic-grid storefront-product-pair" key={section.id}>
-              <div className="editorial-section-heading">
-                <div>
-                  {section.eyebrow ? <p className="editorial-eyebrow editorial-eyebrow--dark">{section.eyebrow}</p> : null}
-                  <h2>{section.title || "Considered essentials"}</h2>
-                </div>
-                {section.ctaHref ? <a className="editorial-text-link" href={section.ctaHref}>{section.ctaLabel || "Discover"}</a> : null}
-              </div>
-              <div className="storefront-product-grid">
-                {visibleProducts.map((product) => (
-                  <a className="storefront-product-card" href={`/products/${product.slug}`} key={product.id}>
-                    {product.images[0]?.url ? (
-                      <img src={product.images[0].url} alt={product.images[0].alt || product.name} loading="lazy" />
-                    ) : (
-                      <span className="storefront-product-card__placeholder" />
-                    )}
-                    <span className="storefront-product-card__name">{product.name}</span>
-                    <span className="storefront-product-card__price">
-                      {new Intl.NumberFormat(localeCode === "ja" ? "ja-JP" : "en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(product.pricePaise / 100)}
-                    </span>
-                  </a>
-                ))}
-              </div>
-            </section>
-          );
-        }
+  const productOffset =
+    typeof settings.offset === "number"
+      ? Math.max(0, settings.offset)
+      : 0;
+
+  // Show all available products instead of limiting to 2.
+  const visibleProducts = featuredProducts.slice(productOffset);
+
+  return (
+    <section
+      className="storefront-dynamic-grid storefront-product-pair"
+      key={section.id}
+    >
+      <div className="editorial-section-heading">
+        <div>
+          {section.eyebrow ? (
+            <p className="editorial-eyebrow editorial-eyebrow--dark">
+              {section.eyebrow}
+            </p>
+          ) : null}
+
+          <h2>{section.title || "Considered essentials"}</h2>
+        </div>
+
+        {section.ctaHref ? (
+          <a className="editorial-text-link" href={section.ctaHref}>
+            {section.ctaLabel || "Discover"}
+          </a>
+        ) : null}
+      </div>
+
+      <div className="storefront-product-grid">
+        {visibleProducts.map((product) => (
+          <a
+            className="storefront-product-card"
+            href={`/products/${product.slug}`}
+            key={product.id}
+          >
+            <div className="storefront-product-card__image">
+              {product.images[0]?.url ? (
+                <img
+                  src={product.images[0].url}
+                  alt={product.images[0].alt || product.name}
+                  loading="lazy"
+                />
+              ) : (
+                <span className="storefront-product-card__placeholder" />
+              )}
+
+              <span className="storefront-product-card__view">
+                View Product <span aria-hidden="true">↗</span>
+              </span>
+            </div>
+
+            <div className="storefront-product-card__details">
+              <span className="storefront-product-card__name">
+                {product.name}
+              </span>
+
+              <span className="storefront-product-card__price">
+                {new Intl.NumberFormat(
+                  localeCode === "ja" ? "ja-JP" : "en-IN",
+                  {
+                    style: "currency",
+                    currency: "INR",
+                    maximumFractionDigits: 0,
+                  }
+                ).format(product.pricePaise / 100)}
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  );
+}
         if (section.sectionType === "featured-collections") {
           return (
             <section className="editorial-collections" key={section.id}>
