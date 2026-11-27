@@ -15,7 +15,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install
+      # Keep the lockfile install deterministic, then explicitly install the
+      # Linux x64 glibc binding because npm can omit optional platform packages.
+      - name: Resolve platform-specific optional dependencies
+        run: npm install --package-lock-only --include=optional
+      - name: Install dependencies
+        run: npm ci --include=optional
+      - name: Ensure Rolldown Linux native binding is installed
+        run: npm install --no-save --no-package-lock --ignore-scripts @rolldown/binding-linux-x64-gnu@1.2.19
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
       - name: Summarize remaining dependency advisories
