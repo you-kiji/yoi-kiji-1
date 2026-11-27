@@ -1,0 +1,3 @@
+"use client";
+type Slide={type:"IMAGE"|"VIDEO";url:string;alt?:string;assetId?:string};
+export function HomepageIntroMedia({slides}:{slides:Slide[]}){if(!slides.length)return null;return <section className="homepage-intro-media" aria-label="Introduction"><div className="homepage-intro-media__track">{slides.map((s,i)=><div className="homepage-intro-media__item" key={s.assetId||s.url||i}>{s.type==="VIDEO"?<video src={s.url} autoPlay muted loop playsInline preload={i===0?"auto":"metadata"} aria-label={s.alt||""}/>:<img src={s.url} alt={s.alt||""} loading={i===0?"eager":"lazy"}/>}</div>)}</div></section>}

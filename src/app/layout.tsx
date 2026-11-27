@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getLocaleData } from "@/lib/i18n";
 import "./design-system.css";
+import "./homepage-intro-media.css";
+import "./homepage-product-cards.css";
 import { SiteChrome } from "@/components/site-chrome";
 import { AnnouncementBar } from "@/components/announcement-bar";
 import { SiteHeader } from "@/components/site-header";
